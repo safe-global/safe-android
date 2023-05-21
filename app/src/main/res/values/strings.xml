@@ -12,23 +12,23 @@
         <item quantity="one">%d action</item>
         <item quantity="other">%d actions</item>
     </plurals>
-    <string name="no_safes_loaded">No Safe loaded</string>
-    <string name="safe_loaded">Safe loaded</string>
+    <string name="no_safes_loaded">No Safe Account loaded</string>
+    <string name="safe_loaded">Safe Account loaded</string>
     <string name="load_gnosis_safe_start">Get started by loading your Safe Account</string>
     <string name="load_safe_account">Load Safe Account</string>
     <string name="tab_title_coins">COINS</string>
     <string name="tab_title_collectibles">COLLECTIBLES</string>
-    <string name="enter_safe_address">Enter Safe address</string>
+    <string name="enter_safe_address">Enter Safe Account address</string>
     <string name="enter_name">Enter name</string>
-    <string name="enter_safe_name_description">Choose a name for the Safe. The name is only stored locally and will not be shared with us or any third parties.</string>
+    <string name="enter_safe_name_description">Choose a name for the Safe Account. The name is only stored locally and will not be shared with us or any third parties.</string>
     <string name="next">Next</string>
-    <string name="add_safe_label_top">Enter your Safe address.</string>
+    <string name="add_safe_label_top">Enter your Safe Account address.</string>
 
-    <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
-    <string name="add_safe_label_link">https://safe.global</string>
+    <string name="add_safe_label_bottom">Don\'t have a Safe Account? Create one first at</string>
+    <string name="add_safe_label_link">https://app.safe.global</string>
     <string name="back">Back</string>
 
-    <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to add owner key for this Safe to confirm transactions?</string>
+    <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to add owner key for this Safe Account to confirm transactions?</string>
     <string name="add_safe_owner_import">Import owner key</string>
     <string name="add_safe_owner_add">Add owner key</string>
     <string name="add_safe_owner_skip">Skip</string>
@@ -50,8 +50,8 @@
     <string name="please_review_terms_and_privacy_policy">Please review our Terms of Use and Privacy Policy.</string>
     <string name="agree_without_sharing_usage_data">Agree without Sharing Usage Data</string>
     <string name="agree">Agree</string>
-    <string name="add_safe">Add Safe</string>
-    <string name="switch_safes">Switch Safes</string>
+    <string name="add_safe">Add Safe Account</string>
+    <string name="switch_safes">Switch Safe Accounts</string>
     <string name="assets">Assets</string>
     <string name="transactions">Transactions</string>
 
@@ -59,15 +59,15 @@
 
     <string name="settings">Settings</string>
 
-    <string name="remove_safe">Remove safe</string>
+    <string name="remove_safe">Remove Safe Account</string>
     <string name="error_data_cannot_be_loaded">Data cannot be loaded</string>
     <string name="error_id">Error %1$d</string>
     <string name="error_description_chain_list">Failed to load chains</string>
-    <string name="error_description_safe_add">Can\'t add safe</string>
+    <string name="error_description_safe_add">Can\'t add Safe Account</string>
     <string name="error_description_safe_address">Can\'t use this address</string>
     <string name="error_description_safe_name">Can\'t use this name</string>
     <string name="error_description_safe_settings">Failed to load Safe Account settings</string>
-    <string name="error_description_safe_settings_advanced">Failed to load advanced safe settings</string>
+    <string name="error_description_safe_settings_advanced">Failed to load advanced Safe Account settings</string>
     <string name="error_description_ens_name">Can\'t use this name</string>
     <string name="error_description_assets_coins">Failed to load balances</string>
     <string name="error_description_assets_coins_send">Failed to create transaction</string>
@@ -100,10 +100,10 @@
     <string name="error_network_safe_info_not_found_reason">Safe Account info is not found</string>
 
     <string name="error_network_safe_info_not_found_fix">Please reach out to the Safe support</string>
-    <string name="error_network_safe_not_found_reason">safe not found</string>
-    <string name="error_network_try_again_fix">Please check that the Safe exists on the blockchain</string>
+    <string name="error_network_safe_not_found_reason">Safe Account not found</string>
+    <string name="error_network_try_again_fix">Please check that the Safe Account exists on the blockchain</string>
     <string name="error_client_safe_duplicate_reason">a Safe Account with this address has been added already</string>
-    <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>
+    <string name="error_client_safe_duplicate_fix">Please use another Safe Account address</string>
     <string name="error_client_safe_name_invalid_reason">this value is not a valid name</string>
     <string name="error_client_safe_name_invalid_fix">Name should not be empty</string>
     <string name="error_client_safe_not_found_reason">Safe Account not found</string>
@@ -225,7 +225,7 @@
     <string name="settings_passcode_enter_your_current_passcode">Enter your current passcode</string>
     <string name="settings_passcode_forgot_your_passcode">Forgot your passcode?</string>
     <string name="settings_passcode_reset_passcode">Reset passcode</string>
-    <string name="settings_passcode_confirm_disable_passcode">You can disable your passcode. This will remove all imported owners and safes from the app.</string>
+    <string name="settings_passcode_confirm_disable_passcode">You can disable your passcode. This will remove all imported owners and Safe Accounts from the app.</string>
     <string name="settings_passcode_disable_passcode">Disable passcode</string>
     <string name="settings_passcode_owner_removal_failed">Could not delete all owner keys</string>
     <string name="settings_passcode_setup_failed">Passcode setup failed</string>
@@ -304,7 +304,7 @@
     <string name="tx_details_advanced">Advanced</string>
     <string name="tx_details_advanced_chain_tx_data">Chain Transaction Data</string>
     <string name="tx_details_advanced_hash">Transaction hash:</string>
-    <string name="tx_details_advanced_safe_tx_data">Safe Transaction Data</string>
+    <string name="tx_details_advanced_safe_tx_data">Safe Account Transaction Data</string>
     <string name="tx_details_advanced_module_data">Module Data</string>
     <string name="tx_details_advanced_module">Module:</string>
     <string name="tx_details_advanced_to">To:</string>
@@ -357,7 +357,7 @@
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
     <string name="tx_status_type_modify_settings">Modify settings</string>
     <string name="tx_status_type_custom">Contract interaction</string>
-    <string name="tx_status_type_creation">Safe created</string>
+    <string name="tx_status_type_creation">Safe Account created</string>
     <string name="tx_status_type_rejection">On-chain rejection</string>
 
     <string name="tx_status_needs_confirmations">\u2022 Needs confirmations</string>
@@ -376,7 +376,7 @@
         <item quantity="other">%d transactions will need to be created and executed before this transaction</item>
     </plurals>
     <string name="tx_safe_tx_gas">SafeTxGas</string>
-    <string name="tx_safe_tx_gas_desc">SafeTxGas specifies the gas that should be used for the Safe transaction.</string>
+    <string name="tx_safe_tx_gas_desc">SafeTxGas specifies the gas that should be used for the Safe Account transaction.</string>
     <string name="tx_safe_tx_gas_error_insufficient">Transaction may fail due to insufficient safeTxGas</string>
     <string name="tx_advanced_params_config_howto">How do I configure these details manually?</string>
 
@@ -390,7 +390,7 @@
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
     <string name="safe_settings_required_confirmations">Required confirmations</string>
     <string name="safe_settings_safe_name">Safe Account name</string>
-    <string name="safe_settings_dialog_description">Removing a Safe only removes it from this app. It does not delete the Safe from the blockchain. Funds will not get lost.</string>
+    <string name="safe_settings_dialog_description">Removing a Safe Account only removes it from this app. It does not delete the Safe Account from the blockchain. Funds will not get lost.</string>
     <string name="safe_settings_dialog_cancel">Cancel</string>
     <string name="safe_settings_dialog_remove">Remove</string>
     <string name="safe_settings_not_set">Not set</string>
@@ -402,8 +402,8 @@
     <string name="safe_settings_guard">Guard</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
-    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Safe?</string>
-    <string name="safe_settings_guard_help">What is a guard and how does it relate to the Safe?</string>
+    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Safe Account?</string>
+    <string name="safe_settings_guard_help">What is a guard and how does it relate to the Safe Account?</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe Account name</string>
 
@@ -421,7 +421,7 @@
     <string name="signing_owner_import_existing_title">Import existing owner key</string>
     <string name="signing_owner_import_existing_desc">Import an existing key or seed phrase</string>
     <string name="signing_owner_create_new_title">Create new owner key</string>
-    <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Safe</string>
+    <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Safe Account</string>
     <string name="signing_owner_connect_ledger_title">Connect Ledger Nano X</string>
     <string name="signing_owner_connect_ledger_desc">Add a key from your hardware wallet</string>
 
@@ -475,7 +475,7 @@
     <string name="banner_passcode_text">Secure your owner keys by setting up a passcode. The passcode will be needed to open the app and sign transactions.</string>
     <string name="banner_passcode_action">Create passcode now</string>
 
-    <string name="push_safe_name">Safe %1$s</string>
+    <string name="push_safe_name">Safe Account %1$s</string>
 
     <string name="push_title_confirmation_required">Confirmation required (%1$s)</string>
     <string name="push_text_confirmation_required">%1$s: A transaction requires your confirmation!</string>
@@ -524,7 +524,7 @@
     <string name="enter_seed_phrase_error">Seed phrase is not valid</string>
     <string name="import_owner_key_title">Import owner key</string>
     <string name="import_owner_key_intro_seed_phrase_title">How does it work?</string>
-    <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
+    <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe Account. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
     <string name="import_owner_key_intro_private_key_title">How secure is that?</string>
     <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
     <string name="import_owner_key_intro_private_key_help">How is a private key stored on mobile?</string>
@@ -534,7 +534,7 @@
     <string name="import_owner_key_default">Default</string>
     <string name="import_owner_key_ledger_title">Connect Ledger Nano X</string>
     <string name="import_owner_key_ledger_how_does_it_work_title">How does it work?</string>
-    <string name="import_owner_key_ledger_how_does_it_work_desc">You can connect your Ledger device and select a key. If it is an owner of your Safe you can sign transactions.</string>
+    <string name="import_owner_key_ledger_how_does_it_work_desc">You can connect your Ledger device and select a key. If it is an owner of your Safe Account you can sign transactions.</string>
     <string name="import_owner_key_ledger_pair_your_ledger_device_title">Pair your Ledger device</string>
     <string name="import_owner_key_ledger_pair_your_ledger_device_desc">Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="import_owner_key_ledger_how_secure_is_that_title">How secure is that?</string>
@@ -582,7 +582,7 @@
     <string name="app">App</string>
 
 
-    <string name="biometric_prompt_info_title">Safe</string>
+    <string name="biometric_prompt_info_title">Safe{Wallet}</string>
     <string name="biometric_prompt_info_subtitle_login">Use biometrics to login</string>
     <string name="biometric_prompt_info_subtitle_sign">Use biometrics to sign</string>
     <string name="biometric_prompt_info_use_app_password">Use passcode</string>
@@ -591,7 +591,7 @@
     <string name="settings_passcode_enable_biometry_title">Activate Biometry?</string>
     <string name="settings_passcode_enable_biometry_enable">Enable</string>
 
-    <string name="chain_select_network">Select network on which your Safe was created:</string>
+    <string name="chain_select_network">Select network on which your Safe Account was created:</string>
 
     <string name="ledger_connect">Connect Ledger Nano X</string>
     <string name="ledger_select_device">Select your device</string>
