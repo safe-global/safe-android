@@ -368,8 +368,8 @@
     <string name="tx_status_failed">Failed</string>
     <string name="tx_status_success">Success</string>
 
-    <string name="tx_safe_nonce">Safe nonce</string>
-    <string name="tx_safe_nonce_desc">Safe nonce determines an order in which transactions are executed.</string>
+    <string name="tx_safe_nonce">Safe Account nonce</string>
+    <string name="tx_safe_nonce_desc">Safe Account nonce determines an order in which transactions are executed.</string>
     <string name="tx_safe_nonce_error_executed">Transaction with this nonce is already executed</string>
     <plurals name="tx_safe_nonce_error_offset">
         <item quantity="one">%d transaction will need to be created and executed before this transaction"</item>
