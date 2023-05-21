@@ -14,7 +14,7 @@
     </plurals>
     <string name="no_safes_loaded">No Safe loaded</string>
     <string name="safe_loaded">Safe loaded</string>
-    <string name="load_gnosis_safe_start">Get started by loading your Safe</string>
+    <string name="load_gnosis_safe_start">Get started by loading your Safe Account</string>
     <string name="load_safe_account">Load Safe Account</string>
     <string name="tab_title_coins">COINS</string>
     <string name="tab_title_collectibles">COLLECTIBLES</string>
@@ -66,7 +66,7 @@
     <string name="error_description_safe_add">Can\'t add safe</string>
     <string name="error_description_safe_address">Can\'t use this address</string>
     <string name="error_description_safe_name">Can\'t use this name</string>
-    <string name="error_description_safe_settings">Failed to load safe account settings</string>
+    <string name="error_description_safe_settings">Failed to load Safe Account settings</string>
     <string name="error_description_safe_settings_advanced">Failed to load advanced safe settings</string>
     <string name="error_description_ens_name">Can\'t use this name</string>
     <string name="error_description_assets_coins">Failed to load balances</string>
@@ -97,16 +97,16 @@
     <string name="error_network_unexpected_fix">Please reach out to the Safe support</string>
     <string name="error_network_address_format_invalid_reason">address format is not valid</string>
     <string name="error_network_address_format_invalid_fix">Please reach out to the Safe support</string>
-    <string name="error_network_safe_info_not_found_reason">safe info is not found</string>
+    <string name="error_network_safe_info_not_found_reason">Safe Account info is not found</string>
 
     <string name="error_network_safe_info_not_found_fix">Please reach out to the Safe support</string>
     <string name="error_network_safe_not_found_reason">safe not found</string>
     <string name="error_network_try_again_fix">Please check that the Safe exists on the blockchain</string>
-    <string name="error_client_safe_duplicate_reason">a Safe with this address has been added already</string>
+    <string name="error_client_safe_duplicate_reason">a Safe Account with this address has been added already</string>
     <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>
     <string name="error_client_safe_name_invalid_reason">this value is not a valid name</string>
     <string name="error_client_safe_name_invalid_fix">Name should not be empty</string>
-    <string name="error_client_safe_not_found_reason">Safe not found</string>
+    <string name="error_client_safe_not_found_reason">Safe Account not found</string>
     <string name="error_client_safe_not_found_fix">Please check that the Safe exists on the blockchain</string>
     <string name="error_client_address_invalid_reason">this value is not a valid address</string>
     <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
