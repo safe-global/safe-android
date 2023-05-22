@@ -185,7 +185,7 @@
     <string name="collectibles_details">Collectible details</string>
     <string name="collectibles_asset_contract">Asset Contract</string>
     <string name="collectibles_view_on">View on %1$s</string>
-    <string name="settings_tab_safe">SAFE SETTINGS</string>
+    <string name="settings_tab_safe">MY SAFE ACCOUNT</string>
     <string name="settings_tab_app">APP SETTINGS</string>
     <string name="settings_app_owner_keys">Owner keys</string>
     <string name="settings_app_passcode">Passcode</string>
