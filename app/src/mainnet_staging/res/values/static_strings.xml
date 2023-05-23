@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name" translatable="false">Mainnet Staging</string>
-    <string name="etherscan_address_url" translatable="false">https://etherscan.io/address/%s</string>
-    <string name="etherscan_transaction_url" translatable="false">https://etherscan.io/tx/%s</string>
-</resources>
