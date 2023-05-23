@@ -46,7 +46,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:text="@string/load_gnosis_safe" />
+                android:text="@string/load_safe_account" />
 
         </LinearLayout>
 
