@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.TextureView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -67,15 +69,17 @@ class QRCodeScanActivity : AppCompatActivity() {
                     findViewById<TextureView>(R.id.scan_view_finder)
                 )
             } else {
-                AlertDialog.Builder(this)
-                    .setTitle(R.string.qr_error_title)
-                    .setMessage(R.string.qr_error_message)
-                    .setNegativeButton(R.string.qr_retry_button) { _, _ ->
-                        videographer.open(
-                            findViewById(R.id.scan_view_finder)
-                        )
-                    }
-                    .create().show()
+                Handler(Looper.getMainLooper()).post {
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.qr_error_title)
+                        .setMessage(R.string.qr_error_message)
+                        .setNegativeButton(R.string.qr_retry_button) { _, _ ->
+                            videographer.open(
+                                findViewById(R.id.scan_view_finder)
+                            )
+                        }
+                        .create().show()
+                }
             }
         } ?: run {
             finishWithResult(value)
