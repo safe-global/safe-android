@@ -2,9 +2,6 @@ package io.gnosis.safe.ui.transactions.details
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Looper
 import com.keystone.module.EthSignRequest
 import com.keystone.sdk.KeystoneEthereumSDK
 import com.keystone.sdk.KeystoneSDK
@@ -16,13 +13,14 @@ import io.gnosis.safe.qrscanner.HasFinished
 import io.gnosis.safe.qrscanner.IsValid
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import kotlinx.coroutines.Runnable
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
+import java.util.Timer
+import java.util.TimerTask
 import java.util.UUID
 import javax.inject.Inject
 
@@ -33,20 +31,11 @@ class KeystoneSignViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<KeystoneSignState>(appDispatchers) {
     private val sdk = KeystoneSDK()
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private val handlerThread = HandlerThread("HandlerThread")
-    private lateinit var backgroundHandler: Handler
+    private val timer = Timer()
     private lateinit var encoder: UREncoder
     private lateinit var ethSignRequest: EthSignRequest
     private lateinit var signingMode: SigningMode
     private var ur: UR? = null
-
-    private val updateQrCode = object : Runnable {
-        override fun run() {
-            updateQrCode()
-            backgroundHandler.postDelayed(this, 500)
-        }
-    }
 
     companion object {
         const val UR_PREFIX_OF_SIGNATURE = "UR:ETH-SIGNATURE"
@@ -76,9 +65,11 @@ class KeystoneSignViewModel
                 )
                 encoder = sdk.eth.generateSignRequest(ethSignRequest)
 
-                handlerThread.start()
-                backgroundHandler = Handler(handlerThread.looper)
-                backgroundHandler.post(updateQrCode)
+                timer.schedule(object : TimerTask() {
+                    override fun run() {
+                        updateQrCode()
+                    }
+                }, 0, 500)
             }
         }
     }
@@ -95,18 +86,15 @@ class KeystoneSignViewModel
         }.onFailure { Timber.e(it) }
             .getOrNull()
 
-        mainHandler.post {
-            safeLaunch {
-                updateState {
-                    KeystoneSignState(UnsignedUrReady(qrCode))
-                }
+        safeLaunch {
+            updateState {
+                KeystoneSignState(UnsignedUrReady(qrCode))
             }
         }
     }
 
     fun stopUpdatingQrCode() {
-        backgroundHandler.removeCallbacks(updateQrCode)
-        handlerThread.quitSafely()
+        timer.cancel()
     }
 
     fun validator(scannedValue: String): Pair<IsValid, HasFinished> {
