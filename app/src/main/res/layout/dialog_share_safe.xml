@@ -176,7 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginLeft="@dimen/default_small_margin"
-                app:setting_name="@string/settings_chain_prefix_qr"
+                app:setting_name="@string/settings_app_chain_prefix_qr"
                 android:background="@drawable/background_secondary_selectable"
                 app:setting_openable="false"
                 app:setting_has_switch="true"
