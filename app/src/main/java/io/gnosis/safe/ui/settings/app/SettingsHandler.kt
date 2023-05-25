@@ -216,6 +216,14 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var chainPrefixQr: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_CHAIN_PREFIX_QR, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_CHAIN_PREFIX_QR, value)
+            }
+        }
+
     companion object {
         internal const val KEY_CURRENT_VERSION = "prefs.integer.current_version"
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
@@ -233,6 +241,8 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
         internal const val KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH = "prefs.boolean.ask_for_passcode_setup_on_first_launch"
         internal const val KEY_SHOW_WHATS_NEW = "prefs.boolean.show_whats_new"
+
+        internal const val KEY_CHAIN_PREFIX_QR = "prefs.boolean.chain_prefix_qr"
 
         internal const val KEY_UPDATE_SHOWN_FOR_VERSION = "prefs.integer.update_shown_for_version"
         internal const val KEY_FIREBASE_NEWEST_VERSION = "newestVersion"
