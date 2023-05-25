@@ -81,8 +81,7 @@
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_passcode_change_passcode"
-                app:setting_openable="true"
-                />
+                app:setting_openable="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/use_biometrics"
@@ -108,8 +107,7 @@
                 android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_passcode_require_to_open_app"
                 app:setting_openable="false"
-                app:setting_has_switch="true"
-                />
+                app:setting_has_switch="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/require_for_confirmations"
@@ -119,8 +117,7 @@
                 android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_passcode_require_for_confirmations"
                 app:setting_openable="false"
-                app:setting_has_switch="true"
-                />
+                app:setting_has_switch="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/require_for_export"
@@ -130,14 +127,16 @@
                 android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_passcode_require_for_exporting_keys"
                 app:setting_openable="false"
-                app:setting_has_switch="true"
-                />
+                app:setting_has_switch="true" />
 
             <TextView
                 style="@style/Helptext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/settings_passcode_at_least_one_option" />
+
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
