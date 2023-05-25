@@ -591,6 +591,8 @@
     <string name="settings_passcode_enable_biometry_title">Activate Biometry?</string>
     <string name="settings_passcode_enable_biometry_enable">Enable</string>
 
+    <string name="settings_chain_prefix_qr">QR code with chain prefix</string>
+
     <string name="chain_select_network">Select network on which your Safe Account was created:</string>
 
     <string name="ledger_connect">Connect Ledger Nano X</string>
