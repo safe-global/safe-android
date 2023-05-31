@@ -12,6 +12,10 @@
         <item quantity="one">%d action</item>
         <item quantity="other">%d actions</item>
     </plurals>
+    <plurals name="tx_safe_nonce_error_offset">
+        <item quantity="one">%d transaction will need to be created and executed before this transaction"</item>
+        <item quantity="other">%d transactions will need to be created and executed before this transaction</item>
+    </plurals>
     <string name="no_safes_loaded">No Safe loaded</string>
     <string name="safe_loaded">Safe loaded</string>
     <string name="load_gnosis_safe_start">Get started by loading your Safe</string>
@@ -22,12 +26,12 @@
     <string name="enter_name">Enter name</string>
     <string name="enter_safe_name_description">Choose a name for the Safe. The name is only stored locally and will not be shared with us or any third parties.</string>
     <string name="next">Next</string>
-    <string name="add_safe_label_top">Enter your Safe address.</string>
 
+    <string name="add_safe_label_top">Enter your Safe address.</string>
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
     <string name="add_safe_label_link">https://safe.global</string>
-    <string name="back">Back</string>
 
+    <string name="back">Back</string>
     <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to add owner key for this Safe to confirm transactions?</string>
     <string name="add_safe_owner_import">Import owner key</string>
     <string name="add_safe_owner_add">Add owner key</string>
@@ -53,12 +57,12 @@
     <string name="add_safe">Add Safe</string>
     <string name="switch_safes">Switch Safes</string>
     <string name="assets">Assets</string>
+
     <string name="transactions">Transactions</string>
 
     <string name="transactions_empty">Transactions will appear here</string>
 
     <string name="settings">Settings</string>
-
     <string name="remove_safe">Remove safe</string>
     <string name="error_data_cannot_be_loaded">Data cannot be loaded</string>
     <string name="error_id">Error %1$d</string>
@@ -74,8 +78,8 @@
     <string name="error_description_assets_collectibles">Failed to load collectibles</string>
     <string name="error_description_tx_list">Failed to load transactions</string>
     <string name="error_description_tx_details">Failed to load transaction details</string>
-    <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
 
+    <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
     <string name="error_description_tx_rejection">Failed to reject transaction</string>
     <string name="error_description_seed_phrase">Can\'t use this seed phrase or private key</string>
     <string name="error_description_fiat">Failed to load supported fiat list</string>
@@ -97,8 +101,8 @@
     <string name="error_network_unexpected_fix">Please reach out to the Safe support</string>
     <string name="error_network_address_format_invalid_reason">address format is not valid</string>
     <string name="error_network_address_format_invalid_fix">Please reach out to the Safe support</string>
-    <string name="error_network_safe_info_not_found_reason">safe info is not found</string>
 
+    <string name="error_network_safe_info_not_found_reason">safe info is not found</string>
     <string name="error_network_safe_info_not_found_fix">Please reach out to the Safe support</string>
     <string name="error_network_safe_not_found_reason">safe not found</string>
     <string name="error_network_try_again_fix">Please check that the Safe exists on the blockchain</string>
@@ -122,32 +126,32 @@
     <string name="error_client_ens_resolution_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
     <string name="error_client_address_not_matching_network_reason">This address is not matching the selected network</string>
+
     <string name="error_client_address_not_matching_network_fix">Please use a different address or switch network</string>
-
     <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
+
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
-
     <string name="error_client_UD_blockchain_provider_is_not_accessible_reason">Blockchain is down</string>
+
     <string name="error_client_UD_blockchain_provider_is_not_accessible_fix">Check your internet connection</string>
-
     <string name="error_client_UD_invalid_domain_reason">Invalid domain name</string>
+
     <string name="error_client_UD_invalid_domain_fix">Please check the domain, it should end with .crypto or .zil</string>
-
     <string name="error_client_UD_not_supported_currency_reason">The desirable currency is not supported by UD</string>
+
     <string name="error_client_UD_not_supported_currency_fix">Contact UD to add more coin support</string>
-
     <string name="error_client_UD_name_not_registered_reason">This domain is not registered with UD</string>
+
     <string name="error_client_UD_name_not_registered_fix">Check if domain is correct</string>
-
     <string name="error_client_UD_record_not_found_reason">Record you are looking is not attached to the domain</string>
+
     <string name="error_client_UD_record_not_found_fix">Check the domain records</string>
-
     <string name="error_client_UD_domain_not_configured_reason">Domain is not configured correctly</string>
+
     <string name="error_client_UD_domain_not_configured_fix">Ask Domain owner to configure resolver contract</string>
-
     <string name="error_client_UD_currency_not_found_reason">Domain doesn\'t have desirable asset attached</string>
-    <string name="error_client_UD_currency_not_found_fix">Contact domain owner</string>
 
+    <string name="error_client_UD_currency_not_found_fix">Contact domain owner</string>
     <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
     <string name="error_unknown_reason">an error occurred</string>
     <string name="error_unknown_fix">Please try again later</string>
@@ -174,14 +178,14 @@
     <string name="coins_asset_send_edit_params">Edit advanced parameters</string>
     <string name="coins_asset_send_error_amount_zero">Amount should be greater than 0</string>
     <string name="coins_asset_send_error_amount_too_big">Insufficient funds</string>
-    <string name="coins_asset_send_error_amount_decimals">Should be 1 to %1$d decimals</string>
 
+    <string name="coins_asset_send_error_amount_decimals">Should be 1 to %1$d decimals</string>
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>
     <string name="collectibles_empty">Collectibles will appear here</string>
-    <string name="collectibles_unknown">Unknown</string>
 
+    <string name="collectibles_unknown">Unknown</string>
     <string name="collectibles_details">Collectible details</string>
     <string name="collectibles_asset_contract">Asset Contract</string>
     <string name="collectibles_view_on">View on %1$s</string>
@@ -203,12 +207,12 @@
     <string name="settings_app_privacy_policy">Privacy policy</string>
     <string name="settings_app_licenses">Licenses</string>
     <string name="settings_app_help_center">Help Center</string>
-    <string name="settings_app_version">App version</string>
 
+    <string name="settings_app_version">App version</string>
     <string name="settings_app_header_support">SUPPORT &amp; FEEDBACK</string>
     <string name="settings_app_header_advanced">ADVANCED</string>
-    <string name="settings_app_header_about">ABOUT</string>
 
+    <string name="settings_app_header_about">ABOUT</string>
     <string name="settings_passcode_use_passcode">Use passcode</string>
     <string name="settings_passcode_change_passcode">Change passcode</string>
     <string name="settings_passcode_is_needed_to_sign">The passcode is needed to open the app and sign transactions.</string>
@@ -236,8 +240,8 @@
     <string name="settings_passcode_require_to_open_app">Require to open app</string>
     <string name="settings_passcode_require_for_confirmations">Require for confirmations</string>
     <string name="settings_passcode_require_for_exporting_keys">Require for exporting keys</string>
-    <string name="settings_passcode_show_keyboard">Show keyboard</string>
 
+    <string name="settings_passcode_show_keyboard">Show keyboard</string>
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
     <string name="settings_app_rate">Rate the app</string>
@@ -245,41 +249,41 @@
     <string name="endpoints">ENDPOINTS</string>
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
-    <string name="client_gateway_service">Client Gateway service</string>
 
+    <string name="client_gateway_service">Client Gateway service</string>
     <string name="tracking">TRACKING</string>
     <string name="tracking_share_usage_data">Share Usage Data</string>
     <string name="tracking_enable_description">By sharing usage data, you are helping us improve the app with anonymized app usage data</string>
+
     <string name="tracking_text">\nWhat Data is shared?</string>
-
     <string name="debug">DEBUG</string>
-    <string name="crash_the_app">Crash the App</string>
 
+    <string name="crash_the_app">Crash the App</string>
     <string name="screenshots">SCREENSHOTS</string>
     <string name="enable_screenshots">Enable screenshots</string>
     <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>
     <string name="get_in_touch_title">Help Center</string>
     <string name="get_in_touch_email">E-mail</string>
-    <string name="get_in_touch_discord">Discord</string>
 
+    <string name="get_in_touch_discord">Discord</string>
     <string name="get_in_touch_twitter">Twitter</string>
     <string name="get_in_touch_help_center">Help center</string>
     <string name="get_in_touch_feature_suggestion">Feature suggestion</string>
-    <string name="feedback_subject">Feedback</string>
 
+    <string name="feedback_subject">Feedback</string>
     <string name="feedback_safe">Safe address: %1$s</string>
     <string name="feedback_chain">Chain: %1$s (%2$s)</string>
+
     <string name="feedback_feedback">Feedback:</string>
-
     <string name="email_chooser_error">Unfortunately you do not have any mail clients configured.</string>
-    <string name="url_copied">URL copied</string>
 
+    <string name="url_copied">URL copied</string>
     <string name="url_copied_success">URL copied to clipboard</string>
     <string name="tx_tab_queue">QUEUE</string>
     <string name="tx_tab_history">HISTORY</string>
     <string name="tx_list_ago_now">just now</string>
-    <string name="tx_list_ago_min">%1$d min ago</string>
 
+    <string name="tx_list_ago_min">%1$d min ago</string>
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
     <string name="tx_list_confirmations">%1$d out of %2$d</string>
@@ -291,12 +295,12 @@
     <string name="tx_list_receive">Receive</string>
     <string name="tx_list_send">Send</string>
     <string name="tx_list_label_type_next">NEXT TRANSACTION</string>
+
     <string name="tx_list_label_type_queued">QUEUE</string>
 
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_multisend_action">Action #%1$d</string>
-
     <string name="tx_details_title">Transaction details</string>
     <string name="tx_details_action">Action (%1$s)</string>
     <string name="tx_details_action_multisend">Multisend (%1$d actions)</string>
@@ -319,8 +323,8 @@
     <string name="tx_details_advanced_gas_price">gasPrice:</string>
     <string name="tx_details_advanced_gas_token">gasToken:</string>
     <string name="tx_details_advanced_refundReceiver">refundReceiver:</string>
-    <string name="tx_details_advanced_signatures">Signatures:</string>
 
+    <string name="tx_details_advanced_signatures">Signatures:</string>
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_block_explorer">View transaction on block explorer</string>
@@ -329,8 +333,8 @@
     <string name="tx_details_creation_implementation_used">Mastercopy used</string>
     <string name="tx_details_creation_factory_used">Factory used</string>
     <string name="tx_details_creation_no_factory_used">No factory used</string>
-    <string name="tx_details_creation_no_implementation_available">Not available</string>
 
+    <string name="tx_details_creation_no_implementation_available">Not available</string>
     <string name="tx_details_add_owner">Add owner:</string>
     <string name="tx_details_new_mastercopy">New mastercopy:</string>
     <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
@@ -338,12 +342,12 @@
     <string name="tx_details_enable_module">Enable module:</string>
     <string name="tx_details_remove_owner">Remove owner:</string>
     <string name="tx_details_set_fallback_handler">Set fallback handler:</string>
-    <string name="tx_details_asset_contract">Asset Contract</string>
 
+    <string name="tx_details_asset_contract">Asset Contract</string>
     <string name="tx_details_rejection_info_queued">This is an on-chain rejection that doesn’t send any funds. Executing this on-chain rejection will replace all currently awaiting transactions with nonce %1$d.</string>
     <string name="tx_details_rejection_info_historic">This is an on-chain rejection that didn’t send any funds. This on-chain rejection replaced all transactions with nonce %1$d. </string>
-    <string name="tx_details_rejection_payment_reason">Why do I need to pay for rejecting a transaction?</string>
 
+    <string name="tx_details_rejection_payment_reason">Why do I need to pay for rejecting a transaction?</string>
     <string name="tx_details_rejection_confirmation_title">Reject transaction</string>
     <string name="tx_details_rejection_confirmation_info">This will create an on-chain rejection with the same nonce that doesn’t send any funds. The on-chain rejection will replace the transaction you wish to reject.\n\nYou\'ll have to confirm the creation of the on-chain rejection with your imported owner key.</string>
     <string name="tx_details_rejection_confirmation_reject_transaction">Reject transaction</string>
@@ -351,30 +355,26 @@
     <string name="tx_details_rejection_confirmation_step1">Create on-chain rejection</string>
     <string name="tx_details_rejection_confirmation_step2">Collect confirmations</string>
     <string name="tx_details_rejection_confirmation_step3">Execute on-chain rejection</string>
-    <string name="tx_details_rejection_confirmation_step4">The initial transaction is replaced</string>
 
+    <string name="tx_details_rejection_confirmation_step4">The initial transaction is replaced</string>
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
     <string name="tx_status_type_modify_settings">Modify settings</string>
     <string name="tx_status_type_custom">Contract interaction</string>
     <string name="tx_status_type_creation">Safe created</string>
-    <string name="tx_status_type_rejection">On-chain rejection</string>
 
+    <string name="tx_status_type_rejection">On-chain rejection</string>
     <string name="tx_status_needs_confirmations">\u2022 Needs confirmations</string>
     <string name="tx_status_needs_your_confirmation">\u2022 Needs your confirmation</string>
     <string name="tx_status_needs_execution">\u2022 Needs execution</string>
     <string name="tx_status_pending">\u2022 Pending</string>
     <string name="tx_status_cancelled">Cancelled</string>
     <string name="tx_status_failed">Failed</string>
-    <string name="tx_status_success">Success</string>
 
+    <string name="tx_status_success">Success</string>
     <string name="tx_safe_nonce">Safe nonce</string>
     <string name="tx_safe_nonce_desc">Safe nonce determines an order in which transactions are executed.</string>
     <string name="tx_safe_nonce_error_executed">Transaction with this nonce is already executed</string>
-    <plurals name="tx_safe_nonce_error_offset">
-        <item quantity="one">%d transaction will need to be created and executed before this transaction"</item>
-        <item quantity="other">%d transactions will need to be created and executed before this transaction</item>
-    </plurals>
     <string name="tx_safe_tx_gas">SafeTxGas</string>
     <string name="tx_safe_tx_gas_desc">SafeTxGas specifies the gas that should be used for the Safe transaction.</string>
     <string name="tx_safe_tx_gas_error_insufficient">Transaction may fail due to insufficient safeTxGas</string>
