@@ -49,7 +49,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
             chainPrefix.setOnClickListener {
-                //TODO: navigate to chain prefix settings screen
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToChainPrefixAppSettingsFragment())
             }
             intercom.setOnClickListener {
                 viewModel.openIntercomMessenger()
