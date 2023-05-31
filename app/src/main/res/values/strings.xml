@@ -210,6 +210,7 @@
     <string name="settings_app_header_about">ABOUT</string>
 
     <string name="settings_app_chain_prefix_qr">QR code with chain prefix</string>
+    <string name="settings_app_chain_prefix">Chain prefix</string>
 
     <string name="settings_passcode_use_passcode">Use passcode</string>
     <string name="settings_passcode_change_passcode">Change passcode</string>

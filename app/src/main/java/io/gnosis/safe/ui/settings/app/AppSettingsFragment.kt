@@ -48,6 +48,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             fiat.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
+            chainPrefix.setOnClickListener {
+                //TODO: navigate to chain prefix settings screen
+            }
             intercom.setOnClickListener {
                 viewModel.openIntercomMessenger()
             }

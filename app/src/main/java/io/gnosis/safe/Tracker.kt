@@ -293,6 +293,7 @@ enum class ScreenId(val value: String) {
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
     SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),
     SETTINGS_APP_FIAT("screen_settings_app_edit_fiat"),
+    SETTINGS_APP_CHAIN_PREFIX("screen_settings_app_chain_prefix"),
     SETTINGS_APP_PASSCODE("screen_settings_app_passcode"),
     SETTINGS_GET_IN_TOUCH("screen_settings_app_support"),
     SETTINGS_ABOUT_SAFE("screen_settings_app_about_safe"),
