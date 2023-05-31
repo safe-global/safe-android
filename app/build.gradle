@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
-        versionName getKey("APP_VERSION_NAME", "3.6.4")
+        versionName getKey("APP_VERSION_NAME", "3.6.5")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Infura API key
