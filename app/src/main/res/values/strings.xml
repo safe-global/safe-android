@@ -209,6 +209,8 @@
     <string name="settings_app_header_advanced">ADVANCED</string>
     <string name="settings_app_header_about">ABOUT</string>
 
+    <string name="settings_app_chain_prefix_qr">QR code with chain prefix</string>
+
     <string name="settings_passcode_use_passcode">Use passcode</string>
     <string name="settings_passcode_change_passcode">Change passcode</string>
     <string name="settings_passcode_is_needed_to_sign">The passcode is needed to open the app and sign transactions.</string>

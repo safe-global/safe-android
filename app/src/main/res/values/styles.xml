@@ -273,7 +273,9 @@
         <item name="android:statusBarColor">@color/background_secondary</item>
         <item name="android:navigationBarColor">@color/background_secondary</item>
         <item name="snackbarStyle">@style/SnackbarStyle</item>
+        <item name="colorAccent">@color/primary</item>
     </style>
+
     <style name="DayNightDialog" parent="BaseDialog"/>
 
     <!-- EnsInputDialog -->
@@ -284,6 +286,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
     </style>
+
     <style name="DayNightFullscreenDialog" parent="BaseFullScreenDialog"/>
 
     <!-- AddressInputHelper BottomSheetDialog -->
@@ -296,10 +299,13 @@
         <item name="android:statusBarColor">@color/background_secondary</item>
         <item name="android:navigationBarColor">@color/background_secondary</item>
     </style>
+
     <style name="ShapeAppearanceOverlay.App.CornerSize9Percent" parent="">
         <item name="cornerSize">9%</item>
     </style>
+
     <style name="ShapeAppearanceOverlay.App.Circle" parent="">
         <item name="cornerSize">50%</item>
     </style>
+
 </resources>
