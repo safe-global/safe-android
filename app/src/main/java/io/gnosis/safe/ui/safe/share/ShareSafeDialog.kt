@@ -17,12 +17,14 @@ import io.gnosis.safe.databinding.DialogShareSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
-import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,9 +32,6 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
 
     @Inject
     lateinit var viewModel: ShareSafeViewModel
-
-    @Inject
-    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogShareSafeBinding =
         DialogShareSafeBinding.inflate(layoutInflater, container, false)
@@ -70,9 +69,9 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            chainPrefixQr.settingSwitch.isChecked = settingsHandler.chainPrefixQr
+            chainPrefixQr.settingSwitch.isChecked = viewModel.isChainPrefixQrEnabled()
             chainPrefixQr.settingSwitch.setOnClickListener {
-                //TODO: handle changing qr code with chain prefix switch
+                viewModel.toggleChainPrefixQr()
             }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
