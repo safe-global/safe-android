@@ -103,6 +103,7 @@ class ShareSafeViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ensRepository.reverseResolve(any(), any()) } throws throwable
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } throws throwable
+        coEvery { settingsHandler.chainPrefixQr } returns false
         mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<ShareSafeState>()
         viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
@@ -135,6 +136,7 @@ class ShareSafeViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ensRepository.reverseResolve(any(), any()) } returns ensName
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns bitmap
+        coEvery { settingsHandler.chainPrefixQr } returns false
         val testObserver = TestLiveDataObserver<ShareSafeState>()
         viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
 
