@@ -9,6 +9,7 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -29,13 +30,14 @@ class ShareSafeViewModelTest {
     private val safeRepository = mockk<SafeRepository>()
     private val ensRepository = mockk<EnsRepository>()
     private val qrCodeGenerator = mockk<QrCodeGenerator>()
+    private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: ShareSafeViewModel
 
     @Test
     fun `init - (no preconditions) emits loading`() = runBlocking {
         val testObserver = TestLiveDataObserver<ShareSafeState>()
-        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
+        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(testObserver)
 
@@ -55,7 +57,7 @@ class ShareSafeViewModelTest {
     fun `load - (no active safe) emits ShowError`() = runBlocking {
         coEvery { safeRepository.getActiveSafe() } returns null
         val testObserver = TestLiveDataObserver<ShareSafeState>()
-        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
+        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(testObserver)
         viewModel.load()
@@ -77,7 +79,7 @@ class ShareSafeViewModelTest {
         val throwable = Throwable()
         coEvery { safeRepository.getActiveSafe() } throws throwable
         val testObserver = TestLiveDataObserver<ShareSafeState>()
-        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
+        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(testObserver)
         viewModel.load()
@@ -103,7 +105,7 @@ class ShareSafeViewModelTest {
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } throws throwable
         mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<ShareSafeState>()
-        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
+        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(testObserver)
         viewModel.load()
@@ -134,7 +136,7 @@ class ShareSafeViewModelTest {
         coEvery { ensRepository.reverseResolve(any(), any()) } returns ensName
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns bitmap
         val testObserver = TestLiveDataObserver<ShareSafeState>()
-        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
+        viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(testObserver)
         viewModel.load()
