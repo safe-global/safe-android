@@ -217,10 +217,26 @@ class SettingsHandler @Inject constructor(
         }
 
     var chainPrefixQr: Boolean
-        get() = preferencesManager.prefs.getBoolean(KEY_CHAIN_PREFIX_QR, false)
+        get() = preferencesManager.prefs.getBoolean(KEY_CHAIN_PREFIX_QR, true)
         set(value) {
             preferencesManager.prefs.edit {
                 putBoolean(KEY_CHAIN_PREFIX_QR, value)
+            }
+        }
+
+    var chainPrefixPrepend: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_CHAIN_PREFIX_PREPEND, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_CHAIN_PREFIX_PREPEND, value)
+            }
+        }
+
+    var chainPrefixCopy: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_CHAIN_PREFIX_COPY, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_CHAIN_PREFIX_COPY, value)
             }
         }
 
@@ -243,6 +259,8 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_SHOW_WHATS_NEW = "prefs.boolean.show_whats_new"
 
         internal const val KEY_CHAIN_PREFIX_QR = "prefs.boolean.chain_prefix_qr"
+        internal const val KEY_CHAIN_PREFIX_PREPEND = "prefs.boolean.chain_prefix_prepend"
+        internal const val KEY_CHAIN_PREFIX_COPY = "prefs.boolean.chain_prefix_copy"
 
         internal const val KEY_UPDATE_SHOWN_FOR_VERSION = "prefs.integer.update_shown_for_version"
         internal const val KEY_FIREBASE_NEWEST_VERSION = "newestVersion"

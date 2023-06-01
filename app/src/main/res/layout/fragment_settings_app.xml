@@ -48,6 +48,16 @@
                 app:setting_openable="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/chain_prefix"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_secondary_selectable"
+                app:setting_image="@drawable/ic_settings_chain_24dp"
+                app:setting_name="@string/settings_app_chain_prefix"
+                app:setting_openable="true" />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/appearance"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"

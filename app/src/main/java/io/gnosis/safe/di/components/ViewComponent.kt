@@ -120,6 +120,8 @@ interface ViewComponent {
 
     fun inject(fragment: AppSettingsFragment)
 
+    fun inject(fragment: ChainPrefixAppSettingsFragment)
+
     fun inject(fragment: GetInTouchFragment)
 
     fun inject(fragment: AboutSafeFragment)

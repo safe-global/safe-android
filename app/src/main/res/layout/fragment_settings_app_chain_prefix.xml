@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_secondary">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_secondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
+            style="@style/Toolbar"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                android:text="@string/back" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/ToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/settings_app_chain_prefix" />
+
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_primary"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/prefix_prepend"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_secondary_selectable"
+                app:setting_name="@string/settings_chain_prefix_prepend"
+                app:setting_openable="false"
+                app:setting_has_switch="true" />
+
+            <TextView
+                style="@style/Helptext"
+                android:text="@string/settings_chain_prefix_prepend_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/prefix_copy"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_secondary_selectable"
+                app:setting_name="@string/settings_chain_prefix_copy"
+                app:setting_openable="false"
+                app:setting_has_switch="true" />
+
+            <TextView
+                android:id="@+id/use_passcode_for"
+                style="@style/Helptext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_chain_prefix_copy_hint" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

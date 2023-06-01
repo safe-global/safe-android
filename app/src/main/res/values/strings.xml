@@ -210,6 +210,11 @@
     <string name="settings_app_header_about">ABOUT</string>
 
     <string name="settings_app_chain_prefix_qr">QR code with chain prefix</string>
+    <string name="settings_app_chain_prefix">Chain prefix</string>
+    <string name="settings_chain_prefix_prepend">Prepend adresses with chain prefix</string>
+    <string name="settings_chain_prefix_prepend_hint">When enabled, all chain-specific addresses will have the chain prefix displayed before them according to standard EIP-3770</string>
+    <string name="settings_chain_prefix_copy">Copy addresses with chain prefix</string>
+    <string name="settings_chain_prefix_copy_hint">When you copy any address, the app will prepend the chain according to standard EIP-3770</string>
 
     <string name="settings_passcode_use_passcode">Use passcode</string>
     <string name="settings_passcode_change_passcode">Change passcode</string>
