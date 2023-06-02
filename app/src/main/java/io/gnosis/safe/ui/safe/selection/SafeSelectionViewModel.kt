@@ -6,6 +6,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.chain.ChainSelectionMode
 import javax.inject.Inject
 
@@ -25,6 +26,7 @@ sealed class SafeSelectionState : BaseStateViewModel.State {
 class SafeSelectionViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
     private val chainInfoRepository: ChainInfoRepository,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSelectionState>(appDispatchers),
     SafeSelectionAdapter.OnSafeSelectionItemClickedListener {
@@ -36,6 +38,8 @@ class SafeSelectionViewModel @Inject constructor(
         SafeSelectionState.SafeListState(
             listOf(AddSafeHeader), null, null
         )
+
+    fun isChainPrefixPrependEnabled(): Boolean = settingsHandler.chainPrefixPrepend
 
     fun loadSafes() {
         safeLaunch {

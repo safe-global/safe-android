@@ -8,6 +8,7 @@ import io.gnosis.data.repositories.SafeStatus
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.utils.HttpCodes
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -17,6 +18,7 @@ class AddSafeViewModel
     private val safeRepository: SafeRepository,
     private val unstoppableDomainsRepository: UnstoppableDomainsRepository,
     private val ensRepository: EnsRepository,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
@@ -49,6 +51,8 @@ class AddSafeViewModel
     fun enableENS(chain: Chain): Boolean {
         return ensRepository.canResolve(chain)
     }
+
+    fun isChainPrefixPrependEnabled(): Boolean = settingsHandler.chainPrefixPrepend
 }
 
 

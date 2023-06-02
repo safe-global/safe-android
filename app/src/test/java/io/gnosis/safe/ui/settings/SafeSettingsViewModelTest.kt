@@ -14,6 +14,7 @@ import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.safe.SafeRemoved
 import io.gnosis.safe.ui.settings.safe.SafeSettingsState
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
@@ -43,6 +44,7 @@ class SafeSettingsViewModelTest {
     private val notificationManager = mockk<NotificationManager>().apply {
         coEvery { deleteNotificationChannelGroup(any()) } just Runs
     }
+    private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
     private val ensRepository = mockk<EnsRepository>().apply {
         coEvery { reverseResolve(any(), any()) } returns null
@@ -62,6 +64,7 @@ class SafeSettingsViewModelTest {
                 credentialsRepository,
                 notificationRepository,
                 notificationManager,
+                settingsHandler,
                 tracker,
                 appDispatchers
             )
@@ -123,6 +126,7 @@ class SafeSettingsViewModelTest {
                 credentialsRepository,
                 notificationRepository,
                 notificationManager,
+                settingsHandler,
                 tracker,
                 appDispatchers
             )
@@ -158,6 +162,7 @@ class SafeSettingsViewModelTest {
                     credentialsRepository,
                     notificationRepository,
                     notificationManager,
+                    settingsHandler,
                     tracker,
                     appDispatchers
                 )
@@ -211,6 +216,7 @@ class SafeSettingsViewModelTest {
                 credentialsRepository,
                 notificationRepository,
                 notificationManager,
+                settingsHandler,
                 tracker,
                 appDispatchers
             )
@@ -266,6 +272,7 @@ class SafeSettingsViewModelTest {
                     credentialsRepository,
                     notificationRepository,
                     notificationManager,
+                    settingsHandler,
                     tracker,
                     appDispatchers
                 )
@@ -306,6 +313,7 @@ class SafeSettingsViewModelTest {
                 credentialsRepository,
                 notificationRepository,
                 notificationManager,
+                settingsHandler,
                 tracker,
                 appDispatchers
             )
@@ -366,6 +374,7 @@ class SafeSettingsViewModelTest {
                 credentialsRepository,
                 notificationRepository,
                 notificationManager,
+                settingsHandler,
                 tracker,
                 appDispatchers
             )
@@ -436,6 +445,7 @@ class SafeSettingsViewModelTest {
                 credentialsRepository,
                 notificationRepository,
                 notificationManager,
+                settingsHandler,
                 tracker,
                 appDispatchers
             )

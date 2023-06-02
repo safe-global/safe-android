@@ -31,6 +31,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.notifications.NotificationServiceApi
 import io.gnosis.safe.ui.assets.collectibles.paging.CollectiblePagingProvider
 import io.gnosis.safe.ui.base.AppDispatchers
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.chain.paging.ChainPagingProvider
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerController
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerPagingProvider
@@ -213,9 +214,10 @@ class ApplicationModule(private val application: Application) {
     fun providesNotificationManager(
         @ApplicationContext context: Context,
         preferencesManager: PreferencesManager,
+        settingsHandler: SettingsHandler,
         balanceFormatter: BalanceFormatter,
         safeRepository: SafeRepository
-    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter, safeRepository)
+    ): NotificationManager = NotificationManager(context, preferencesManager, settingsHandler, balanceFormatter, safeRepository)
 
     @Provides
     @Singleton

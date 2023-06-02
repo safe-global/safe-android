@@ -55,6 +55,8 @@ class AddSafeNameViewModel
     }
 
     override fun initialState(): State = AddSafeNameState(ViewAction.Loading(false))
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
 }
 
 class InvalidName : Throwable()

@@ -8,6 +8,7 @@ import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -17,6 +18,7 @@ class SendAssetViewModel
     private val safeRepository: SafeRepository,
     private val unstoppableDomainsRepository: UnstoppableDomainsRepository,
     private val ensRepository: EnsRepository,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SendAssetState>(appDispatchers) {
 
@@ -67,6 +69,8 @@ class SendAssetViewModel
     fun enableENS(chain: Chain): Boolean {
         return ensRepository.canResolve(chain)
     }
+
+    fun isChainPrefixPrependEnabled(): Boolean = settingsHandler.chainPrefixPrepend
 }
 
 data class SendAssetState(

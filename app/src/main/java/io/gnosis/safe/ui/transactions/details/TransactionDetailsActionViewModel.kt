@@ -5,12 +5,14 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import javax.inject.Inject
 
 class TransactionDetailsActionViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<ActionDetailsState>(appDispatchers) {
 
@@ -36,6 +38,10 @@ class TransactionDetailsActionViewModel @Inject constructor(
             }
         }
     }
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled() = settingsHandler.chainPrefixCopy
 }
 
 data class ActionDetailsState(
