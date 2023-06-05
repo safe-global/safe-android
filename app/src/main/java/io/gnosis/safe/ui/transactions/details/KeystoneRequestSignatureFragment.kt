@@ -51,7 +51,7 @@ class KeystoneRequestSignatureFragment :
 
         with(binding) {
             backButton.setOnClickListener {
-                onBackNavigation()
+                findNavController().navigateUp()
             }
 
             chainRibbon.text = chain.name
@@ -116,9 +116,9 @@ class KeystoneRequestSignatureFragment :
         }
     }
 
-    private fun onBackNavigation() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel.stopUpdatingQrCode()
-        findNavController().navigateUp()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

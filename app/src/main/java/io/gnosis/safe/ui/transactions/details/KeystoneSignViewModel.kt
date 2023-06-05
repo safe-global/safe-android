@@ -31,11 +31,11 @@ class KeystoneSignViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<KeystoneSignState>(appDispatchers) {
     private val sdk = KeystoneSDK()
-    private val timer = Timer()
     private lateinit var encoder: UREncoder
     private lateinit var ethSignRequest: EthSignRequest
     private lateinit var signingMode: SigningMode
     private var ur: UR? = null
+    private var timer: Timer? = null
 
     companion object {
         const val UR_PREFIX_OF_SIGNATURE = "UR:ETH-SIGNATURE"
@@ -65,7 +65,8 @@ class KeystoneSignViewModel
                 )
                 encoder = sdk.eth.generateSignRequest(ethSignRequest)
 
-                timer.schedule(object : TimerTask() {
+                timer = Timer()
+                timer?.schedule(object : TimerTask() {
                     override fun run() {
                         updateQrCode()
                     }
@@ -94,7 +95,9 @@ class KeystoneSignViewModel
     }
 
     fun stopUpdatingQrCode() {
-        timer.cancel()
+        timer?.cancel()
+        timer?.purge()
+        timer = null
     }
 
     fun validator(scannedValue: String): Pair<IsValid, HasFinished> {

@@ -82,6 +82,7 @@ class OwnerListViewModel
                             )
                         )
                     }
+                    updateState { OwnerListState(ViewAction.None) }
                 }
                 else -> {
                     if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {
