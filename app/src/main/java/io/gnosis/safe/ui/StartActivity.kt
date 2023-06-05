@@ -296,8 +296,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
             adjustSafeNameWidth()
 
-            safeAddress.text =
-                safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            safeAddress.text = safe.address
+                .asEthereumAddressChecksumString()
+                .abbreviateEthAddress(
+                    if (settingsHandler.chainPrefixPrepend) safe.chain.shortName else null
+                )
             safeAddress.setOnClickListener {
                 navigateToShareSafeDialog()
             }

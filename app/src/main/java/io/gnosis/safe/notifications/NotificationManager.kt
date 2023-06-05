@@ -14,9 +14,10 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.ui.StartActivity
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
-import io.gnosis.safe.utils.formatForTxList
+import io.gnosis.safe.utils.shortChecksumString
 import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -26,6 +27,7 @@ import pm.gnosis.utils.asEthereumAddressString
 class NotificationManager(
     private val context: Context,
     private val preferencesManager: PreferencesManager,
+    private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
     private val safeRepository: SafeRepository,
     private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
@@ -119,10 +121,12 @@ class NotificationManager(
         var intent: PendingIntent? = null
 
         val safeName =
-            if (safe.localName.isNullOrBlank())
-                context.getString(R.string.push_safe_name, safe.address.formatForTxList())
-            else
+            if (safe.localName.isNullOrBlank()) {
+                val chainPrefix = if (settingsHandler.chainPrefixPrepend) safe.chain.shortName else null
+                context.getString(R.string.push_safe_name, safe.address.shortChecksumString(chainPrefix = chainPrefix))
+            } else {
                 safe.localName
+            }
 
         when (pushNotification) {
             is PushNotification.ConfirmationRequest -> {
@@ -192,7 +196,7 @@ class NotificationManager(
             .setDefaults(Notification.DEFAULT_ALL)
             .setCategory(category)
             .setPriority(priority)
-            .setContentIntent(intent)!!
+            .setContentIntent(intent)
 
 
     fun show(id: Int, title: String, message: String, channelId: String?, intent: PendingIntent?) {

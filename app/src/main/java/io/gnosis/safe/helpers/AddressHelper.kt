@@ -14,11 +14,12 @@ class AddressHelper
     suspend fun populateAddressInfo(
         addressView: TextView,
         imageView: BlockiesImageView?,
-        address: Solidity.Address
+        address: Solidity.Address,
+        chainPrefix: String?
     ) {
-
         val (displayAddress, fullAddress) = address.formatEthAddress(
             addressView.context,
+            chainPrefix,
             addMiddleLinebreak = false
         ) to address.asEthereumAddressChecksumString()
 

@@ -35,18 +35,35 @@ class MasterCopyItem @JvmOverloads constructor(
         binding.blockies.loadKnownAddressLogo(addressUri, address)
     }
 
-    fun setAddress(chain: Chain?, value: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean = true) {
+    fun setAddress(
+        chain: Chain?,
+        value: Solidity.Address?,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
+        version: String? = null,
+        showUpdateAvailable: Boolean = true
+    ) {
         with(binding) {
             blockies.setAddress(value)
             setVersionName(value, version, showUpdateAvailable)
-            address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
+            address.text = value
+                ?.asEthereumAddressChecksumString()
+                ?.abbreviateEthAddress(
+                    if (showChainPrefix) chain?.shortName else null
+                )
             binding.link.setOnClickListener {
                 BlockExplorer.forChain(chain)?.showAddress(context, value)
             }
-
             binding.root.setOnClickListener {
                 value?.let {
-                    context.copyToClipboard(context.getString(R.string.address_copied), value.asEthereumAddressChecksumString()) {
+                    context.copyToClipboard(
+                        context.getString(R.string.address_copied),
+                        if (copyChainPrefix && !chain?.shortName.isNullOrBlank()) {
+                            "${chain?.shortName}:${value.asEthereumAddressChecksumString()}"
+                        } else {
+                            value.asEthereumAddressChecksumString()
+                        }
+                    ) {
                         snackbar(view = root, textId = R.string.copied_success)
                     }
                 }

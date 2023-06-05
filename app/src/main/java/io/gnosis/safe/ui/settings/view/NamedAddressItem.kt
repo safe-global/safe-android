@@ -45,10 +45,20 @@ class NamedAddressItem @JvmOverloads constructor(
             field = value
         }
 
-    fun setAddress(chain: Chain, value: Solidity.Address?, ownerType: Owner.Type? = null) {
+    fun setAddress(
+        chain: Chain,
+        value: Solidity.Address?,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
+        ownerType: Owner.Type? = null
+    ) {
         with(binding) {
             blockies.setAddress(value)
-            address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
+            address.text = value
+                ?.asEthereumAddressChecksumString()
+                ?.abbreviateEthAddress(
+                    if (showChainPrefix) chain.shortName else null
+                )
             link.setOnClickListener {
                 BlockExplorer.forChain(chain)?.showAddress(context, value)
             }
@@ -56,7 +66,11 @@ class NamedAddressItem @JvmOverloads constructor(
                 value?.let {
                     context.copyToClipboard(
                         context.getString(R.string.address_copied),
-                        value.asEthereumAddressChecksumString()
+                        if (copyChainPrefix) {
+                            "${chain.shortName}:${value.asEthereumAddressChecksumString()}"
+                        } else {
+                            value.asEthereumAddressChecksumString()
+                        }
                     ) {
                         snackbar(view = root, textId = R.string.copied_success)
                     }

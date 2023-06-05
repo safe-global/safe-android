@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewSafeInputBinding
 import io.gnosis.safe.utils.formatEthAddress
@@ -32,7 +33,11 @@ class SafeInputView @JvmOverloads constructor(
         }
 
 
-    fun setNewAddress(newAddress: Solidity.Address) {
+    fun setNewAddress(
+        chain: Chain,
+        newAddress: Solidity.Address,
+        showChainPrefix: Boolean
+    ) {
 
         address = newAddress
 
@@ -40,7 +45,11 @@ class SafeInputView @JvmOverloads constructor(
             this.errorMessage.visible(false, View.INVISIBLE)
             blockies.setAddress(newAddress)
             blockies.visible(true)
-            address.text = newAddress.formatEthAddress(context, addMiddleLinebreak = false)
+            address.text = newAddress.formatEthAddress(
+                context,
+                if (showChainPrefix) chain.shortName else null,
+                addMiddleLinebreak = false
+            )
             mainContainer.backgroundTintList = ColorStateList.valueOf(
                 ResourcesCompat.getColor(
                     resources,
@@ -51,7 +60,12 @@ class SafeInputView @JvmOverloads constructor(
         }
     }
 
-    fun setError(errorMessage: String?, input: String?) {
+    fun setError(
+        chain: Chain,
+        errorMessage: String?,
+        input: String?,
+        showChainPrefix: Boolean
+    ) {
 
         address = null
 
@@ -63,7 +77,11 @@ class SafeInputView @JvmOverloads constructor(
             input?.asEthereumAddress()?.let {
                 blockies.visible(true)
                 blockies.setAddress(it)
-                address.text = it.formatEthAddress(context, addMiddleLinebreak = false)
+                address.text = it.formatEthAddress(
+                    context,
+                    if (showChainPrefix) chain.shortName else null,
+                    addMiddleLinebreak = false
+                )
             } ?: run {
                 if (input != null) {
                     blockies.setAddress(null)
