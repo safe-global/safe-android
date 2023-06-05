@@ -157,7 +157,7 @@ class StringUtilsKtTest {
 
         val address = Solidity.Address(BigInteger.TEN)
 
-        val result = address.formatForTxList()
+        val result = address.shortChecksumString(chainPrefix = null)
 
         assertEquals(result, "0x0000...000A")
     }
@@ -167,7 +167,7 @@ class StringUtilsKtTest {
 
         val addressString = "0x000000000000000000000000000000A"
 
-        val result = addressString.abbreviateEthAddress()
+        val result = addressString.abbreviateEthAddress(null)
 
         assertEquals(result, "0x0000...000A")
     }
@@ -205,17 +205,17 @@ class StringUtilsKtTest {
     fun `formatEthAddress (with middleLineBreak)`() {
         val address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
 
-        val spannable = address.formatEthAddress(applicationContext)
+        val spannable = address.formatEthAddress(applicationContext, null)
 
         assertEquals('\n', spannable.get(21)) // check linebreak
         assertEquals(43, spannable.length)
     }
 
     @Test
-    fun `formatEthAddress (no middleLineBreak)`() {
+    fun `formatEthAddress (no middleLineBre2ak)`() {
         val address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
 
-        val spannable = address.formatEthAddress(context = applicationContext, addMiddleLinebreak = false)
+        val spannable = address.formatEthAddress(context = applicationContext, chainPrefix = null, addMiddleLinebreak = false)
 
         assertEquals('C', spannable.get(21)) // check no linebreak
         assertEquals(42, spannable.length)
@@ -225,7 +225,7 @@ class StringUtilsKtTest {
     fun `formatEthAddress (not checksummed)`() {
         val address = "0xd5d82B6addc9027b22dca772Aa68d5d74cdbdf44".asEthereumAddress()!!
 
-        val spannable = address.formatEthAddress(context = applicationContext, addMiddleLinebreak = false)
+        val spannable = address.formatEthAddress(context = applicationContext, chainPrefix = null, addMiddleLinebreak = false)
 
         assertEquals("0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44", spannable.toString())
 
@@ -260,7 +260,7 @@ class StringUtilsKtTest {
     fun `shortChecksumString`() {
         val address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
 
-        val result = address.shortChecksumString()
+        val result = address.shortChecksumString(chainPrefix = null)
 
         assertEquals(13, result.length)
         assertEquals("0xd5D8...dF44", result)
