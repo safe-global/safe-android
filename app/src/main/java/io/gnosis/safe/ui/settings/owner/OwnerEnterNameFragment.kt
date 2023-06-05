@@ -61,7 +61,8 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             newAddressBlockies.setAddress(ownerAddress)
-            newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
+            // owners are not bound to a specific chain, so we show addresses without chain prefix
+            newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), null, addMiddleLinebreak = false)
             keyType.setImageResource(ownerType.imageRes24dpWhite())
             backButton.setOnClickListener { findNavController().navigateUp() }
 
