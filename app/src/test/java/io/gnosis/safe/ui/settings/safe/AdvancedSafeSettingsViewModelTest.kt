@@ -6,6 +6,7 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -21,13 +22,14 @@ class AdvancedSafeSettingsViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>(relaxed = true)
+    private val settingsHandler = mockk<SettingsHandler>(relaxed = true)
     private lateinit var viewModel: AdvancedSafeSettingsViewModel
     private val defaultActiveSafe = Safe(Solidity.Address(BigInteger.ONE), "test")
 
     @Test
     fun `init - (no input) should emit viewAction None is Loading`() = runBlocking {
         val stateObserver = TestLiveDataObserver<AdvancedSafeSettingsState>()
-        viewModel = AdvancedSafeSettingsViewModel(safeRepository, appDispatchers)
+        viewModel = AdvancedSafeSettingsViewModel(safeRepository, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(stateObserver)
 
@@ -45,7 +47,7 @@ class AdvancedSafeSettingsViewModelTest {
         val throwable = Throwable()
         coEvery { safeRepository.getSafeInfo(any()) } throws throwable
         coEvery { safeRepository.getActiveSafe() } returns defaultActiveSafe
-        viewModel = AdvancedSafeSettingsViewModel(safeRepository, appDispatchers)
+        viewModel = AdvancedSafeSettingsViewModel(safeRepository, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(stateObserver)
         viewModel.load()
@@ -75,7 +77,7 @@ class AdvancedSafeSettingsViewModelTest {
         val chain = Chain.DEFAULT_CHAIN
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { safeRepository.getActiveSafe() } returns defaultActiveSafe
-        viewModel = AdvancedSafeSettingsViewModel(safeRepository, appDispatchers)
+        viewModel = AdvancedSafeSettingsViewModel(safeRepository, settingsHandler, appDispatchers)
 
         viewModel.state.observeForever(stateObserver)
         viewModel.load()
@@ -89,7 +91,7 @@ class AdvancedSafeSettingsViewModelTest {
 
     @Test
     fun `isDefaultFallbackHandler - (any address) should return false` () {
-        viewModel = AdvancedSafeSettingsViewModel(safeRepository, appDispatchers)
+        viewModel = AdvancedSafeSettingsViewModel(safeRepository, settingsHandler, appDispatchers)
 
         val actual = viewModel.isDefaultFallbackHandler(Solidity.Address(BigInteger.ONE))
 
@@ -98,7 +100,7 @@ class AdvancedSafeSettingsViewModelTest {
 
     @Test
     fun `isDefaultFallbackHandler - (default fallback handler) should return true` () {
-        viewModel = AdvancedSafeSettingsViewModel(safeRepository, appDispatchers)
+        viewModel = AdvancedSafeSettingsViewModel(safeRepository, settingsHandler, appDispatchers)
 
         val actual = viewModel.isDefaultFallbackHandler(SafeRepository.DEFAULT_FALLBACK_HANDLER)
 
