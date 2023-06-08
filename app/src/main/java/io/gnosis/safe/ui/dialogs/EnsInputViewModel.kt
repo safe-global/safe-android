@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import io.gnosis.data.models.Chain
 import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsRepository
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class EnsInputViewModel
 @Inject constructor(
-    private val ensRepository: EnsRepository
+    private val ensRepository: EnsRepository,
+    private val settingsHandler: SettingsHandler
 ) : ViewModel() {
 
     suspend fun processEnsInput(input: CharSequence, chain: Chain): Solidity.Address {
@@ -31,4 +33,6 @@ class EnsInputViewModel
             }
             .getOrNull()!!
     }
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
 }

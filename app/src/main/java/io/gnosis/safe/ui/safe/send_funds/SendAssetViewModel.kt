@@ -47,7 +47,7 @@ class SendAssetViewModel
                         SendAssetFragmentDirections.actionSendAssetFragmentToSendAssetReviewFragment(
                             chain,
                             asset,
-                            activeSafe!!.address.asEthereumAddressString(),
+                            activeSafe.address.asEthereumAddressString(),
                             toAddress,
                             amount.toPlainString()
                         )
@@ -71,6 +71,8 @@ class SendAssetViewModel
     }
 
     fun isChainPrefixPrependEnabled(): Boolean = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled(): Boolean = settingsHandler.chainPrefixCopy
 }
 
 data class SendAssetState(
