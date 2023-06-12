@@ -96,7 +96,8 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
                         addressHelper.populateAddressInfo(
                             dialogUnstoppableInputAddress,
                             dialogEnsInputAddressImage,
-                            address
+                            address,
+                            if (viewModel.isChainPrefixPrependEnabled()) selectedChain.shortName else null
                         )
                     }
                 }

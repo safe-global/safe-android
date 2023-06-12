@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.ValueDecoded
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -85,7 +86,13 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
             decodedValues?.let {
                 it.forEachIndexed { index, value ->
                     val action = value.dataDecoded?.method ?: getString(R.string.tx_multisend_action, index + 1)
-                    val item = getMultisendActionItem(value.to, action, addressInfoIndex)
+                    val item = getMultisendActionItem(
+                        chain = chain,
+                        address = value.to,
+                        showChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        method = action,
+                        addressInfoIndex = addressInfoIndex
+                    )
                     item.setOnClickListener {
                         findNavController().navigate(
                             TransactionDetailsActionMultisendFragmentDirections.actionTransactionDetailsActionMultisendFragmentToTransactionDetailsActionFragment(
@@ -105,7 +112,13 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
         }
     }
 
-    private fun getMultisendActionItem(address: Solidity.Address, method: String, addressInfoIndex: Map<String, AddressInfo>? = null): MultisendActionView {
+    private fun getMultisendActionItem(
+        chain: Chain,
+        address: Solidity.Address,
+        showChainPrefix: Boolean,
+        method: String,
+        addressInfoIndex: Map<String, AddressInfo>? = null
+    ): MultisendActionView {
         val item = MultisendActionView(requireContext())
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
@@ -113,10 +126,10 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
 
         val addressInfo = addressInfoIndex?.get(address.asEthereumAddressChecksumString())
         if (addressInfo != null) {
-            item.setData(address, method, addressInfo.name)
+            item.setData(chain, address, showChainPrefix, method, addressInfo.name)
             item.loadKnownAddressLogo(addressInfo.logoUri, address)
         } else {
-            item.setData(address, method)
+            item.setData(chain, address, showChainPrefix, method)
         }
 
         return item

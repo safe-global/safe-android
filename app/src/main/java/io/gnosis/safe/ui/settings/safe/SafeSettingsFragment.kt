@@ -120,7 +120,13 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             safeInfo?.owners?.forEach() { owner ->
                 ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners, owner !== safeInfo.owners.last()))
             }
-            masterCopy.setAddress(safe?.chain, safeInfo?.implementation?.value, safeInfo?.version)
+            masterCopy.setAddress(
+                chain = safe?.chain,
+                value = safeInfo?.implementation?.value,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                version = safeInfo?.version
+            )
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
@@ -136,11 +142,17 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             NamedAddressItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                setAddress(chain, owner.value, localOwner.type)
+                setAddress(
+                    chain = chain,
+                    value = owner.value,
+                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                    ownerType = localOwner.type
+                )
                 name = if (localOwner.name.isNullOrBlank())
                     context.getString(
                         R.string.settings_app_imported_owner_key_default_name,
-                        localOwner.address.shortChecksumString()
+                        localOwner.address.shortChecksumString(chainPrefix = if (viewModel.isChainPrefixPrependEnabled()) chain.shortName else null)
                     ) else localOwner.name
                 showSeparator = showTrailingSeparator
             }
@@ -151,7 +163,12 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                    setAddress(chain, owner.value)
+                    setAddress(
+                        chain = chain,
+                        value = owner.value,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                    )
                     name = owner.name
                     showSeparator = showTrailingSeparator
                     loadKnownAddressLogo(owner.logoUri, owner.value)
@@ -161,7 +178,12 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                    setAddress(chain, owner.value)
+                    setAddress(
+                        chain,
+                        owner.value,
+                        viewModel.isChainPrefixPrependEnabled(),
+                        viewModel.isChainPrefixCopyEnabled()
+                    )
                     showSeparator = showTrailingSeparator
                 }
             }

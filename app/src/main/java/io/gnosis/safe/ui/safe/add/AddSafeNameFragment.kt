@@ -48,7 +48,8 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             newAddressBlockies.setAddress(newAddress)
-            newAddressHex.text = newAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
+            val chainPrefix = if (viewModel.isChainPrefixPrependEnabled()) selectedChain.shortName else null
+            newAddressHex.text = newAddress.formatEthAddress(requireContext(), chainPrefix, addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener {
                 addSafeNameLayout.isErrorEnabled = false

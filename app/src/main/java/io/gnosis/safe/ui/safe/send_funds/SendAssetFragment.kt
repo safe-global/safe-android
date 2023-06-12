@@ -94,7 +94,12 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             )
             senderItem.showLink = false
             senderItem.name = viewModel.activeSafe.localName
-            senderItem.setAddress(chain, viewModel.activeSafe.address)
+            senderItem.setAddress(
+                chain = chain,
+                value = viewModel.activeSafe.address,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+            )
             recipientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
             recipientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
@@ -213,14 +218,22 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         recipientInput = address.asEthereumAddressString()
         with(binding) {
             validateInputs()
-            recipientAddressInputLayout.setNewAddress(address)
+            recipientAddressInputLayout.setNewAddress(
+                chain = chain,
+                newAddress = address,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled()
+            )
         }
     }
 
     private fun handleValid(address: Solidity.Address) {
         with(binding) {
             if (recipientAddressInputLayout.address == null) {
-                recipientAddressInputLayout.setNewAddress(address)
+                recipientAddressInputLayout.setNewAddress(
+                    chain = chain,
+                    newAddress = address,
+                    showChainPrefix = viewModel.isChainPrefixPrependEnabled()
+                )
             }
             validateInputs()
         }
@@ -242,7 +255,12 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
 
             val errorMsg = error.message(requireContext(), R.string.error_description_safe_address)
 
-            recipientAddressInputLayout.setError(errorMsg, recipientInput)
+            recipientAddressInputLayout.setError(
+                chain = chain,
+                errorMessage = errorMsg,
+                input = recipientInput,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled()
+            )
         }
     }
 }

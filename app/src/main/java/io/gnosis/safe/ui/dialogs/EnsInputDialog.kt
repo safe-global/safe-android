@@ -108,7 +108,8 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     addressHelper.populateAddressInfo(
                         binding.dialogEnsInputAddress,
                         binding.dialogEnsInputAddressImage,
-                        address
+                        address,
+                        if (viewModel.isChainPrefixPrependEnabled()) selectedChain.shortName else null
                     )
                 }
                 .onFailure {
