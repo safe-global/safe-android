@@ -212,7 +212,7 @@ class StringUtilsKtTest {
     }
 
     @Test
-    fun `formatEthAddress (no middleLineBre2ak)`() {
+    fun `formatEthAddress (no middleLineBreak)`() {
         val address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
 
         val spannable = address.formatEthAddress(context = applicationContext, chainPrefix = null, addMiddleLinebreak = false)
