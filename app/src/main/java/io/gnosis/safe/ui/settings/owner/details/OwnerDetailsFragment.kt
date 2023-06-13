@@ -64,7 +64,8 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
             ownerName.setOnClickListener {
                 findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
             }
-            ownerAddress.setAddress(null, owner)
+            // owners are not bound to a specific chain, so we show addresses without chain prefix
+            ownerAddress.setAddress(null, owner, false, false)
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer {

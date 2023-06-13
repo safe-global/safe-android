@@ -19,6 +19,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.view.SettingItem
 import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
@@ -41,6 +42,9 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
     @Inject
     lateinit var paramSerializer: ParamSerializer
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsAdvancedBinding =
             FragmentTransactionDetailsAdvancedBinding.inflate(inflater, container, false)
@@ -81,7 +85,14 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 data?.let {
 
                     content.addView(
-                            requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_to), it.to.value, if (it.to.name != null) it.to else null)
+                            requireContext().getLabeledAddressItem(
+                                chain = chain,
+                                showChainPrefix = settingsHandler.chainPrefixPrepend,
+                                copyChainPrefix = settingsHandler.chainPrefixCopy,
+                                name = getString(R.string.tx_details_advanced_to),
+                                value = it.to.value,
+                                addressInfo = if (it.to.name != null) it.to else null
+                            )
                     )
                     content.addView(
                             requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_value), it.value.toString())
@@ -98,7 +109,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                     )
 
                     data!!.dataDecoded?.let { dataDecoded ->
-                        if (dataDecoded.method.toLowerCase() == "multisend") {
+                        if (dataDecoded.method.lowercase() == "multisend") {
                             val valueDecoded = (dataDecoded.parameters?.get(0) as Param.Bytes).valueDecoded
                             val decodedDataItemName = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
                             val decodedDataItem = getDecodedDataItem(decodedDataItemName)
@@ -162,7 +173,14 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                                     getModuleDataHeader()
                             )
                             content.addView(
-                                    requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_module), info.address.value, if (info.address.name != null) info.address else null)
+                                    requireContext().getLabeledAddressItem(
+                                        chain = chain,
+                                        showChainPrefix = settingsHandler.chainPrefixPrepend,
+                                        copyChainPrefix = settingsHandler.chainPrefixCopy,
+                                        name = getString(R.string.tx_details_advanced_module),
+                                        value = info.address.value,
+                                        addressInfo = if (info.address.name != null) info.address else null
+                                    )
                             )
                         }
 
@@ -200,12 +218,26 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                                     requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_gas_price), info.gasPrice.toString())
                             )
                             content.addView(
-                                    requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_gas_token), info.gasToken, null)
+                                    requireContext().getLabeledAddressItem(
+                                        chain = chain,
+                                        showChainPrefix = settingsHandler.chainPrefixPrepend,
+                                        copyChainPrefix = settingsHandler.chainPrefixCopy,
+                                        name = getString(R.string.tx_details_advanced_gas_token),
+                                        value = info.gasToken,
+                                        addressInfo = null
+                                    )
                             )
 
                             info.refundReceiver?.let {
                                 content.addView(
-                                        requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_refundReceiver), it.value, null)
+                                        requireContext().getLabeledAddressItem(
+                                            chain = chain,
+                                            showChainPrefix = settingsHandler.chainPrefixPrepend,
+                                            copyChainPrefix = settingsHandler.chainPrefixCopy,
+                                            name = getString(R.string.tx_details_advanced_refundReceiver),
+                                            value = it.value,
+                                            addressInfo = null
+                                        )
                                 )
                             }
 
@@ -214,7 +246,16 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                                         requireContext().getDivider()
                                 )
                                 content.addView(
-                                        requireContext().getArrayItem(chain, getString(R.string.tx_details_advanced_signatures), info.confirmations.map { it.signature }, ParamType.BYTES, "bytes", null)
+                                        requireContext().getArrayItem(
+                                            chain = chain,
+                                            showChainPrefix = settingsHandler.chainPrefixPrepend,
+                                            copyChainPrefix = settingsHandler.chainPrefixCopy,
+                                            name = getString(R.string.tx_details_advanced_signatures),
+                                            value = info.confirmations.map { it.signature },
+                                            paramType = ParamType.BYTES,
+                                            paramTypeValue = "bytes",
+                                            addressInfoIndex = null
+                                        )
                                 )
                             }
                         }

@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.dialogs
 import io.gnosis.data.models.Chain
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.EnsResolutionError
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -16,7 +17,9 @@ class EnsInputViewModelTest {
 
     private val ensRepository = mockk<EnsRepository>(relaxed = true, relaxUnitFun = true)
 
-    private val viewModel = EnsInputViewModel(ensRepository)
+    private val settingsHandler = mockk<SettingsHandler>(relaxed = true, relaxUnitFun = true)
+
+    private val viewModel = EnsInputViewModel(ensRepository, settingsHandler)
 
     private val defaultChain = Chain.DEFAULT_CHAIN
 

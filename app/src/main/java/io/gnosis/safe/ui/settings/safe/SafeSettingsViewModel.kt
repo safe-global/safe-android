@@ -13,6 +13,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,6 +25,7 @@ class SafeSettingsViewModel @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
     private val notificationManager: NotificationManager,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
@@ -120,6 +122,10 @@ class SafeSettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled() = settingsHandler.chainPrefixCopy
 }
 
 data class SafeSettingsState(

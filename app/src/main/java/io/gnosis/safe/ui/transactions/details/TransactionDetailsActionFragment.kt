@@ -84,7 +84,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
         address?.let {
             with(binding) {
-                content.addView(requireContext().getTransferItem(chain, it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
+                content.addView(
+                    requireContext().getTransferItem(
+                        chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        address = it,
+                        amount = amount ?: "",
+                        addressInfo = addressInfoIndex?.get(it.asEthereumAddressChecksumString())
+                    )
+                )
                 content.addView(requireContext().getDivider())
             }
         }
@@ -102,10 +111,30 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 it.parameters?.forEach {
                     when (it) {
                         is Param.Address -> {
-                            content.addView(requireContext().getLabeledAddressItem(chain, "${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
+                            content.addView(
+                                requireContext().getLabeledAddressItem(
+                                    chain = chain,
+                                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                                    name = "${it.name}(${it.type}):",
+                                    value = it.value,
+                                    addressInfo = addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())
+                                )
+                            )
                         }
                         is Param.Array -> {
-                            content.addView(requireContext().getArrayItem(chain, "${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
+                            content.addView(
+                                requireContext().getArrayItem(
+                                    chain = chain,
+                                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                                    name = "${it.name}(${it.type}):",
+                                    value = it.value,
+                                    paramType = it.getItemType(),
+                                    paramTypeValue = it.type,
+                                    addressInfoIndex = addressInfoIndex
+                                )
+                            )
                         }
                         is Param.Bytes -> {
                             content.addView(requireContext().getDataItem("${it.name}(${it.type}):", it.value))

@@ -109,7 +109,12 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
             val errorMsg = error.message(requireContext(), R.string.error_description_safe_address)
 
-            addSafeAddressInputLayout.setError(errorMsg, inputValue)
+            addSafeAddressInputLayout.setError(
+                chain = selectedChain,
+                errorMessage = errorMsg,
+                input = inputValue,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled()
+            )
         }
     }
 
@@ -122,7 +127,11 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         inputValue = address.asEthereumAddressString()
         with(binding) {
             nextButton.isEnabled = false
-            addSafeAddressInputLayout.setNewAddress(address)
+            addSafeAddressInputLayout.setNewAddress(
+                chain = selectedChain,
+                newAddress = address,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled()
+            )
         }
         viewModel.validate(Safe(address, "", selectedChain.chainId))
     }
@@ -130,7 +139,11 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     private fun handleValid(address: Solidity.Address) {
         with(binding) {
             if (addSafeAddressInputLayout.address == null) {
-                addSafeAddressInputLayout.setNewAddress(address)
+                addSafeAddressInputLayout.setNewAddress(
+                    chain = selectedChain,
+                    newAddress = address,
+                    showChainPrefix = viewModel.isChainPrefixPrependEnabled()
+                )
             }
             progress.visible(false)
             binding.nextButton.setOnClickListener {

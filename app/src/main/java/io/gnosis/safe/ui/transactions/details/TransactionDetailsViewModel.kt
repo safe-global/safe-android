@@ -247,6 +247,10 @@ class TransactionDetailsViewModel
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled() = settingsHandler.chainPrefixCopy
 }
 
 open class TransactionDetailsViewState(

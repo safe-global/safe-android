@@ -169,7 +169,12 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         return NamedAddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            setAddress(chain, address)
+            setAddress(
+                chain = chain,
+                value = address,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+            )
             this.name = label
             logoUri?.let { this.loadKnownAddressLogo(it, address) }
             showSeparator = true

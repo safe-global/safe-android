@@ -12,6 +12,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionState
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -32,11 +33,13 @@ class SafeSelectionViewModelTest {
 
     private val chainInfoRepository = mockk<ChainInfoRepository>()
 
+    private val settingsHandler = mockk<SettingsHandler>()
+
     private lateinit var safeSelectionViewModel: SafeSelectionViewModel
 
     @Before
     fun setup() {
-        safeSelectionViewModel = SafeSelectionViewModel(safeRepository, chainInfoRepository, appDispatchers)
+        safeSelectionViewModel = SafeSelectionViewModel(safeRepository, chainInfoRepository, settingsHandler, appDispatchers)
     }
 
     @Test

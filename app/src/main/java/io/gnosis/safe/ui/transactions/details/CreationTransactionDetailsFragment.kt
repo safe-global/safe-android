@@ -11,6 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.shortChecksumString
@@ -19,6 +20,7 @@ import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import javax.inject.Inject
 
 class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsCreationBinding>() {
 
@@ -40,6 +42,9 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     private val factoryName by lazy { navArgs.factoryName }
     private val factoryLogoUri by lazy { navArgs.factoryLogoUri }
     private val dateTimeText by lazy { navArgs.dateTimeText }
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsCreationBinding =
         FragmentTransactionDetailsCreationBinding.inflate(inflater, container, false)
@@ -77,12 +82,19 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
             with(creatorItem) {
                 val creatorAddress = creator!!.asEthereumAddress()
-                setAddress(chain, creatorAddress)
+                setAddress(
+                    chain = chain,
+                    value = creatorAddress,
+                    showChainPrefix = settingsHandler.chainPrefixPrepend,
+                    copyChainPrefix = settingsHandler.chainPrefixCopy
+                )
                 if (creatorLocal) {
                     name = if (creatorName.isNullOrBlank())
                         context.getString(
                             R.string.settings_app_imported_owner_key_default_name,
-                            creatorAddress?.shortChecksumString()
+                            creatorAddress?.shortChecksumString(
+                                chainPrefix = if (settingsHandler.chainPrefixPrepend) chain.shortName else null
+                            )
                         ) else creatorName
                 } else {
                     name = creatorName ?: getString(R.string.unknown_creator)
@@ -94,7 +106,12 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             if (implementation != null) {
                 with(implementationItem) {
                     val implementationAddress = implementation!!.asEthereumAddress()
-                    setAddress(chain, implementationAddress)
+                    setAddress(
+                        chain = chain,
+                        value = implementationAddress,
+                        showChainPrefix = settingsHandler.chainPrefixPrepend,
+                        copyChainPrefix = settingsHandler.chainPrefixCopy
+                    )
                     name = implementationName ?: getString(R.string.unknown_implementation_version)
                     loadKnownAddressLogo(implementationLogoUri, implementationAddress)
                 }
@@ -108,7 +125,12 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             if (factory != null) {
                 with(factoryItem) {
                     val factoryAddress = factory!!.asEthereumAddress()
-                    setAddress(chain, factoryAddress)
+                    setAddress(
+                        chain = chain,
+                        value = factoryAddress,
+                        showChainPrefix = settingsHandler.chainPrefixPrepend,
+                        copyChainPrefix = settingsHandler.chainPrefixCopy
+                    )
                     name = factoryName ?: getString(R.string.unknown_factory)
                     loadKnownAddressLogo(factoryLogoUri, factoryAddress)
                     visible(true)

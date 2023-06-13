@@ -109,7 +109,8 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 ownerSelection.alpha = OPACITY_HALF
                 ownerLabel.text = ownerHolder.name
                 ownerLabel.alpha = OPACITY_HALF
-                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
+                // owners are not bound to a specific chain, so we show addresses without chain prefix
+                ownerShortAddress.text = ownerHolder.address.shortChecksumString(chainPrefix = null)
                 ownerShortAddress.alpha = OPACITY_HALF
             }
         }
@@ -127,7 +128,8 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 }
                 ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(ownerHolder.address)
-                ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                // owners are not bound to a specific chain, so we show addresses without chain prefix
+                ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, null, addMiddleLinebreak = false)
                 root.alpha = OPACITY_FULL
                 ownerSelection.visible(selectedOwnerPosition == position)
             }

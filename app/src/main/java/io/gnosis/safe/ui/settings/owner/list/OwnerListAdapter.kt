@@ -91,11 +91,12 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
             val context = root.context
             blockies.setAddress(owner.address)
             keyType.setImageResource(owner.type.imageRes16dp())
-            ownerAddress.text = owner.address.shortChecksumString()
+            // owners are not bound to a specific chain, so we show addresses without chain prefix
+            ownerAddress.text = owner.address.shortChecksumString(chainPrefix = null)
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
                     R.string.settings_app_imported_owner_key_default_name,
-                    owner.address.shortChecksumString()
+                    owner.address.shortChecksumString(chainPrefix = null)
                 ) else owner.name
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address, owner.type)
@@ -111,11 +112,12 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
             val context = root.context
             blockies.setAddress(owner.address)
             keyType.setImageResource(owner.type.imageRes16dp())
-            ownerAddress.text = owner.address.shortChecksumString()
+            // owners are not bound to a specific chain, so we show addresses without chain prefix
+            ownerAddress.text = owner.address.shortChecksumString(chainPrefix = null)
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
                     R.string.settings_app_imported_owner_key_default_name,
-                    owner.address.shortChecksumString()
+                    owner.address.shortChecksumString(chainPrefix = null)
                 ) else owner.name
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address, owner.type)

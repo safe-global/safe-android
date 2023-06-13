@@ -44,7 +44,17 @@ class TxConfirmationsView @JvmOverloads constructor(
         linePaint.color = context.getColorCompat(LINE_COLOR)
     }
 
-    fun setExecutionData(chain: Chain, rejection: Boolean, status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null, localOwners: List<Owner> = listOf()) {
+    fun setExecutionData(
+        chain: Chain,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
+        rejection: Boolean,
+        status: TransactionStatus,
+        confirmations: List<Solidity.Address>,
+        threshold: Int,
+        executor: Solidity.Address? = null,
+        localOwners: List<Owner> = listOf()
+    ) {
 
         clear()
 
@@ -59,9 +69,16 @@ class TxConfirmationsView @JvmOverloads constructor(
 
             val localOwner = localOwners.find { it.address == confirmationAddress }
             if (localOwner != null) {
-                addNamedAddressItem(chain, localOwner.address, localOwner.name, localOwner.type)
+                addNamedAddressItem(
+                    chain = chain,
+                    address = localOwner.address,
+                    showChainPrefix = showChainPrefix,
+                    copyChainPrefix = copyChainPrefix,
+                    name = localOwner.name,
+                    ownerType = localOwner.type
+                )
             } else {
-                addAddressItem(chain, confirmationAddress)
+                addAddressItem(chain, confirmationAddress, showChainPrefix, copyChainPrefix)
             }
         }
 
@@ -80,9 +97,16 @@ class TxConfirmationsView @JvmOverloads constructor(
 
                     val localOwner = localOwners.find { it.address == executor }
                     if (localOwner != null) {
-                        addNamedAddressItem(chain, localOwner.address, localOwner.name, localOwner.type)
+                        addNamedAddressItem(
+                            chain = chain,
+                            address = localOwner.address,
+                            showChainPrefix = showChainPrefix,
+                            copyChainPrefix = copyChainPrefix,
+                            name = localOwner.name,
+                            ownerType = localOwner.type
+                        )
                     } else {
-                        addAddressItem(chain, executor)
+                        addAddressItem(chain, executor, showChainPrefix, copyChainPrefix)
                     }
 
                 } else {
@@ -109,26 +133,44 @@ class TxConfirmationsView @JvmOverloads constructor(
         })
     }
 
-    private fun addAddressItem(chain: Chain, address: Solidity.Address) {
+    private fun addAddressItem(
+        chain: Chain,
+        address: Solidity.Address,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean
+    ) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         addressItem.layoutParams = layoutParams
-        addressItem.setAddress(chain, address)
+        addressItem.setAddress(chain, address, showChainPrefix, copyChainPrefix)
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String?, ownerType : Owner.Type? = null) {
+    private fun addNamedAddressItem(
+        chain: Chain,
+        address: Solidity.Address,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
+        name: String?,
+        ownerType : Owner.Type? = null
+    ) {
         val namedAddressItem = NamedAddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         namedAddressItem.layoutParams = layoutParams
         namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_secondary_selectable)
-        namedAddressItem.setAddress(chain, address, ownerType)
+        namedAddressItem.setAddress(
+            chain = chain,
+            value = address,
+            showChainPrefix = showChainPrefix,
+            copyChainPrefix = copyChainPrefix,
+            ownerType = ownerType
+        )
         namedAddressItem.name = if (name.isNullOrBlank())
             resources.getString(
                 R.string.settings_app_imported_owner_key_default_name,
-                address.shortChecksumString()
+                address.shortChecksumString(chainPrefix = if (showChainPrefix) chain.shortName else null)
             ) else name
         addView(namedAddressItem)
     }

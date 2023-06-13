@@ -115,7 +115,6 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
     }
 
     inner class DisabledOwnerViewHolder(private val binding: ItemOwnerSelectionDisabledOwnerBinding) : BaseOwnerViewHolder(binding.root) {
-
         @SuppressLint("SetTextI18n")
         override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
@@ -123,15 +122,14 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 ownerImage.setAddress(ownerHolder.address)
                 ownerSelection.visible(selectedOwnerPosition == position)
                 ownerLabel.text = ownerHolder.name
-                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
-
+                // owners are not bound to a specific chain, so we show addresses without chain prefix
+                ownerShortAddress.text = ownerHolder.address.shortChecksumString(chainPrefix = null)
                 root.alpha = OPACITY_HALF
             }
         }
     }
 
     inner class DisabledDefaultOwnerViewHolder(private val binding: ItemDefaultOwnerDisabledKeyBinding) : BaseOwnerViewHolder(binding.root) {
-
         @SuppressLint("SetTextI18n")
         override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
@@ -139,7 +137,8 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 defaultOwnerSelection.visible(false)
                 defaultOwnerNumber.text = "#${position + 1}"
                 defaultOwnerImage.setAddress(ownerHolder.address)
-                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
+                // owners are not bound to a specific chain, so we show addresses without chain prefix
+                ownerShortAddress.text = ownerHolder.address.shortChecksumString(chainPrefix = null)
                 ownerLabel.text = ownerHolder.name
                 derivedKeysExplanation.visible(itemCount > 1)
             }
@@ -147,7 +146,6 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
     }
 
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : BaseOwnerViewHolder(binding.root) {
-
         @SuppressLint("SetTextI18n")
         override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
@@ -158,7 +156,8 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 }
                 ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(ownerHolder.address)
-                ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                // owners are not bound to a specific chain, so we show addresses without chain prefix
+                ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, null, addMiddleLinebreak = false)
                 root.alpha = OPACITY_FULL
                 ownerSelection.visible(selectedOwnerPosition == position)
             }
@@ -166,7 +165,6 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
     }
 
     inner class DefaultOwnerViewHolder(private val binding: ItemDefaultOwnerKeyBinding) : BaseOwnerViewHolder(binding.root) {
-
         @SuppressLint("SetTextI18n")
         override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
@@ -177,7 +175,8 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 }
                 defaultOwnerNumber.text = "#${position + 1}"
                 defaultOwnerImage.setAddress(ownerHolder.address)
-                defaultOwnerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                // owners are not bound to a specific chain, so we show addresses without chain prefix
+                defaultOwnerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, null, addMiddleLinebreak = false)
                 defaultOwnerSelection.visibility = if (selectedOwnerPosition == position) View.VISIBLE else View.INVISIBLE
                 derivedKeysExplanation.visible(itemCount > 1)
             }

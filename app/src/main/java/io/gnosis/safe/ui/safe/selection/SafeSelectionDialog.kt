@@ -60,7 +60,7 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
             when (state) {
                 is SafeSelectionState.SafeListState -> {
                     navHandler?.setSafeData(state.activeSafe)
-                    adapter.setItems(state.listItems, state.activeSafe)
+                    adapter.setItems(state.listItems, state.activeSafe, viewModel.isChainPrefixPrependEnabled())
                     if (state.viewAction == BaseStateViewModel.ViewAction.CloseScreen) {
                         binding.root.postDelayed({
                             dismiss()

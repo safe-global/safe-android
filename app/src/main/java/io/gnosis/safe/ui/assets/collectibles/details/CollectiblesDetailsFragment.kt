@@ -17,10 +17,12 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import javax.inject.Inject
 
 class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectiblesDetailsBinding>() {
 
@@ -34,6 +36,10 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
     private val description by lazy { navArgs.description }
     private val uri by lazy { navArgs.uri }
     private val imageUri by lazy { navArgs.imageUri }
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
+
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -68,7 +74,12 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
                 collectibleDescription.visible(false)
             }
             collectibleContract.name = getString(R.string.collectibles_asset_contract)
-            collectibleContract.setAddress(chain, contract.asEthereumAddress())
+            collectibleContract.setAddress(
+                chain = chain,
+                value = contract.asEthereumAddress(),
+                showChainPrefix = settingsHandler.chainPrefixPrepend,
+                copyChainPrefix = settingsHandler.chainPrefixCopy
+            )
 
             collectibleUri.visible(false)
             //FIXME: uncomment when collectible uri should be visible

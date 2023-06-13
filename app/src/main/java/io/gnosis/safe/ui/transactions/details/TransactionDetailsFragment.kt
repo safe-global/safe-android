@@ -183,6 +183,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
                         chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                         rejection = isRejection,
                         status = txDetails.txStatus,
                         confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer.value },
@@ -198,8 +200,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> {
                 hideCreatedAndConfirmations()
-            }
-            else -> {
+            } else -> {
                 hideCreatedAndConfirmations()
             }
         }
@@ -266,11 +267,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     amount = txInfo.formattedAmount(chain, balanceFormatter),
                                     logoUri = txInfo.logoUri(chain) ?: "",
                                     address = address,
+                                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                                     tokenId = transferInfo.tokenId,
                                     addressName = txInfo.addressName,
                                     addressUri = txInfo.addressUri
                             )
-                            contractAddress.setAddress(chain, transferInfo.tokenAddress)
+                            contractAddress.setAddress(
+                                chain = chain,
+                                value = transferInfo.tokenAddress,
+                                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                            )
                             contractAddress.name = getString(R.string.tx_details_asset_contract)
                         }
                         else -> {
@@ -280,6 +288,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     amount = txInfo.formattedAmount(chain, balanceFormatter),
                                     logoUri = txInfo.logoUri(chain) ?: "",
                                     address = address,
+                                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                                     addressName = txInfo.addressName,
                                     addressUri = txInfo.addressUri
                             )
@@ -302,7 +312,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
                 with(txDetailsSettingsChangeBinding) {
-                    txAction.setActionInfoItems(chain, txInfo.txActionInfoItems(requireContext().resources))
+                    txAction.setActionInfoItems(
+                        chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        actionInfoItems = txInfo.txActionInfoItems(requireContext().resources)
+                    )
                     txStatus.setStatus(
                             TxType.MODIFY_SETTINGS.titleRes,
                             TxType.MODIFY_SETTINGS.iconRes,
@@ -324,6 +339,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             amount = txInfo.formattedAmount(chain, balanceFormatter),
                             logoUri = txInfo.logoUri(chain) ?: "",
                             address = txInfo.to,
+                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                             addressUri = txInfo.actionInfoAddressUri,
                             addressName = txInfo.actionInfoAddressName
                     )

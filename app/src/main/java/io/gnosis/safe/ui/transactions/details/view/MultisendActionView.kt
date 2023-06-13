@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.databinding.ViewMultisendActionBinding
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -18,10 +19,12 @@ class MultisendActionView @JvmOverloads constructor(
 
     private val binding by lazy { ViewMultisendActionBinding.inflate(LayoutInflater.from(context), this) }
 
-    fun setData(address: Solidity.Address, method: String, name: String? = null) {
+    fun setData(chain: Chain, address: Solidity.Address, showChainPrefix: Boolean, method: String, name: String? = null) {
         with(binding) {
             addressImage.setAddress(address)
-            addressLabel.text = address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            addressLabel.text = address.asEthereumAddressChecksumString().abbreviateEthAddress(
+                if (showChainPrefix) chain.shortName else null
+            )
             methodLabel.text = method
             if (!name.isNullOrBlank()) {
                 nameLabel.visible(true)

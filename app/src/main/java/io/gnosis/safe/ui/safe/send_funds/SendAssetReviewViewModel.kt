@@ -12,6 +12,7 @@ import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.MissingOwnerCredential
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import pm.gnosis.model.Solidity
@@ -28,6 +29,7 @@ class SendAssetReviewViewModel
     private val transactionRepository: TransactionRepository,
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SendAssetReviewState>(appDispatchers) {
 
@@ -260,6 +262,10 @@ class SendAssetReviewViewModel
             }
         }
     }
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled() = settingsHandler.chainPrefixCopy
 }
 
 data class SendAssetReviewState(

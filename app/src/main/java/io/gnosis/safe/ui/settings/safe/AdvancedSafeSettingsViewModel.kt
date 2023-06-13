@@ -5,12 +5,14 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class AdvancedSafeSettingsViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<AdvancedSafeSettingsState>(appDispatchers) {
 
@@ -32,6 +34,10 @@ class AdvancedSafeSettingsViewModel
 
     fun isDefaultFallbackHandler(fallbackHandle: Solidity.Address): Boolean =
         SafeRepository.DEFAULT_FALLBACK_HANDLER == fallbackHandle
+
+    fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled() = settingsHandler.chainPrefixCopy
 }
 
 data class LoadSafeInfo(

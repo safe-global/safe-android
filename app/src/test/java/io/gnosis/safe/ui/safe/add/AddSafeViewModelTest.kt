@@ -11,6 +11,7 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -30,6 +31,7 @@ class AddSafeViewModelTest {
 
     private val ensRepository = mockk<EnsRepository>()
     private val safeRepository = mockk<SafeRepository>()
+    private val settingsHandler = mockk<SettingsHandler>()
 
     private val mainnet = Chain(
         Chain.ID_MAINNET,
@@ -48,7 +50,13 @@ class AddSafeViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = AddSafeViewModel(safeRepository, UnstoppableDomainsRepository(), ensRepository, appDispatchers)
+        viewModel = AddSafeViewModel(
+            safeRepository,
+            UnstoppableDomainsRepository(),
+            ensRepository,
+            settingsHandler,
+            appDispatchers
+        )
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 

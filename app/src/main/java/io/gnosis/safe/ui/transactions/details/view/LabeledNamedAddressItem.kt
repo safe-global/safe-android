@@ -26,8 +26,8 @@ class LabeledNamedAddressItem @JvmOverloads constructor(
     var address: Solidity.Address? = null
         private set
 
-    fun setAddress(chain: Chain, value: Solidity.Address?) {
-        binding.value.setAddress(chain, value)
+    fun setAddress(chain: Chain, value: Solidity.Address?, showChainPrefix: Boolean, copyChainPrefix: Boolean) {
+        binding.value.setAddress(chain, value, showChainPrefix, copyChainPrefix)
         address = value
     }
 

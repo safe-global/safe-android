@@ -111,9 +111,20 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             }
 
             safeDetails.safe.address.let { address ->
-                safeAddress.text = address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
+                safeAddress.text = address.formatEthAddress(
+                    context = requireContext(),
+                    chainPrefix = if (viewModel.isChainPrefixPrependEnabled()) chain.shortName else null,
+                    addMiddleLinebreak = false
+                )
                 safeAddress.setOnClickListener {
-                    requireContext().copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
+                    requireContext().copyToClipboard(
+                        getString(R.string.address_copied),
+                        if (viewModel.isChainPrefixCopyEnabled()) {
+                            "${chain.shortName}:${address.asEthereumAddressChecksumString()}"
+                        } else {
+                            address.asEthereumAddressChecksumString()
+                        }
+                    ) {
                         snackbar(requireView(), getString(R.string.copied_success))
                     }
                 }

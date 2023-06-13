@@ -25,6 +25,7 @@ class SafeSelectionAdapter(
 ) : RecyclerView.Adapter<BaseSafeSelectionViewHolder>() {
 
     private val items = mutableListOf<SafeSelectionViewData>()
+    private var showChainPrefix: Boolean = false
 
     var activeSafe: Safe? = null
         set(value) {
@@ -32,10 +33,11 @@ class SafeSelectionAdapter(
             notifyAllChanged()
         }
 
-    fun setItems(items: List<SafeSelectionViewData>, activeSafe: Safe?) {
+    fun setItems(items: List<SafeSelectionViewData>, activeSafe: Safe?, showChainPrefix: Boolean) {
         this.activeSafe = activeSafe
         this.items.clear()
         this.items.addAll(items)
+        this.showChainPrefix = showChainPrefix
         notifyDataSetChanged()
     }
 
@@ -48,7 +50,7 @@ class SafeSelectionAdapter(
             }
             is SafeItemViewHolder -> {
                 val safeItem = items[position] as SafeItem
-                holder.bind(safeItem.safe, safeItem.safe == activeSafe)
+                holder.bind(safeItem.safe, safeItem.safe == activeSafe, showChainPrefix)
             }
         }
     }
@@ -133,7 +135,10 @@ class ChainHeaderViewHolder(
                 chainCircle.setColorFilter(it, PorterDuff.Mode.SRC_IN)
             }.onFailure {
                 // this should never happen
-                chainCircle.setColorFilter(chainCircle.context.getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
+                chainCircle.setColorFilter(
+                    chainCircle.context.getColorCompat(R.color.primary),
+                    PorterDuff.Mode.SRC_IN
+                )
             }
             chainName.text = chainHeader.name
         }
@@ -145,10 +150,11 @@ class SafeItemViewHolder(
     private val clickListener: WeakReference<SafeSelectionAdapter.OnSafeSelectionItemClickedListener>
 ) : BaseSafeSelectionViewHolder(binding) {
 
-    fun bind(safe: Safe, selected: Boolean) {
+    fun bind(safe: Safe, selected: Boolean, showChainPrefix: Boolean) {
         with(binding) {
             safeName.text = safe.localName
-            safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            safeAddress.text = safe.address.asEthereumAddressChecksumString()
+                .abbreviateEthAddress(if (showChainPrefix) safe.chain.shortName else null)
             safeImage.setAddress(safe.address)
             safeSelection.visible(selected, View.INVISIBLE)
             root.setOnClickListener {

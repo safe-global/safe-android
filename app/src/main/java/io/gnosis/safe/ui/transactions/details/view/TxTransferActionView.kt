@@ -34,6 +34,8 @@ class TxTransferActionView @JvmOverloads constructor(
         amount: String,
         logoUri: String,
         address: Solidity.Address,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
         tokenId: String = "",
         addressUri: String? = null,
         addressName: String? = null
@@ -49,9 +51,9 @@ class TxTransferActionView @JvmOverloads constructor(
             }
         } else {
             if (addressName != null) {
-                addNamedAddressItem(chain, address, addressName, addressUri)
+                addNamedAddressItem(chain, address, showChainPrefix, copyChainPrefix, addressName, addressUri)
             } else {
-                addAddressItem(chain, address)
+                addAddressItem(chain, address, showChainPrefix, copyChainPrefix)
             }
         }
 
@@ -59,9 +61,9 @@ class TxTransferActionView @JvmOverloads constructor(
 
         if (outgoing) {
             if (addressName != null) {
-                addNamedAddressItem(chain, address, addressName, addressUri)
+                addNamedAddressItem(chain, address, showChainPrefix, copyChainPrefix, addressName, addressUri)
             } else {
-                addAddressItem(chain, address)
+                addAddressItem(chain, address, showChainPrefix, copyChainPrefix)
             }
         } else {
             if (tokenId.isNotEmpty()) {
@@ -91,21 +93,28 @@ class TxTransferActionView @JvmOverloads constructor(
         addView(amountView)
     }
 
-    private fun addAddressItem(chain: Chain, address: Solidity.Address) {
+    private fun addAddressItem(chain: Chain, address: Solidity.Address, showChainPrefix: Boolean, copyChainPrefix: Boolean) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
         layoutParams.setMargins(0, 0, 0, 0)
         addressItem.layoutParams = layoutParams
-        addressItem.setAddress(chain, address)
+        addressItem.setAddress(chain, address, showChainPrefix, copyChainPrefix)
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String, addressUri: String?) {
+    private fun addNamedAddressItem(
+        chain: Chain,
+        address: Solidity.Address,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
+        name: String,
+        addressUri: String?
+    ) {
         val addressItem = NamedAddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
         layoutParams.setMargins(0, 0, 0, 0)
         addressItem.layoutParams = layoutParams
-        addressItem.setAddress(chain, address)
+        addressItem.setAddress(chain, address, showChainPrefix, copyChainPrefix)
         addressItem.name = name
         addressItem.loadKnownAddressLogo(addressUri, address)
         addView(addressItem)

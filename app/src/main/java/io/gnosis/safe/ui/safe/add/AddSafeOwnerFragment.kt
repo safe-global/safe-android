@@ -46,7 +46,11 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
         with(binding) {
             backButton.setOnClickListener { finishAddSafeFlow() }
             safeName.text = name
-            safeAddress.text = address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
+            safeAddress.text = address.formatEthAddress(
+                context = requireContext(),
+                chainPrefix = if (settingsHandler.chainPrefixPrepend) selectedChain.shortName else null,
+                addMiddleLinebreak = false
+            )
             safeAddress.setOnClickListener {
                 requireContext().copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
                     snackbar(view = root, textId = R.string.copied_success)

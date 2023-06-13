@@ -51,6 +51,10 @@ class ShareSafeViewModel
 
     fun isChainPrefixQrEnabled(): Boolean = settingsHandler.chainPrefixQr
 
+    fun isChainPrefixPrependEnabled(): Boolean = settingsHandler.chainPrefixPrepend
+
+    fun isChainPrefixCopyEnabled(): Boolean = settingsHandler.chainPrefixCopy
+
     fun toggleChainPrefixQr() {
         settingsHandler.chainPrefixQr = !settingsHandler.chainPrefixQr
         safeLaunch {

@@ -78,8 +78,18 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             )
             transferAmount.setAmount(amount, selectedAsset.symbol, selectedAsset.logoUri)
             fromAddressItem.name = viewModel.activeSafe.localName
-            fromAddressItem.setAddress(chain, fromAddress)
-            toAddressItem.setAddress(chain, toAddress)
+            fromAddressItem.setAddress(
+                chain = chain,
+                value = fromAddress,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+            )
+            toAddressItem.setAddress(
+                chain,
+                toAddress,
+                viewModel.isChainPrefixPrependEnabled(),
+                viewModel.isChainPrefixCopyEnabled()
+            )
             reviewAdvanced.setOnClickListener {
                 if (confirmButton.isEnabled) viewModel.onAdvancedParamsEdit()
             }

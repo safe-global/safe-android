@@ -26,7 +26,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         removeAllViews()
     }
 
-    fun setActionInfoItems(chain: Chain, actionInfoItems: List<ActionInfoItem>) {
+    fun setActionInfoItems(chain: Chain, showChainPrefix: Boolean, copyChainPrefix: Boolean, actionInfoItems: List<ActionInfoItem>) {
         clear()
         actionInfoItems.forEach { actionInfoItem ->
             addStringItem(context.getString(actionInfoItem.itemLabel!!))
@@ -36,10 +36,17 @@ class TxSettingsActionView @JvmOverloads constructor(
                     addStringItem(actionInfoItem.value, R.color.label_secondary, DEFAULT_MARGIN)
                 }
                 is ActionInfoItem.Address -> {
-                    addAddressItem(chain, actionInfoItem.address)
+                    addAddressItem(chain, actionInfoItem.address, showChainPrefix, copyChainPrefix)
                 }
                 is ActionInfoItem.AddressWithLabel -> {
-                    addNamedAddressItem(chain, actionInfoItem.address, actionInfoItem.addressLabel, actionInfoItem.addressUrl)
+                    addNamedAddressItem(
+                        chain = chain,
+                        address = actionInfoItem.address,
+                        showChainPrefix = showChainPrefix,
+                        copyChainPrefix = copyChainPrefix,
+                        label = actionInfoItem.addressLabel,
+                        addressUrl = actionInfoItem.addressUrl
+                    )
                 }
             }
         }
@@ -54,17 +61,24 @@ class TxSettingsActionView @JvmOverloads constructor(
         addView(actionLabel)
     }
 
-    private fun addAddressItem(chain: Chain, address: Solidity.Address?) {
+    private fun addAddressItem(chain: Chain, address: Solidity.Address?, showChainPrefix: Boolean, copyChainPrefix: Boolean) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
         addressItem.layoutParams = layoutParams
-        addressItem.setAddress(chain, address)
+        addressItem.setAddress(chain, address, showChainPrefix, copyChainPrefix)
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address?, label: String?, addressUrl: String?) {
+    private fun addNamedAddressItem(
+        chain: Chain,
+        address: Solidity.Address?,
+        showChainPrefix: Boolean,
+        copyChainPrefix: Boolean,
+        label: String?,
+        addressUrl: String?
+    ) {
         val addressItem = NamedAddressItem(context)
-        addressItem.setAddress(chain, address)
+        addressItem.setAddress(chain, address, showChainPrefix, copyChainPrefix)
         addressItem.name = label
         addressItem.showSeparator = false
         address?.let {

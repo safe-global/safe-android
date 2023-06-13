@@ -9,6 +9,7 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
@@ -25,6 +26,7 @@ class TransactionDetailsActionViewModelTest {
 
     private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
+    private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: TransactionDetailsActionViewModel
 
@@ -60,7 +62,7 @@ class TransactionDetailsActionViewModelTest {
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
         viewModel =
-            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
+            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, settingsHandler, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
@@ -116,7 +118,7 @@ class TransactionDetailsActionViewModelTest {
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
         viewModel =
-            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
+            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, settingsHandler, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
@@ -175,7 +177,7 @@ class TransactionDetailsActionViewModelTest {
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
         viewModel =
-            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
+            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, settingsHandler, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)

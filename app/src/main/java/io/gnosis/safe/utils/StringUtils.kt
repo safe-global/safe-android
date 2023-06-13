@@ -8,12 +8,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.ImageSpan
-import android.text.style.StyleSpan
-import android.text.style.URLSpan
-import android.text.style.UnderlineSpan
+import android.text.style.*
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -37,12 +32,20 @@ fun String.asMiddleEllipsized(prefixLength: Int, suffixLength: Int): String {
 
 fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
 
-fun Solidity.Address.shortChecksumString() =
-    asEthereumAddressChecksumString().abbreviateEthAddress()
+fun Solidity.Address.shortChecksumString(chainPrefix: String?) =
+    asEthereumAddressChecksumString().abbreviateEthAddress(chainPrefix)
 
-fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 6, suffixLength: Int = 4, addMiddleLinebreak: Boolean = true): Spannable {
-    return SpannableStringBuilder(this.asEthereumAddressChecksumString()).apply {
-        if (addMiddleLinebreak) insert(21, "\n")
+fun Solidity.Address.formatEthAddress(context: Context, chainPrefix: String?, prefixLength: Int = 6, suffixLength: Int = 4, addMiddleLinebreak: Boolean = true): Spannable {
+
+    var prefixLength = prefixLength
+    var addressString = this.asEthereumAddressChecksumString()
+    if (!chainPrefix.isNullOrBlank()) {
+        prefixLength += chainPrefix.length + 1 // chain prefix + ":"
+        addressString = "${chainPrefix}:${this.asEthereumAddressChecksumString()}"
+    }
+
+    return SpannableStringBuilder(addressString).apply {
+        if (addMiddleLinebreak) insert(length / 2, "\n")
         setSpan(
             ForegroundColorSpan(context.getColorCompat(R.color.address_boundaries)),
             0,
@@ -91,10 +94,15 @@ fun String.formatEthAddressBold(prefixLength: Int = 6, suffixLength: Int = 4): S
     }
 }
 
-fun String.abbreviateEthAddress(): String =
-    asMiddleEllipsized(6, 4)
-
-fun Solidity.Address.formatForTxList(): String = asEthereumAddressChecksumString().abbreviateEthAddress()
+fun String.abbreviateEthAddress(chainPrefix: String?): String {
+    return if (chainPrefix.isNullOrBlank()) {
+        asMiddleEllipsized(6, 4)
+    } else {
+        val prefixLength = chainPrefix.length + 6
+        val suffixLength = 4
+        "${chainPrefix}:${this}".asMiddleEllipsized(prefixLength, suffixLength)
+    }
+}
 
 // Append a CharSequence with several spans applied
 fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<Any>, flags: Int = 0): SpannableStringBuilder {
