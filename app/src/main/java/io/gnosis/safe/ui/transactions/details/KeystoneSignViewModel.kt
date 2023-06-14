@@ -18,6 +18,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.removeHexPrefix
 import timber.log.Timber
 import java.util.Timer
 import java.util.TimerTask
@@ -55,7 +56,7 @@ class KeystoneSignViewModel
             owner?.let {
                 ethSignRequest = EthSignRequest(
                     requestId = UUID.randomUUID().toString(),
-                    signData = safeTxHash,
+                    signData = safeTxHash.removeHexPrefix(),
                     dataType = signingMode.toDataType(),
                     chainId = chainId,
                     path = owner.keyDerivationPath!!,
