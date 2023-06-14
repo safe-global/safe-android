@@ -165,6 +165,15 @@ class Tracker internal constructor(
         logEvent(Event.INTERCOM_CHAT_OPENED, null)
     }
 
+    fun logTxExecFieldsEdit(fields: List<TxExecField>) {
+        logEvent(
+            Event.TRANSACTION_EXEC_EDIT_FEE_FIELDS,
+            mapOf(
+                Param.TX_EXEC_FIELDS to fields.joinToString(separator = ",") { it.value }
+            )
+        )
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -228,6 +237,7 @@ class Tracker internal constructor(
         val NUM_KEYS_LEDGER = "num_keys_ledger_nano_x"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
+        val TX_EXEC_FIELDS = "fields"
     }
 
     object ParamValues {
@@ -250,6 +260,14 @@ class Tracker internal constructor(
             }
         }
     }
+}
+
+enum class TxExecField(val value: String) {
+    NONCE("nonce"),
+    GAS_LIMIT("gasLimit"),
+    GAS_PRICE("gasPrice"),
+    MAX_FEE("maxFee"),
+    MAX_PRIORITY_FEE("maxPriorityFee")
 }
 
 enum class ScreenId(val value: String) {
