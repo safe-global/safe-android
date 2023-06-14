@@ -105,6 +105,7 @@ class KeystoneSignViewModel
         return if (scannedValue.startsWith(UR_PREFIX_OF_SIGNATURE)) {
             sdk.decodeQR(scannedValue)?.let {
                 this.ur = it
+                sdk.resetQRDecoder()
                 Pair(true, true)
             } ?: Pair(true, false)
         } else {

@@ -94,6 +94,7 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
         ) {
             keystoneSDK.decodeQR(scannedValue)?.let {
                 this.ur = it
+                keystoneSDK.resetQRDecoder()
                 Pair(true, true)
             } ?: Pair(true, false)
         } else {
