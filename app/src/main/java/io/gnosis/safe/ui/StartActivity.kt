@@ -21,6 +21,7 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.AppStateListener
 import io.gnosis.safe.HeimdallApplication
+import io.gnosis.safe.HeimdallIntercom
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ActivityStartBinding
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
@@ -33,7 +34,6 @@ import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.toColor
-import io.intercom.android.sdk.Intercom
 import io.intercom.android.sdk.UnreadConversationCountListener
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -86,17 +86,17 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
         (application as? HeimdallApplication)?.registerForAppState(this)
 
-        onCountUpdate(Intercom.client().unreadConversationCount)
+        onCountUpdate(HeimdallIntercom.unreadConversationCount())
     }
 
     override fun onResume() {
         super.onResume()
-        Intercom.client().addUnreadConversationCountListener(this)
+        HeimdallIntercom.addUnreadConversationCountListener(this)
     }
 
     override fun onPause() {
         super.onPause()
-        Intercom.client().removeUnreadConversationCountListener(this)
+        HeimdallIntercom.removeUnreadConversationCountListener(this)
     }
 
     private fun setupPasscode() {
@@ -434,7 +434,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun handleIntercom() {
         if (notificationRepository.intercomPushReceived) {
-            Intercom.client().handlePushMessage()
+            HeimdallIntercom.handlePushMessage()
             notificationRepository.intercomPushReceived = false
         }
     }

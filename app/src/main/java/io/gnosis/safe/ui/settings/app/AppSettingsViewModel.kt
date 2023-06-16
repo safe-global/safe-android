@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.safe.HeimdallIntercom
 import io.gnosis.safe.Tracker
-import io.intercom.android.sdk.Intercom
 import io.intercom.android.sdk.UnreadConversationCountListener
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class AppSettingsViewModel @Inject constructor(
     val intercomCount = MutableLiveData<Int>()
 
     init {
-        Intercom.client().addUnreadConversationCountListener(this)
+        HeimdallIntercom.addUnreadConversationCountListener(this)
     }
 
     fun loadUserDefaultFiat() {
@@ -39,7 +39,7 @@ class AppSettingsViewModel @Inject constructor(
     }
 
     fun loadIntercomCount() {
-        onCountUpdate(Intercom.client().unreadConversationCount)
+        onCountUpdate(HeimdallIntercom.unreadConversationCount())
     }
 
     override fun onCountUpdate(count: Int) {
@@ -47,12 +47,12 @@ class AppSettingsViewModel @Inject constructor(
     }
 
     fun openIntercomMessenger() {
-        Intercom.client().displayMessenger()
+        HeimdallIntercom.present()
         tracker.logIntercomChatOpened()
     }
 
     override fun onCleared() {
         super.onCleared()
-        Intercom.client().removeUnreadConversationCountListener(this)
+        HeimdallIntercom.removeUnreadConversationCountListener(this)
     }
 }

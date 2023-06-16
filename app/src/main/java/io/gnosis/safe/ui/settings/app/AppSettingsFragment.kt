@@ -13,6 +13,7 @@ import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import pm.gnosis.svalinn.common.utils.snackbar
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -52,7 +53,11 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToChainPrefixAppSettingsFragment())
             }
             intercom.setOnClickListener {
-                viewModel.openIntercomMessenger()
+                try {
+                    viewModel.openIntercomMessenger()
+                } catch (e: Exception) {
+                    snackbar(requireView(), getString(R.string.settings_app_intercom_failure))
+                }
             }
             helpCenter.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
