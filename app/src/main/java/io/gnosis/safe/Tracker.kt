@@ -165,6 +165,15 @@ class Tracker internal constructor(
         logEvent(Event.INTERCOM_CHAT_OPENED, null)
     }
 
+    fun logTxExecFieldsEdit(fields: List<TxExecField>) {
+        logEvent(
+            Event.TRANSACTION_EXEC_EDIT_FEE_FIELDS,
+            mapOf(
+                Param.TX_EXEC_FIELDS to fields.joinToString(separator = ",") { it.value }
+            )
+        )
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -203,6 +212,9 @@ class Tracker internal constructor(
         val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
         val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
+        val TRANSACTION_EXEC_EDIT_FEE_FIELDS = "user_edit_exec_tx_fee_fields"
+        val TRANSACTION_EXEC_KEY_CHANGE = "user_select_exec_key_change"
+        val TRANSACTION_EXEC_FAILED = "user_exec_tx_failed"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
         val BANNER_OWNER_SKIP = "user_banner_owner_skip"
@@ -225,6 +237,7 @@ class Tracker internal constructor(
         val NUM_KEYS_LEDGER = "num_keys_ledger_nano_x"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
+        val TX_EXEC_FIELDS = "fields"
     }
 
     object ParamValues {
@@ -247,6 +260,14 @@ class Tracker internal constructor(
             }
         }
     }
+}
+
+enum class TxExecField(val value: String) {
+    NONCE("nonce"),
+    GAS_LIMIT("gasLimit"),
+    GAS_PRICE("gasPrice"),
+    MAX_FEE("maxFee"),
+    MAX_PRIORITY_FEE("maxPriorityFee")
 }
 
 enum class ScreenId(val value: String) {
@@ -289,6 +310,11 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_DETAILS_ACTION_LIST("screen_transaction_details_action_list"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
     TRANSACTIONS_REJECTION_CONFIRMATION("screen_transactions_reject_confirmation"),
+    TRANSACTIONS_EXEC_REVIEW("screen_exec_tx_review"),
+    TRANSACTIONS_EXEC_REVIEW_ADVANCED("screen_exec_tx_review_advanced"),
+    TRANSACTIONS_EXEC_EDIT_FEE("screen_edit_exec_tx_fee"),
+    TRANSACTIONS_EXEC_SELECT_KEY("screen_select_exec_key"),
+    TRANSACTIONS_EXEC_SUBMITTED("screen_exec_tx_submitted"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
     SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),
