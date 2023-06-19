@@ -192,6 +192,7 @@
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
     <string name="settings_app_intercom">Chat with us</string>
+    <string name="settings_app_intercom_failure">Could not start the chat. Make sure Intercom is properly initialised.</string>
     <string name="settings_app_about">About Safe</string>
     <string name="settings_app_auto">Auto</string>
     <string name="settings_app_dark">Dark</string>
