@@ -138,6 +138,7 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
                                     action.maxPriorityFeeError,
                                     action.maxFeeError
                                 )
+                                updateTotalFee()
                             }
                         }
                     }
@@ -157,6 +158,11 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             gasLimitLayout.error = gasLimitError
             maxPriorityFeeLayout.error = maxPriorityFeeError
             maxFeeLayout.error = maxFeeError
+        }
+    }
+
+    private fun updateTotalFee() {
+        with(binding) {
             totalFeeLabel.text = getString(
                 R.string.tx_exec_estimated_fee_price,
                 viewModel.totalFee1559(

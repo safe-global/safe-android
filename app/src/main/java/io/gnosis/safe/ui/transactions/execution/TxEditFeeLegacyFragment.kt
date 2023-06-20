@@ -122,6 +122,7 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
                                     action.gasLimitError,
                                     action.gasPriceError
                                 )
+                                updateTotalFee()
                             }
                         }
                     }
@@ -139,6 +140,11 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
             nonceLayout.error = nonceError
             gasLimitLayout.error = gasLimitError
             gasPriceLayout.error = gasPriceError
+        }
+    }
+
+    private fun updateTotalFee() {
+        with(binding) {
             totalFeeLabel.text = getString(
                 R.string.tx_exec_estimated_fee_price,
                 viewModel.totalFeeLegacy(
