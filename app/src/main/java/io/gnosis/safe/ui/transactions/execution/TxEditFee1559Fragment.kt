@@ -106,6 +106,15 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
                     maxFeeValue.text.toString()
                 )
             }
+            totalFeeLabel.text = getString(
+                R.string.tx_exec_estimated_fee_price,
+                viewModel.totalFee1559(
+                    requireContext(),
+                    chain,
+                    gasLimitValue.text.toString(),
+                    maxFeeValue.text.toString()
+                )
+            )
             configHowtoLink.appendLink(
                 urlText = resources.getString(R.string.tx_advanced_params_config_howto),
                 url = resources.getString(R.string.tx_advanced_params_config_howto_link),
@@ -130,12 +139,6 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
                                     action.maxFeeError
                                 )
                             }
-                            is UpdateEstimation -> {
-                                binding.estimatedFeeLabel.text = getString(
-                                    R.string.tx_exec_estimated_fee_price,
-                                    action.estimation
-                                )
-                            }
                         }
                     }
                 }
@@ -154,6 +157,15 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             gasLimitLayout.error = gasLimitError
             maxPriorityFeeLayout.error = maxPriorityFeeError
             maxFeeLayout.error = maxFeeError
+            totalFeeLabel.text = getString(
+                R.string.tx_exec_estimated_fee_price,
+                viewModel.totalFee1559(
+                    requireContext(),
+                    chain,
+                    gasLimitValue.text.toString(),
+                    maxFeeValue.text.toString()
+                )
+            )
         }
     }
 }

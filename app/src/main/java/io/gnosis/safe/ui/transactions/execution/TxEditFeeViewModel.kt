@@ -1,7 +1,7 @@
 package io.gnosis.safe.ui.transactions.execution
 
 import android.content.Context
-import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.qrscanner.nullOnThrow
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -10,7 +10,6 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class TxEditFeeViewModel @Inject constructor(
-    private val transactionRepository: TransactionRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TxEditFeeState>(appDispatchers) {
 
@@ -165,8 +164,36 @@ class TxEditFeeViewModel @Inject constructor(
         }
     }
 
-    fun loadEstimation() {
-        //TODO load estimation
+    fun totalFee1559(
+        context: Context,
+        chain: Chain,
+        gasLimitValue: String?,
+        maxFeeValue: String?
+    ): String {
+        val gasLimit = nullOnThrow { BigInteger(gasLimitValue) }
+        val maxFee = nullOnThrow { BigInteger(maxFeeValue) }
+        return if (gasLimit == null || maxFee == null) {
+            context.getString(R.string.value_not_available)
+        } else {
+            val totalFee = gasLimit * maxFee
+            "$totalFee ${chain.currency.symbol}"
+        }
+    }
+
+    fun totalFeeLegacy(
+        context: Context,
+        chain: Chain,
+        gasLimitValue: String?,
+        gasPriceValue: String?
+    ): String {
+        val gasLimit = nullOnThrow { BigInteger(gasLimitValue) }
+        val gasPrice = nullOnThrow { BigInteger(gasPriceValue) }
+        return if (gasLimit == null || gasPrice == null) {
+            context.getString(R.string.value_not_available)
+        } else {
+            val totalFee = gasLimit * gasPrice
+            "$totalFee ${chain.currency.symbol}"
+        }
     }
 }
 
@@ -186,8 +213,4 @@ data class ValidateLegacyFeeData(
     val nonceError: String?,
     val gasLimitError: String?,
     val gasPriceError: String?
-) : BaseStateViewModel.ViewAction
-
-data class UpdateEstimation(
-    val estimation: String
 ) : BaseStateViewModel.ViewAction
