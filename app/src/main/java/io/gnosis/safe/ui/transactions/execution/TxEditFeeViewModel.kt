@@ -113,6 +113,56 @@ class TxEditFeeViewModel @Inject constructor(
         gasPriceValue: String?
     ) {
 
+        val nonceError = if (nonceValue.isNullOrBlank()) {
+            context.getString(R.string.tx_exec_error_value_required)
+        } else {
+            val nonce = nullOnThrow { BigInteger(nonceValue) }
+            if (nonce == null || nonce < BigInteger.ZERO) {
+                context.getString(R.string.tx_exec_error_value_nan)
+            } else {
+                if (nonce < minNonce) {
+                    context.getString(R.string.tx_exec_nonce_error_executed)
+                } else {
+                    null
+                }
+            }
+        }
+
+        val gasLimitError = if (gasLimitValue.isNullOrBlank()) {
+            context.getString(R.string.tx_exec_error_value_required)
+        } else {
+            val gasLimit = nullOnThrow { BigInteger(gasLimitValue) }
+            if (gasLimit == null || gasLimit < BigInteger.ZERO) {
+                context.getString(R.string.tx_exec_error_value_nan)
+            } else {
+                null
+            }
+        }
+
+        val gasPriceError = if (gasPriceValue.isNullOrBlank()) {
+            context.getString(R.string.tx_exec_error_value_required)
+        } else {
+            val gasPrice = nullOnThrow { BigInteger(gasPriceValue) }
+            if (gasPrice == null || gasPrice < BigInteger.ZERO) {
+                context.getString(R.string.tx_exec_error_value_nan)
+            } else {
+                null
+            }
+        }
+
+        safeLaunch {
+            val saveEnabled = nonceError == null && gasLimitError == null && gasPriceError == null
+            updateState {
+                TxEditFeeState(
+                    saveEnabled = saveEnabled,
+                    viewAction = ValidateLegacyFeeData(
+                        nonceError = nonceError,
+                        gasLimitError = gasLimitError,
+                        gasPriceError = gasPriceError
+                    )
+                )
+            }
+        }
     }
 
     fun loadEstimation() {
