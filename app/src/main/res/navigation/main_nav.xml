@@ -1061,6 +1061,58 @@
     </fragment>
 
     <fragment
+        android:id="@+id/txEditFeeLegacyFragment"
+        android:name="io.gnosis.safe.ui.transactions.execution.TxEditFeeLegacyFragment"
+        android:label="TxEditFeeLegacyFragment"
+        tools:layout="@layout/fragment_tx_edit_fee_legacy">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="nonce"
+            app:argType="string" />
+
+        <argument
+            android:name="gasLimit"
+            app:argType="string" />
+
+        <argument
+            android:name="gasPrice"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/txEditFee1559Fragment"
+        android:name="io.gnosis.safe.ui.transactions.execution.TxEditFee1559Fragment"
+        android:label="TxEditFee1559Fragment"
+        tools:layout="@layout/fragment_tx_edit_fee">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="nonce"
+            app:argType="string" />
+
+        <argument
+            android:name="gasLimit"
+            app:argType="string" />
+
+        <argument
+            android:name="maxPriorityFee"
+            app:argType="string" />
+
+        <argument
+            android:name="maxFee"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/selectChainFragment"
         android:name="io.gnosis.safe.ui.settings.chain.ChainSelectionFragment"
         android:label="ChainSelectionFragment"

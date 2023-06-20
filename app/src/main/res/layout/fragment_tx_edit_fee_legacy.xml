@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_secondary">
+
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        style="@style/Toolbar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="0"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/ToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/tx_exec_edit_fee" />
+
+        <TextView
+            android:id="@+id/save_button"
+            style="@style/ToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:enabled="false"
+            android:layout_marginEnd="24dp"
+            android:text="@string/save" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/chain_ribbon"
+        style="@style/ChainRibbon"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/chain_ribbon_size"
+        tools:text="Mainnet"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
+
+        <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tx_exec_nonce"
+            app:info_label_text="@string/tx_exec_nonce_desc" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nonce_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/label_tertiary"
+            app:boxStrokeColor="@color/outline_box"
+            app:errorIconDrawable="@null"
+            app:errorTextColor="@color/error"
+            app:hintTextColor="@color/label_tertiary"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <EditText
+                android:id="@+id/nonce_value"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:textColor="@color/label_primary"
+                android:textCursorDrawable="@drawable/cursor_drawable" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
+            android:id="@+id/gas_limit_label"
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tx_exec_gas_limit"
+            app:info_label_text="@string/tx_exec_gas_limit_desc"
+            android:layout_marginTop="@dimen/default_margin"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/gas_limit_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/label_tertiary"
+            app:boxStrokeColor="@color/outline_box"
+            app:errorIconDrawable="@null"
+            app:errorTextColor="@color/error"
+            app:hintTextColor="@color/label_tertiary"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <EditText
+                android:id="@+id/gas_limit_value"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:textColor="@color/label_primary"
+                android:textCursorDrawable="@drawable/cursor_drawable" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
+            android:id="@+id/gas_price_label"
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tx_exec_gas_price"
+            app:info_label_text="@string/tx_exec_gas_price_desc"
+            android:layout_marginTop="@dimen/default_margin"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/gas_price_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/label_tertiary"
+            app:boxStrokeColor="@color/outline_box"
+            app:errorIconDrawable="@null"
+            app:errorTextColor="@color/error"
+            app:hintTextColor="@color/label_tertiary"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <EditText
+                android:id="@+id/gas_price_value"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:textColor="@color/label_primary"
+                android:textCursorDrawable="@drawable/cursor_drawable" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/estimated_fee_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_small_margin"
+            android:text="@string/tx_exec_estimated_fee_price" />
+
+        <TextView
+            android:id="@+id/config_howto_link"
+            style="@style/TextLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="@dimen/default_large_margin"
+            tools:text="@string/tx_advanced_params_config_howto" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
