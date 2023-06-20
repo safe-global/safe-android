@@ -1075,6 +1075,10 @@
             app:argType="string" />
 
         <argument
+            android:name="minNonce"
+            app:argType="string" />
+
+        <argument
             android:name="gasLimit"
             app:argType="string" />
 
@@ -1096,6 +1100,10 @@
 
         <argument
             android:name="nonce"
+            app:argType="string" />
+
+        <argument
+            android:name="minNonce"
             app:argType="string" />
 
         <argument

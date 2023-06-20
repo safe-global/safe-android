@@ -14,6 +14,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.toColor
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>() {
@@ -23,6 +24,7 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
     private val navArgs by navArgs<TxEditFee1559FragmentArgs>()
     private val chain by lazy { navArgs.chain }
     private val nonce by lazy { navArgs.nonce }
+    private val minNonce by lazy { BigInteger(navArgs.minNonce) }
     private val gasLimit by lazy { navArgs.gasLimit }
     private val maxPriorityFee by lazy { navArgs.maxPriorityFee }
     private val maxFee by lazy { navArgs.maxFee }
@@ -63,6 +65,8 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             nonceValue.setText(nonce)
             nonceValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validate1559Inputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     maxPriorityFeeValue.text.toString(),
@@ -72,6 +76,8 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             gasLimitValue.setText(gasLimit)
             gasLimitValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validate1559Inputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     maxPriorityFeeValue.text.toString(),
@@ -81,6 +87,8 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             maxPriorityFeeValue.setText(maxPriorityFee)
             maxPriorityFeeValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validate1559Inputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     maxPriorityFeeValue.text.toString(),
@@ -90,6 +98,8 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             maxFeeValue.setText(maxFee)
             maxFeeValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validate1559Inputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     maxPriorityFeeValue.text.toString(),
@@ -121,7 +131,10 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
                                 )
                             }
                             is UpdateEstimation -> {
-                                binding.estimatedFeeLabel.text = getString(R.string.tx_exec_estimated_fee_price, action.estimation)
+                                binding.estimatedFeeLabel.text = getString(
+                                    R.string.tx_exec_estimated_fee_price,
+                                    action.estimation
+                                )
                             }
                         }
                     }
@@ -136,6 +149,11 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
         maxPriorityFeeError: String?,
         maxFeeError: String?
     ) {
-        //TODO: show validation results
+        with(binding) {
+            nonceLayout.error = nonceError
+            gasLimitLayout.error = gasLimitError
+            maxPriorityFeeLayout.error = maxPriorityFeeError
+            maxFeeLayout.error = maxFeeError
+        }
     }
 }

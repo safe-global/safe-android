@@ -14,6 +14,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.toColor
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyBinding>() {
@@ -23,6 +24,7 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
     private val navArgs by navArgs<TxEditFeeLegacyFragmentArgs>()
     private val chain by lazy { navArgs.chain }
     private val nonce by lazy { navArgs.nonce }
+    private val minNonce by lazy { BigInteger(navArgs.minNonce) }
     private val gasLimit by lazy { navArgs.gasLimit }
     private val gasPrice by lazy { navArgs.gasPrice }
 
@@ -62,6 +64,8 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
             nonceValue.setText(nonce)
             nonceValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validateLegacyInputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     gasPriceValue.text.toString()
@@ -70,6 +74,8 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
             gasLimitValue.setText(gasLimit)
             gasLimitValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validateLegacyInputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     gasPriceValue.text.toString()
@@ -78,6 +84,8 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
             gasPriceValue.setText(gasPrice)
             gasPriceValue.doOnTextChanged { text, _, _, _ ->
                 viewModel.validateLegacyInputs(
+                    requireContext(),
+                    minNonce,
                     nonceValue.text.toString(),
                     gasLimitValue.text.toString(),
                     gasPriceValue.text.toString()
@@ -107,7 +115,10 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
                                 )
                             }
                             is UpdateEstimation -> {
-                                binding.estimatedFeeLabel.text = getString(R.string.tx_exec_estimated_fee_price, action.estimation)
+                                binding.estimatedFeeLabel.text = getString(
+                                    R.string.tx_exec_estimated_fee_price,
+                                    action.estimation
+                                )
                             }
                         }
                     }
@@ -121,6 +132,10 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
         gasLimitError: String?,
         gasPriceError: String?,
     ) {
-        //TODO: show validation results
+        with(binding) {
+            nonceLayout.error = nonceError
+            gasLimitLayout.error = gasLimitError
+            gasPriceLayout.error = gasPriceError
+        }
     }
 }

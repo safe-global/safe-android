@@ -390,14 +390,21 @@
 
     <string name="tx_exec_nonce">Nonce</string>
     <string name="tx_exec_nonce_desc">Transaction count of the execution account</string>
+    <string name="tx_exec_nonce_error_executed">Transaction with this nonce is already executed</string>
     <string name="tx_exec_gas_limit">Gas limit</string>
     <string name="tx_exec_gas_limit_desc">Maximum gas that this transaction can spend. Unused gas will be refunded</string>
     <string name="tx_exec_max_priority_fee">Max priority fee per gas (GWEI)</string>
     <string name="tx_exec_max_priority_fee_desc">Maximum tip to miner per 1 gas in Gwei price units</string>
+    <string name="tx_exec_max_priority_fee_error_too_big">Max priority fee must be less than or equal to max fee</string>
     <string name="tx_exec_max_fee">Max fee per gas (GWEI)</string>
     <string name="tx_exec_max_fee_desc">Maximum limit paid per 1 gas in Gwei price units</string>
+    <string name="tx_exec_max_fee_error_too_small">Max fee must be greater or equal than or equal than max priority fee</string>
     <string name="tx_exec_gas_price">Gas price (GWEI)</string>
     <string name="tx_exec_gas_price_desc">Price per 1 gas in Gwei price units</string>
+
+    <string name="tx_exec_error_value_required">This value is required</string>
+    <string name="tx_exec_error_value_nan">Value is not a valid number</string>
+    <string name="tx_exec_error_value_zero">Value should be greater than 0</string>
 
     <string name="tx_exec_estimated_fee_price">Total esimated fee: %1$s</string>
 
