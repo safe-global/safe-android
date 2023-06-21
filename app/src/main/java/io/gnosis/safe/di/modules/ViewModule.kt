@@ -47,6 +47,7 @@ import io.gnosis.safe.ui.transactions.TransactionsViewModel
 import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
+import io.gnosis.safe.ui.transactions.execution.TxEditFeeViewModel
 import io.gnosis.safe.ui.updates.UpdatesViewModel
 import java.lang.ref.WeakReference
 import javax.inject.Named
@@ -212,6 +213,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesConfirmRejectionViewModel(provider: ViewModelProvider) = provider[ConfirmRejectionViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesTxEditFeeViewModel(provider: ViewModelProvider) = provider[TxEditFeeViewModel::class.java]
 
     @Provides
     @ForView

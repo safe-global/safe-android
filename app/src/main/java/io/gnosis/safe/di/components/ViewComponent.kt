@@ -46,6 +46,9 @@ import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.transactions.TransactionListFragment
 import io.gnosis.safe.ui.transactions.TransactionsFragment
 import io.gnosis.safe.ui.transactions.details.*
+import io.gnosis.safe.ui.transactions.execution.TxAdvancedParamsFragment
+import io.gnosis.safe.ui.transactions.execution.TxEditFee1559Fragment
+import io.gnosis.safe.ui.transactions.execution.TxEditFeeLegacyFragment
 import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.ui.whatsnew.WhatsNewDialog
 
@@ -83,6 +86,12 @@ interface ViewComponent {
     fun inject(fragment: TransactionDetailsActionMultisendFragment)
 
     fun inject(fragment: AdvancedTransactionDetailsFragment)
+
+    fun inject(fragment: TxEditFee1559Fragment)
+
+    fun inject(fragment: TxEditFeeLegacyFragment)
+
+    fun inject(fragment: TxAdvancedParamsFragment)
 
     fun inject(fragment: ConfirmRejectionFragment)
 
