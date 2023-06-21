@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -106,7 +109,15 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
                 linkIcon = R.drawable.ic_external_link_green_16dp
             )
             saveButton.setOnClickListener {
-
+                setFragmentResult(
+                    REQUEST_EDIT_FEE,
+                    bundleOf(
+                        RESULT_NONCE to nonceValue.text.toString(),
+                        RESULT_GAS_LIMIT to gasLimitValue.text.toString(),
+                        RESULT_GAS_PRICE to gasPriceValue.text.toString(),
+                    )
+                )
+                Navigation.findNavController(it).navigateUp()
             }
             saveButton.isEnabled = false
         }
@@ -155,5 +166,12 @@ class TxEditFeeLegacyFragment : BaseViewBindingFragment<FragmentTxEditFeeLegacyB
                 )
             )
         }
+    }
+
+    companion object {
+        const val REQUEST_EDIT_FEE = "request_edit_fee"
+        const val RESULT_NONCE = "result_nonce"
+        const val RESULT_GAS_LIMIT = "result_gas_limit"
+        const val RESULT_GAS_PRICE = "result_gas_price"
     }
 }

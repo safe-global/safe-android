@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -121,7 +124,16 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
                 linkIcon = R.drawable.ic_external_link_green_16dp
             )
             saveButton.setOnClickListener {
-
+                setFragmentResult(
+                    REQUEST_EDIT_FEE,
+                    bundleOf(
+                        RESULT_NONCE to nonceValue.text.toString(),
+                        RESULT_GAS_LIMIT to gasLimitValue.text.toString(),
+                        RESULT_MAX_PRIORITY_FEE to maxPriorityFeeValue.text.toString(),
+                        RESULT_MAX_FEE to maxFeeValue.text.toString()
+                    )
+                )
+                Navigation.findNavController(it).navigateUp()
             }
             saveButton.isEnabled = false
         }
@@ -173,5 +185,13 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
                 )
             )
         }
+    }
+
+    companion object {
+        const val REQUEST_EDIT_FEE = "request_edit_fee"
+        const val RESULT_NONCE = "result_nonce"
+        const val RESULT_GAS_LIMIT = "result_gas_limit"
+        const val RESULT_MAX_PRIORITY_FEE = "result_max_priority_fee"
+        const val RESULT_MAX_FEE = "result_max_fee"
     }
 }
