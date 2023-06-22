@@ -17,7 +17,7 @@ import io.gnosis.safe.ui.safe.add.*
 import io.gnosis.safe.ui.settings.owner.InvalidPrivateKey
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.settings.owner.KeyAlreadyImported
-import io.gnosis.safe.ui.transactions.details.KeystoneSignFailed
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneSignFailed
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
 import pm.gnosis.utils.exceptions.InvalidAddressException

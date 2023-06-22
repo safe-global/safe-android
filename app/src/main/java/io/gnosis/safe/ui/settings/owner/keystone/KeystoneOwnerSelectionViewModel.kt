@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.selection
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -9,6 +9,10 @@ import com.keystone.module.Note
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.owner.selection.DerivedOwnerPagingProvider
+import io.gnosis.safe.ui.settings.owner.selection.DerivedOwners
+import io.gnosis.safe.ui.settings.owner.selection.OwnerHolder
+import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionState
 import io.gnosis.safe.utils.PublicKeyAndAddressDerivator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map

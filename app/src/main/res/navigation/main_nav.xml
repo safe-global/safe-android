@@ -326,7 +326,7 @@
 
     <fragment
         android:id="@+id/keystoneOwnerSelectionFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.selection.KeystoneOwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.keystone.KeystoneOwnerSelectionFragment"
         android:label="KeystoneOwnerSelectionFragment"
         tools:layout="@layout/fragment_keystone_owner_selection">
 
@@ -889,7 +889,7 @@
 
     <fragment
         android:id="@+id/keystoneRequestSignatureFragment"
-        android:name="io.gnosis.safe.ui.transactions.details.KeystoneRequestSignatureFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.keystone.KeystoneRequestSignatureFragment"
         android:label="KeystoneRequestSignatureFragment"
         tools:layout="@layout/fragment_keystone_request_signature">
 

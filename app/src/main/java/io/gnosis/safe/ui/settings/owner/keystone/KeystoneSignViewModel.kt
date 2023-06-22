@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transactions.details
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -13,6 +13,7 @@ import io.gnosis.safe.qrscanner.HasFinished
 import io.gnosis.safe.qrscanner.IsValid
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator

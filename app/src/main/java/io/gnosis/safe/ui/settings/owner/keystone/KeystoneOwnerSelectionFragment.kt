@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.selection
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import android.animation.Animator
 import android.os.Bundle
@@ -24,12 +24,16 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentKeystoneOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.selection.DerivedOwnerListAdapter
+import io.gnosis.safe.ui.settings.owner.selection.DerivedOwnerPagingProvider
+import io.gnosis.safe.ui.settings.owner.selection.DerivedOwners
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import javax.inject.Inject
 
-class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneOwnerSelectionBinding>(), DerivedOwnerListAdapter.OnOwnerItemClickedListener {
+class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneOwnerSelectionBinding>(),
+    DerivedOwnerListAdapter.OnOwnerItemClickedListener {
 
     override fun screenId() = ScreenId.KEYSTONE_OWNER_SELECTION
 

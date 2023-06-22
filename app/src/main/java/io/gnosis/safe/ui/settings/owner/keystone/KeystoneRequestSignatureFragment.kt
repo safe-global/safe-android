@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transactions.details
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import android.content.Intent
 import android.os.Bundle

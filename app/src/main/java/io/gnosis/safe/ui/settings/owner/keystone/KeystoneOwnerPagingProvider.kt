@@ -1,10 +1,9 @@
-package io.gnosis.safe.ui.settings.owner.selection
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.keystone.module.MultiHDKeys
-import io.gnosis.safe.utils.AddressPagingSource
 import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 

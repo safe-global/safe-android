@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.selection
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import androidx.paging.PagingSource
 import com.keystone.module.MultiHDKeys

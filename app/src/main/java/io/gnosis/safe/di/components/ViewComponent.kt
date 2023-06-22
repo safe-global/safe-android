@@ -33,12 +33,13 @@ import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoKeystoneFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneRequestSignatureFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerTabsFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerSignDialog
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
-import io.gnosis.safe.ui.settings.owner.selection.KeystoneOwnerSelectionFragment
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneOwnerSelectionFragment
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment

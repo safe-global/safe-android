@@ -37,7 +37,7 @@ import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerSignViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
-import io.gnosis.safe.ui.settings.owner.selection.KeystoneOwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneOwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
@@ -46,7 +46,7 @@ import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.TransactionsViewModel
 import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
-import io.gnosis.safe.ui.transactions.details.KeystoneSignViewModel
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneSignViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import io.gnosis.safe.ui.transactions.execution.TxEditFeeViewModel

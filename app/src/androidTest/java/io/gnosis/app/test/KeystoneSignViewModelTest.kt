@@ -4,7 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.keystone.sdk.KeystoneEthereumSDK
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
-import io.gnosis.safe.ui.transactions.details.KeystoneSignViewModel
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneSignViewModel
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
