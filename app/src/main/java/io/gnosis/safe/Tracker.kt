@@ -215,6 +215,7 @@ class Tracker internal constructor(
         val TRANSACTION_EXEC_EDIT_FEE_FIELDS = "user_edit_exec_tx_fee_fields"
         val TRANSACTION_EXEC_KEY_CHANGE = "user_select_exec_key_change"
         val TRANSACTION_EXEC_FAILED = "user_exec_tx_failed"
+        val TRANSACTIONS_EXEC_SUBMITTED = "user_transaction_exec_submitted"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
         val BANNER_OWNER_SKIP = "user_banner_owner_skip"
@@ -314,7 +315,7 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_EXEC_REVIEW_ADVANCED("screen_exec_tx_review_advanced"),
     TRANSACTIONS_EXEC_EDIT_FEE("screen_edit_exec_tx_fee"),
     TRANSACTIONS_EXEC_SELECT_KEY("screen_select_exec_key"),
-    TRANSACTIONS_EXEC_SUBMITTED("screen_exec_tx_submitted"),
+    TRANSACTIONS_SUCCESS_SIGNER("screen_tx_signer_success"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
     SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),
