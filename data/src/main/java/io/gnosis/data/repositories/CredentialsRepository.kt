@@ -37,7 +37,7 @@ class CredentialsRepository(
 
     suspend fun ownerCount(ownerType: Owner.Type? = null): Int {
         return when {
-            ownerType == Owner.Type.IMPORTED || ownerType == Owner.Type.GENERATED ||ownerType == Owner.Type.LEDGER_NANO_X -> {
+            ownerType == Owner.Type.IMPORTED || ownerType == Owner.Type.GENERATED ||ownerType == Owner.Type.LEDGER_NANO_X ||ownerType == Owner.Type.KEYSTONE -> {
                 ownerDao.ownerCountForType(OwnerTypeConverter().toValue(ownerType))
             }
             else -> {

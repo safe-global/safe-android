@@ -15,5 +15,6 @@ fun Owner.Type.stringRes(): Int =
         0 -> R.string.signing_owner_details_owner_type_imported
         1 -> R.string.signing_owner_details_owner_type_generated
         2 -> R.string.signing_owner_details_owner_type_ledger
+        3 -> R.string.signing_owner_details_owner_type_keystone
         else -> R.string.signing_owner_details_owner_type_imported
     }
