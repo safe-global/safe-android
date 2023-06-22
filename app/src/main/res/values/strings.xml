@@ -424,6 +424,10 @@
 
     <string name="tx_exec_edit_fee">Edit transaction fee</string>
 
+    <string name="tx_exec_review">Execute transaction</string>
+
+    <string name="tx_exec_submit">Submit</string>
+
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Safe Account base contract version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
