@@ -1242,6 +1242,19 @@
     </fragment>
 
     <fragment
+        android:id="@+id/txReviewFragment"
+        android:name="io.gnosis.safe.ui.transactions.execution.TxReviewFragment"
+        android:label="TxReviewFragment"
+        tools:layout="@layout/fragment_tx_review">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+    </fragment>
+
+
+    <fragment
         android:id="@+id/txSuccessFragment"
         android:name="io.gnosis.safe.ui.transactions.execution.TxSuccessFragment"
         android:label="TxSuccessFragment"
