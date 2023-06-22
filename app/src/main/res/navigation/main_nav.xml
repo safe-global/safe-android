@@ -159,8 +159,8 @@
             app:destination="@id/signingOwnerSelectionFragment" />
 
         <action
-            android:id="@+id/action_sendAssetReviewFragment_to_successFragment"
-            app:destination="@id/successFragment" />
+            android:id="@+id/action_sendAssetReviewFragment_to_sendAssetSuccessFragment"
+            app:destination="@id/sendAssetSuccessFragment" />
 
     </fragment>
 
@@ -197,10 +197,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/successFragment"
-        android:name="io.gnosis.safe.ui.safe.send_funds.SuccessFragment"
-        android:label="SuccessFragment"
-        tools:layout="@layout/fragment_success">
+        android:id="@+id/sendAssetSuccessFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.SendAssetSuccessFragment"
+        android:label="SendAssetSuccessFragment"
+        tools:layout="@layout/fragment_send_asset_success">
 
         <argument
             android:name="chain"
@@ -283,6 +283,7 @@
         <action
             android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoLedgerFragment"
             app:destination="@id/ownerInfoLedgerFragment" />
+
     </fragment>
 
     <fragment
@@ -369,6 +370,7 @@
             app:destination="@id/ownerEnterNameFragment" />
 
     </fragment>
+
     <fragment
         android:id="@+id/ownerEnterNameFragment"
         android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
@@ -553,6 +555,7 @@
         <argument
             android:name="passcodeCommand"
             app:argType="io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand" />
+
     </fragment>
 
     <fragment
@@ -1158,6 +1161,12 @@
             app:nullable="true" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/txSuccessFragment"
+        android:name="io.gnosis.safe.ui.transactions.execution.TxSuccessFragment"
+        android:label="TxSuccessFragment"
+        tools:layout="@layout/fragment_tx_success" />
 
     <fragment
         android:id="@+id/selectChainFragment"

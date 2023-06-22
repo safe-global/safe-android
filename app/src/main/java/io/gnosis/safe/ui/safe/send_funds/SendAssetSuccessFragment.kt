@@ -9,15 +9,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentSuccessBinding
+import io.gnosis.safe.databinding.FragmentSendAssetSuccessBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.TransactionsFragmentDirections
 import io.gnosis.safe.ui.transactions.TxPagerAdapter
 
-class SuccessFragment : BaseViewBindingFragment<FragmentSuccessBinding>() {
+class SendAssetSuccessFragment : BaseViewBindingFragment<FragmentSendAssetSuccessBinding>() {
 
-    private val navArgs by navArgs<SuccessFragmentArgs>()
+    private val navArgs by navArgs<SendAssetSuccessFragmentArgs>()
     private val chain by lazy { navArgs.chain }
     private val txId by lazy { navArgs.txId }
     private val amount by lazy { navArgs.amount }
@@ -32,8 +32,8 @@ class SuccessFragment : BaseViewBindingFragment<FragmentSuccessBinding>() {
     override fun inflateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentSuccessBinding =
-        FragmentSuccessBinding.inflate(inflater, container, false)
+    ): FragmentSendAssetSuccessBinding =
+        FragmentSendAssetSuccessBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +44,7 @@ class SuccessFragment : BaseViewBindingFragment<FragmentSuccessBinding>() {
                 override fun handleOnBackPressed() {}
             })
         with(binding) {
-            description.text = getString(R.string.tx_submitted_desc, amount, token)
+            description.text = getString(R.string.tx_queued_desc, amount, token)
             viewDetailsButton.setOnClickListener {
                 findNavController().popBackStack(R.id.assetsFragment, false)
                 with(findNavController()) {

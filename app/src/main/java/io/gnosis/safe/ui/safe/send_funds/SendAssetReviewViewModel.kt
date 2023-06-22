@@ -248,7 +248,7 @@ class SendAssetReviewViewModel
                 updateState {
                     SendAssetReviewState(
                         ViewAction.NavigateTo(
-                            SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToSuccessFragment(
+                            SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToSendAssetSuccessFragment(
                                 activeSafe.chain,
                                 safeTxHash,
                                 amountString,

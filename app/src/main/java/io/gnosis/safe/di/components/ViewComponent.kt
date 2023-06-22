@@ -49,6 +49,7 @@ import io.gnosis.safe.ui.transactions.details.*
 import io.gnosis.safe.ui.transactions.execution.TxAdvancedParamsFragment
 import io.gnosis.safe.ui.transactions.execution.TxEditFee1559Fragment
 import io.gnosis.safe.ui.transactions.execution.TxEditFeeLegacyFragment
+import io.gnosis.safe.ui.transactions.execution.TxSuccessFragment
 import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.ui.whatsnew.WhatsNewDialog
 
@@ -94,6 +95,8 @@ interface ViewComponent {
     fun inject(fragment: TxAdvancedParamsFragment)
 
     fun inject(fragment: ConfirmRejectionFragment)
+
+    fun inject(fragment: TxSuccessFragment)
 
     fun inject(fragment: SettingsFragment)
 
@@ -151,7 +154,7 @@ interface ViewComponent {
 
     fun inject(fragment: EditAdvancedParamsFragment)
 
-    fun inject(fragment: SuccessFragment)
+    fun inject(fragment: SendAssetSuccessFragment)
 
     fun inject(fragment: AddOwnerFirstFragment)
 
