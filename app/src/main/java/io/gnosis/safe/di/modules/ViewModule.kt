@@ -50,6 +50,7 @@ import io.gnosis.safe.ui.settings.owner.keystone.KeystoneSignViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import io.gnosis.safe.ui.transactions.execution.TxEditFeeViewModel
+import io.gnosis.safe.ui.transactions.execution.TxReviewViewModel
 import io.gnosis.safe.ui.updates.UpdatesViewModel
 import java.lang.ref.WeakReference
 import javax.inject.Named
@@ -227,6 +228,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesTxEditFeeViewModel(provider: ViewModelProvider) = provider[TxEditFeeViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesTxReviewViewModel(provider: ViewModelProvider) = provider[TxReviewViewModel::class.java]
 
     @Provides
     @ForView

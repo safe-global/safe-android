@@ -46,6 +46,7 @@ import io.gnosis.safe.ui.settings.owner.keystone.KeystoneSignViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import io.gnosis.safe.ui.transactions.execution.TxEditFeeViewModel
+import io.gnosis.safe.ui.transactions.execution.TxReviewViewModel
 import io.gnosis.safe.ui.updates.UpdatesViewModel
 import javax.inject.Singleton
 
@@ -211,6 +212,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TxEditFeeViewModel::class)
     abstract fun providesTxEditFeeViewModel(viewModel: TxEditFeeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TxReviewViewModel::class)
+    abstract fun providesTxReviewViewModel(viewModel: TxReviewViewModel): ViewModel
 
     @Binds
     @IntoMap
