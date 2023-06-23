@@ -96,6 +96,7 @@ class TransactionDetailsViewModelTest {
             transactionDetails.toTransactionDetailsViewData(
                 emptyList(),
                 canSign = false,
+                canExecute = false,
                 owners = emptyList(),
                 hasOwnerKey = false
             )
@@ -490,6 +491,7 @@ class TransactionDetailsViewModelTest {
                         txDetails = transactionDetails.toTransactionDetailsViewData(
                             safes = emptyList(),
                             canSign = false,
+                            canExecute = true,
                             hasOwnerKey = false,
                             owners = listOf(owner)
                         )
