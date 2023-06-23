@@ -37,7 +37,10 @@ class CredentialsRepository(
 
     suspend fun ownerCount(ownerType: Owner.Type? = null): Int {
         return when {
-            ownerType == Owner.Type.IMPORTED || ownerType == Owner.Type.GENERATED ||ownerType == Owner.Type.LEDGER_NANO_X ||ownerType == Owner.Type.KEYSTONE -> {
+            ownerType == Owner.Type.IMPORTED ||
+                    ownerType == Owner.Type.GENERATED ||
+                    ownerType == Owner.Type.LEDGER_NANO_X ||
+                    ownerType == Owner.Type.KEYSTONE -> {
                 ownerDao.ownerCountForType(OwnerTypeConverter().toValue(ownerType))
             }
             else -> {
@@ -162,7 +165,8 @@ class CredentialsRepository(
 
     fun signWithOwner(owner: Owner, data: ByteArray): String {
         val converter = EncryptedByteArray.Converter()
-        val cryptoData = EncryptionManager.CryptoData.fromString(converter.toStorage(owner.privateKey!!))
+        val cryptoData =
+            EncryptionManager.CryptoData.fromString(converter.toStorage(owner.privateKey!!))
         encryptionManager.unlock()
         val key = encryptionManager.decrypt(cryptoData)
         encryptionManager.lock()
