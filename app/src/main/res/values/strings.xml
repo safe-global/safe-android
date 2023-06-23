@@ -555,6 +555,7 @@
     <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
     <string name="reject">Reject</string>
+    <string name="execute">Execute</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
     <string name="enter_unstoppable_domain">Enter Unstoppable domain</string>

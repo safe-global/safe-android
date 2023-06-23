@@ -830,6 +830,11 @@
             app:destination="@id/signingOwnerSelectionFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
+        <action
+            android:id="@+id/action_transactionDetailsFragment_to_txReviewFragment"
+            app:destination="@id/txReviewFragment"
+            app:popUpTo="@id/transactionDetailsFragment" />
+
         <argument
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
@@ -1250,6 +1255,29 @@
         <argument
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="hash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="data"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="executionInfo"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_txAdvancedParamsFragment"
+            app:destination="@id/txAdvancedParamsFragment"
+            app:popUpTo="@id/txReviewFragment" />
 
     </fragment>
 

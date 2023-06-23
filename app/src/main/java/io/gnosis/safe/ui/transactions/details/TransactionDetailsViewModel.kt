@@ -39,16 +39,21 @@ class TransactionDetailsViewModel
     fun loadDetails(txId: String) {
         safeLaunch {
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-            txDetails = transactionRepository.getTransactionDetails(safeRepository.getActiveSafe()!!.chainId, txId)
+            txDetails = transactionRepository.getTransactionDetails(
+                safeRepository.getActiveSafe()!!.chainId,
+                txId
+            )
             val safes = safeRepository.getSafes()
 
             val executionInfo = txDetails?.detailedExecutionInfo
             val owners = credentialsRepository.owners()
 
             var canSign = false
+            var canExecute = false
             var safeOwner = false
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                 canSign = canBeSignedFromDevice(executionInfo, owners)
+                canExecute = canBeExecutedFromDevice(executionInfo, owners)
                 safeOwner = isOwner(executionInfo, owners)
             }
 
@@ -59,6 +64,7 @@ class TransactionDetailsViewModel
                         txDetails?.toTransactionDetailsViewData(
                             safes = safes,
                             canSign = canSign,
+                            canExecute = canExecute,
                             owners = owners,
                             hasOwnerKey = safeOwner
                         )
@@ -77,7 +83,8 @@ class TransactionDetailsViewModel
         status == TransactionStatus.AWAITING_CONFIRMATIONS &&
                 owners.isNotEmpty() &&
                 owners.any { owner ->
-                    executionInfo.signers.map { it.value }.contains(owner.address) && !executionInfo.confirmations.map { it.signer.value }
+                    executionInfo.signers.map { it.value }
+                        .contains(owner.address) && !executionInfo.confirmations.map { it.signer.value }
                         .contains(owner.address)
                 }
 
@@ -92,6 +99,14 @@ class TransactionDetailsViewModel
                 localOwners.any { owner ->
                     possibleSigners.contains(owner.address) && !signedBy.contains(owner.address)
                 }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    suspend fun canBeExecutedFromDevice(
+        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
+        localOwners: List<Owner>
+    ): Boolean {
+        return localOwners.isNotEmpty() && executionInfo.confirmations.size == executionInfo.confirmationsRequired
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -120,9 +135,11 @@ class TransactionDetailsViewModel
             val addressInfoIndex = txDetails?.txData?.addressInfoIndex ?: emptyMap()
 
             var canSign = false
+            var canExecute = false
             var safeOwner = false
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                 canSign = canBeSignedFromDevice(executionInfo, owners)
+                canExecute = canBeExecutedFromDevice(executionInfo, owners)
                 safeOwner = isOwner(executionInfo, owners)
             }
 
@@ -132,6 +149,7 @@ class TransactionDetailsViewModel
                         txDetails?.toTransactionDetailsViewData(
                             safes = safes,
                             canSign = canSign,
+                            canExecute = canExecute,
                             owners = owners,
                             hasOwnerKey = safeOwner
                         )
@@ -180,10 +198,15 @@ class TransactionDetailsViewModel
         }
     }
 
-    fun submitConfirmation(transaction: TransactionDetails, selectedOwnerKey: Solidity.Address, signedSafeTxHash: String? = null) {
+    fun submitConfirmation(
+        transaction: TransactionDetails,
+        selectedOwnerKey: Solidity.Address,
+        signedSafeTxHash: String? = null
+    ) {
 
-        val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-            ?: throw MissingCorrectExecutionDetailsException
+        val executionInfo =
+            txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
+                ?: throw MissingCorrectExecutionDetailsException
 
         safeLaunch {
 
@@ -192,7 +215,8 @@ class TransactionDetailsViewModel
             val safe = safeRepository.getActiveSafe()!!
 
             //FIXME: validate safeTxHash in startConfirmationFlow
-            validateSafeTxHash(safe, transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
+            validateSafeTxHash(safe, transaction, executionInfo).takeUnless { it }
+                ?.let { throw MismatchingSafeTxHash }
 
             if (credentialsRepository.ownerCount() == 0) {
                 throw MissingOwnerCredential
@@ -204,16 +228,21 @@ class TransactionDetailsViewModel
                 transactionRepository.submitConfirmation(
                     chainId = safe.chainId,
                     safeTxHash = executionInfo.safeTxHash,
-                    signedSafeTxHash = signedSafeTxHash ?: credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
+                    signedSafeTxHash = signedSafeTxHash ?: credentialsRepository.signWithOwner(
+                        selectedOwner!!,
+                        executionInfo.safeTxHash.hexToByteArray()
+                    )
                 )
             }.onSuccess {
                 txDetails = it
-                val newExecutionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-                    ?: throw MissingCorrectExecutionDetailsException
+                val newExecutionInfo =
+                    txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
+                        ?: throw MissingCorrectExecutionDetailsException
                 tracker.logTransactionConfirmed(safe.chainId)
                 val safes = safeRepository.getSafes()
 
                 val canSign = canBeSignedFromDevice(newExecutionInfo, owners)
+                val canExecute = canBeExecutedFromDevice(newExecutionInfo, owners)
                 val safeOwner = isOwner(newExecutionInfo, owners)
 
                 updateState {
@@ -222,6 +251,7 @@ class TransactionDetailsViewModel
                             it.toTransactionDetailsViewData(
                                 safes = safes,
                                 canSign = canSign,
+                                canExecute = canExecute,
                                 owners = owners,
                                 hasOwnerKey = safeOwner
                             )
@@ -245,7 +275,13 @@ class TransactionDetailsViewModel
             } ?: SemVer(0, 0, 0)
             val safeTxHash = executionInfo.safeTxHash
             val calculatedSafeTxHash =
-                calculateSafeTxHash(contractVersion, safe.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
+                calculateSafeTxHash(
+                    contractVersion,
+                    safe.chainId,
+                    safe.address,
+                    transaction,
+                    executionInfo
+                ).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }

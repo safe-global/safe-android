@@ -156,6 +156,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         isRejection = isRejection,
                         awaitingExecution = awaitingExecution,
                         canSign = txDetails.canSign,
+                        canExecute = txDetails.canExecute,
                         hasOwnerKey = txDetails.hasOwnerKey
                 )
 
@@ -165,9 +166,22 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
 
                 binding.txConfirmButton.visible(buttonState.confirmationButtonIsVisible())
+                binding.txConfirmButton.text = getString(if (buttonState.canExecute) R.string.execute else R.string.confirm)
                 binding.txConfirmButton.isEnabled = buttonState.confirmationButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
-                    viewModel.startConfirmationFlow()
+                    if (buttonState.canExecute) {
+                        // start execution flow
+                        findNavController().navigate(
+                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTxReviewFragment(
+                                chain = chain,
+                                hash = txDetails.txHash,
+                                data = paramSerializer.serializeData(txDetails.txData),
+                                executionInfo = paramSerializer.serializeExecutionInfo(txDetails.detailedExecutionInfo)
+                            )
+                        )
+                    } else {
+                        viewModel.startConfirmationFlow()
+                    }
                     binding.txConfirmButton.isEnabled = false
                 }
                 binding.txRejectButton.visible(buttonState.rejectionButtonIsVisible())

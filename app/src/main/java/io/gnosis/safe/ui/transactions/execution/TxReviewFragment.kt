@@ -10,8 +10,12 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTxReviewBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.toColor
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
 class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
@@ -20,6 +24,12 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
     private val navArgs by navArgs<TxReviewFragmentArgs>()
     private val chain by lazy { navArgs.chain }
+    private val hash by lazy { navArgs.hash }
+    private val data by lazy { navArgs.data?.let { paramSerializer.deserializeData(it) } }
+    private val executionInfo by lazy { navArgs.executionInfo?.let { paramSerializer.deserializeExecutionInfo(it) } }
+
+    @Inject
+    lateinit var paramSerializer: ParamSerializer
 
     @Inject
     lateinit var viewModel: TxReviewViewModel
@@ -53,6 +63,16 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     R.color.primary
                 )
             )
+            binding.reviewAdvanced.setOnClickListener {
+                findNavController().navigate(
+                    TxReviewFragmentDirections.actionTxReviewFragmentToTxAdvancedParamsFragment(
+                        chain = chain,
+                        hash = hash,
+                        data = paramSerializer.serializeData(data),
+                        executionInfo = paramSerializer.serializeExecutionInfo(executionInfo)
+                    )
+                )
+            }
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -63,5 +83,29 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 }
             }
         }
+    }
+
+    private fun ownerSelected(): Solidity.Address? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT
+        )
+            ?.asEthereumAddress()
+    }
+
+    private fun ownerSigned(): String? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT
+        )
+    }
+
+    private fun resetOwnerData() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+            null
+        )
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+            null
+        )
     }
 }

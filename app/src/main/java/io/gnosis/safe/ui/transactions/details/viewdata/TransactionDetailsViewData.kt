@@ -20,6 +20,7 @@ data class TransactionDetailsViewData(
     val txData: TxData?,
     val detailedExecutionInfo: DetailedExecutionInfo?,
     val canSign: Boolean,
+    val canExecute: Boolean,
     val hasOwnerKey: Boolean,
     val owners: List<Owner>
 
@@ -122,6 +123,7 @@ sealed class SettingsInfoViewData(
 fun TransactionDetails.toTransactionDetailsViewData(
     safes: List<Safe>,
     canSign: Boolean,
+    canExecute: Boolean,
     owners: List<Owner>,
     hasOwnerKey: Boolean
 ): TransactionDetailsViewData =
@@ -137,6 +139,7 @@ fun TransactionDetails.toTransactionDetailsViewData(
         txData = txData,
         detailedExecutionInfo = detailedExecutionInfo,
         canSign = canSign,
+        canExecute = canExecute,
         hasOwnerKey = hasOwnerKey,
         owners = owners
     )
