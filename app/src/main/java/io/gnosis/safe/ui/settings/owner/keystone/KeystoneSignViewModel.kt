@@ -43,6 +43,10 @@ class KeystoneSignViewModel
         const val UR_PREFIX_OF_SIGNATURE = "UR:ETH-SIGNATURE"
     }
 
+    init {
+        sdk.resetQRDecoder()
+    }
+
     override fun initialState() = KeystoneSignState(ViewAction.None)
 
     fun setSignRequestUREncoder(
