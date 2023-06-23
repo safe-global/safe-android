@@ -35,6 +35,7 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
     private val missingSigners by lazy { navArgs.missingSigners }
     private val signingMode by lazy { navArgs.signingMode }
+    private val chain by lazy { navArgs.chain }
     private val safeTxHash by lazy { navArgs.safeTxHash }
 
     lateinit var adapter: OwnerListAdapter
@@ -135,7 +136,7 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     }
 
     override fun onOwnerClick(owner: Solidity.Address, type: Owner.Type) {
-        viewModel.selectKeyForSigning(owner, type, signingMode, safeTxHash)
+        viewModel.selectKeyForSigning(owner, type, signingMode, chain, safeTxHash)
     }
 
     private fun showList() {

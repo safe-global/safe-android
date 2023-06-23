@@ -514,6 +514,8 @@ class TransactionDetailsViewModelTest {
             val testObserver = TestLiveDataObserver<TransactionDetailsViewState>()
             val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
             val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+            coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
@@ -538,6 +540,7 @@ class TransactionDetailsViewModelTest {
                                 "0xf2cea96575d6b10f51d9af3b10e3e4e5738aa6bd"
                             ).toTypedArray(),
                             signingMode = SigningMode.CONFIRMATION,
+                            chain = Chain.DEFAULT_CHAIN,
                             safeTxHash = "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67"
                         )
                     ).toString(), viewAction.toString()

@@ -284,6 +284,9 @@
             android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoLedgerFragment"
             app:destination="@id/ownerInfoLedgerFragment" />
 
+        <action
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoKeystoneFragment"
+            app:destination="@id/ownerInfoKeystoneFragment" />
     </fragment>
 
     <fragment
@@ -307,6 +310,39 @@
         <action
             android:id="@+id/action_ownerInfoLedgerFragment_to_ledgerDeviceListFragment"
             app:destination="@id/ledgerDeviceListFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoKeystoneFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoKeystoneFragment"
+        android:label="OwnerInfoKeystoneFragment"
+        tools:layout="@layout/fragment_owner_info_keystone">
+
+        <action
+            android:id="@+id/action_ownerInfoKeystoneFragment_to_keystoneOwnerSelectionFragment"
+            app:destination="@id/keystoneOwnerSelectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/keystoneOwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.keystone.KeystoneOwnerSelectionFragment"
+        android:label="KeystoneOwnerSelectionFragment"
+        tools:layout="@layout/fragment_keystone_owner_selection">
+
+        <argument
+            android:name="hdKey"
+            app:argType="com.keystone.module.HDKey"
+            app:nullable="true" />
+
+        <argument
+            android:name="multiHDKeys"
+            app:argType="com.keystone.module.MultiHDKeys"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_keystoneOwnerSelectionFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
 
     </fragment>
 
@@ -398,6 +434,12 @@
 
         <argument
             android:name="derivationPathWithIndex"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <argument
+            android:name="sourceFingerprint"
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null"/>
@@ -819,6 +861,11 @@
             app:destination="@id/ledgerDeviceListFragment"
             app:popUpTo="@id/signingOwnerSelectionFragment" />
 
+        <action
+            android:id="@+id/action_signingOwnerSelectionFragment_to_keystoneRequestSignatureFragment"
+            app:destination="@id/keystoneRequestSignatureFragment"
+            app:popUpTo="@id/signingOwnerSelectionFragment" />
+
         <argument
             android:name="missingSigners"
             app:argType="string[]"
@@ -827,6 +874,38 @@
         <argument
             android:name="signingMode"
             app:argType="io.gnosis.safe.ui.transactions.details.SigningMode" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="safeTxHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/keystoneRequestSignatureFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.keystone.KeystoneRequestSignatureFragment"
+        android:label="KeystoneRequestSignatureFragment"
+        tools:layout="@layout/fragment_keystone_request_signature">
+
+        <argument
+            android:name="owner"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="signingMode"
+            app:argType="io.gnosis.safe.ui.transactions.details.SigningMode" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
         <argument
             android:name="safeTxHash"

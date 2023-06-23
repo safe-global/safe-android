@@ -99,6 +99,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
                 android:background="@color/separator" />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/item_connect_keystone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background_secondary"
+                app:setting_name="@string/signing_owner_connect_keystone_title"
+                app:setting_description="@string/signing_owner_connect_keystone_desc"
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_keystone_24dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/separator" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

@@ -33,6 +33,10 @@ class Tracker internal constructor(
         firebaseAnalytics.setUserProperty(Param.NUM_KEYS_LEDGER, numKeysLedger.toString())
     }
 
+    fun setNumKeysKeystone(numKeysKeystone: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_KEYS_KEYSTONE, numKeysKeystone.toString())
+    }
+
     fun setPushInfo(enabled: Boolean) {
         firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
@@ -97,6 +101,10 @@ class Tracker internal constructor(
 
     fun logLedgerKeyImported() {
         logEvent(Event.KEY_IMPORTED_LEDGER, null)
+    }
+
+    fun logKeystoneKeyImported() {
+        logEvent(Event.KEY_IMPORTED_KEYSTONE, null)
     }
 
     fun logKeyDeleted() {
@@ -207,11 +215,14 @@ class Tracker internal constructor(
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
         val KEY_IMPORTED_LEDGER = "user_ledger_nano_x_key_imported"
+        val KEY_IMPORTED_KEYSTONE = "user_keystone_key_imported"
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
+        val TRANSACTION_CONFIRMED_KEYSTONE = "user_transaction_confirmed_keystone"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
         val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
+        val TRANSACTION_REJECTED_KEYSTONE = "user_transaction_rejected_keystone"
         val TRANSACTION_EXEC_EDIT_FEE_FIELDS = "user_edit_exec_tx_fee_fields"
         val TRANSACTION_EXEC_KEY_CHANGE = "user_select_exec_key_change"
         val TRANSACTION_EXEC_FAILED = "user_exec_tx_failed"
@@ -236,6 +247,7 @@ class Tracker internal constructor(
         val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
         val NUM_KEYS_LEDGER = "num_keys_ledger_nano_x"
+        val NUM_KEYS_KEYSTONE = "num_keys_keystone"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
         val TX_EXEC_FIELDS = "fields"
@@ -289,6 +301,7 @@ enum class ScreenId(val value: String) {
     OWNER_INFO("screen_owner_info"),
     OWNER_GENERATE_INFO("screen_owner_generate_info"),
     OWNER_LEDGER_INFO("screen_owner_ledger_nano_x_info"),
+    OWNER_KEYSTONE_INFO("screen_owner_keystone_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
     OWNER_ENTER_NAME("screen_owner_enter_name"),
     OWNER_EDIT_NAME("screen_owner_edit_name"),
@@ -329,6 +342,7 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_EDIT_NAME("screen_settings_safe_edit_name"),
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
+    SCANNER_KEYSTONE("screen_keystone_scan"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
     OWNER_SELECT_LEDGER_ACCOUNT("screen_owner_ledger_account"),
     PASSCODE_CREATE("screen_passcode_create"),
@@ -341,5 +355,7 @@ enum class ScreenId(val value: String) {
     UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
     UPDATE_NEW_VERSION("screen_update_new_version"),
     LEDGER_DEVICE_LIST("screen_ledger_nano_x_device"),
-    LEDGER_SIGN("screen_ledger_nano_x_sign")
+    LEDGER_SIGN("screen_ledger_nano_x_sign"),
+    KEYSTONE_OWNER_SELECTION("screen_keystone_owner_selection"),
+    KEYSTONE_REQUEST_SIGNATURE("screen_keystone_request_signature")
 }

@@ -31,12 +31,15 @@ import io.gnosis.safe.ui.settings.owner.export.OwnerExportKeyFragment
 import io.gnosis.safe.ui.settings.owner.export.OwnerExportSeedFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
+import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoKeystoneFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneRequestSignatureFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerTabsFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerSignDialog
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneOwnerSelectionFragment
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment
@@ -108,9 +111,13 @@ interface ViewComponent {
 
     fun inject(fragment: OwnerInfoLedgerFragment)
 
+    fun inject(fragment: OwnerInfoKeystoneFragment)
+
     fun inject(fragment: OwnerSelectionFragment)
 
     fun inject(fragment: LedgerOwnerSelectionFragment)
+
+    fun inject(fragment: KeystoneOwnerSelectionFragment)
 
     fun inject(fragment: LedgerTabsFragment)
 
@@ -191,6 +198,8 @@ interface ViewComponent {
     fun inject(fragment: UpdatesFragment)
 
     fun inject(fragment: LedgerDeviceListFragment)
+
+    fun inject(fragment: KeystoneRequestSignatureFragment)
 
     // Dialogs
     fun inject(dialog: EnsInputDialog)

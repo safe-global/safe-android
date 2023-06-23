@@ -75,6 +75,7 @@
     <string name="error_description_tx_list">Failed to load transactions</string>
     <string name="error_description_tx_details">Failed to load transaction details</string>
     <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
+    <string name="error_description_tx_sign">Failed to sign transaction</string>
 
     <string name="error_description_tx_rejection">Failed to reject transaction</string>
     <string name="error_description_seed_phrase">Can\'t use this seed phrase or private key</string>
@@ -123,6 +124,8 @@
     <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
     <string name="error_client_address_not_matching_network_reason">This address is not matching the selected network</string>
     <string name="error_client_address_not_matching_network_fix">Please use a different address or switch network</string>
+    <string name="error_client_keystone_sign_reason">Can\'t understand received signature</string>
+    <string name="error_client_keystone_sign_fix">Please reach out to the support</string>
 
     <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
@@ -175,6 +178,7 @@
     <string name="coins_asset_send_error_amount_zero">Amount should be greater than 0</string>
     <string name="coins_asset_send_error_amount_too_big">Insufficient funds</string>
     <string name="coins_asset_send_error_amount_decimals">Should be 1 to %1$d decimals</string>
+    <string name="coins_asset_get_signature">Get signature</string>
 
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
@@ -459,6 +463,8 @@
     <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Safe Account</string>
     <string name="signing_owner_connect_ledger_title">Connect Ledger Nano X</string>
     <string name="signing_owner_connect_ledger_desc">Add a key from your hardware wallet</string>
+    <string name="signing_owner_connect_keystone_title">Connect Keystone</string>
+    <string name="signing_owner_connect_keystone_desc">Connect your key via QR code</string>
 
     <string name="signing_owner_dialog_remove">Remove</string>
     <string name="signing_owner_dialog_cancel">Cancel</string>
@@ -486,6 +492,7 @@
     <string name="signing_owner_details_owner_type_imported">Imported</string>
     <string name="signing_owner_details_owner_type_generated">Generated</string>
     <string name="signing_owner_details_owner_type_ledger">Ledger Nano X</string>
+    <string name="signing_owner_details_owner_type_keystone">Keystone</string>
     <string name="signing_owner_list_error_loading_data">Could not load more owner addresses</string>
 
     <string name="signing_owner_name_title">Enter key name</string>
@@ -497,6 +504,10 @@
     <string name="signing_owner_selection_list_title">Select owner keys</string>
     <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
     <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
+    <string name="signing_owner_request_signature">Request Signature</string>
+    <string name="signing_owner_request_signature_headline">Scan this QR code with your Keystone wallet</string>
+    <string name="signing_owner_request_signature_description">Sign the transaction with your wallet, then click on Get signature.</string>
+    <string name="signing_owner_keystone_scanner_description">Scan the QR code on the Keystone wallet to confirm the transaction.</string>
 
     <string name="signing_owner_list_add">Add</string>
     <string name="signing_owner_list_title">Owner keys</string>
@@ -574,6 +585,15 @@
     <string name="import_owner_key_ledger_pair_your_ledger_device_desc">Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="import_owner_key_ledger_how_secure_is_that_title">How secure is that?</string>
     <string name="import_owner_key_ledger_how_secure_is_that_desc">Your key will remain on your Ledger wallet. We do not store it in the app.</string>
+
+    <string name="import_owner_key_keystone_title">Connect Keystone</string>
+    <string name="import_owner_key_keystone_how_does_it_work_title">How does it work?</string>
+    <string name="import_owner_key_keystone_how_does_it_work_desc">Connect your Keystone device and select a key. If it is an owner of your Safe you can sign transactions.</string>
+    <string name="import_owner_key_keystone_secured_qr_codes_title">Secured QR codes</string>
+    <string name="import_owner_key_keystone_secured_qr_codes_desc">Sign anywhere without USB cables or unstable bluetooth via secured and verifiable QR codes.</string>
+    <string name="import_owner_key_keystone_how_secure_is_that_title">How secure is that?</string>
+    <string name="import_owner_key_keystone_how_secure_is_that_desc">Your key will remain on your Keystone wallet. We do not store it in the app.</string>
+    <string name="import_owner_key_keystone_scanner_description">Scan your Keystone wallet QR code to connect.</string>
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>

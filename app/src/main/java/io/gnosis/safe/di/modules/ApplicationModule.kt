@@ -40,6 +40,7 @@ import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.PublicKeyAndAddressDerivator
 import io.gnosis.safe.workers.HeimdallWorkerFactory
 import io.intercom.android.sdk.push.IntercomPushClient
 import okhttp3.CertificatePinner
@@ -241,6 +242,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesMnemonicKeyAndAddressDerivator(bip39: Bip39): MnemonicKeyAndAddressDerivator = MnemonicKeyAndAddressDerivator(bip39)
+
+    @Provides
+    @Singleton
+    fun providesPublicKeyAndAddressDerivator(): PublicKeyAndAddressDerivator = PublicKeyAndAddressDerivator()
 
     @Provides
     @Singleton

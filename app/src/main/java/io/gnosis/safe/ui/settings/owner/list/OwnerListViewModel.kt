@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -45,7 +46,13 @@ class OwnerListViewModel
         }
     }
 
-    fun selectKeyForSigning(owner: Solidity.Address, type: Owner.Type, signingMode: SigningMode, safeTxHash: String? = null) {
+    fun selectKeyForSigning(
+        owner: Solidity.Address,
+        type: Owner.Type,
+        signingMode: SigningMode,
+        chain: Chain,
+        safeTxHash: String? = null
+    ) {
         val isConfirmation = signingMode == SigningMode.CONFIRMATION || signingMode == SigningMode.INITIATE_TRANSFER
         safeLaunch {
             when(type) {
@@ -61,6 +68,21 @@ class OwnerListViewModel
                             )
                         )
                     }
+                }
+                Owner.Type.KEYSTONE -> {
+                    updateState {
+                        OwnerListState(
+                            ViewAction.NavigateTo(
+                                SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToKeystoneRequestSignatureFragment(
+                                    owner = owner.asEthereumAddressString(),
+                                    signingMode = signingMode,
+                                    chain = chain,
+                                    safeTxHash = safeTxHash
+                                )
+                            )
+                        )
+                    }
+                    updateState { OwnerListState(ViewAction.None) }
                 }
                 else -> {
                     if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {

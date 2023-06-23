@@ -86,6 +86,27 @@ class OwnerEnterNameViewModel
             }
         }
     }
+
+    fun importKeystone(address: Solidity.Address, name: String, path: String, sourceFingerprint: String) {
+        safeLaunch {
+            credentialsRepository.saveKeystoneOwner(address, name, path, sourceFingerprint)
+            settingsHandler.showOwnerBanner = false
+            settingsHandler.showOwnerScreen = false
+            tracker.logKeystoneKeyImported()
+            tracker.setNumKeysKeystone(credentialsRepository.ownerCount(Owner.Type.KEYSTONE))
+            notificationRepository.registerSafes()
+
+            updateState {
+                OwnerEnterNameState(
+                    if (settingsHandler.usePasscode) {
+                        ViewAction.CloseScreen
+                    } else {
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.KEYSTONE.name, address.asEthereumAddressString()))
+                    }
+                )
+            }
+        }
+    }
 }
 
 data class OwnerEnterNameState(

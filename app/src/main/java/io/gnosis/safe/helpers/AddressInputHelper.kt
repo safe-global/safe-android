@@ -10,6 +10,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.databinding.BottomSheetAddressInputBinding
+import io.gnosis.safe.qrscanner.HasFinished
+import io.gnosis.safe.qrscanner.IsValid
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
@@ -69,7 +71,10 @@ class AddressInputHelper(
                 }
 
                 bottomSheetAddressInputQrTouch.setOnClickListener {
-                    QRCodeScanActivity.startForResult(fragment)
+                    QRCodeScanActivity.startForResult(
+                        fragment = fragment,
+                        scannedValueValidator = ::validator
+                    )
                     tracker.logScreen(ScreenId.SCANNER, selectedChain.chainId)
                     dismiss()
                 }
@@ -166,5 +171,16 @@ class AddressInputHelper(
 
     private fun handleError(error: Throwable, input: String) {
         errorCallback.invoke(error, input)
+    }
+
+    private fun validator(scannedValue: String): Pair<IsValid, HasFinished> {
+        val address =
+            if (scannedValue.contains(":")) {
+                parseEthereumAddress(scannedValue.split(":")[1])
+            } else {
+                parseEthereumAddress(scannedValue)
+            }
+
+        return Pair(address != null, true)
     }
 }

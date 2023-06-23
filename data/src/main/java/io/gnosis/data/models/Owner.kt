@@ -30,7 +30,10 @@ data class Owner(
     val seedPhrase: EncryptedString? = null,
 
     @ColumnInfo(name = COL_KEY_DERIVATION_PATH)
-    val keyDerivationPath: String? = null
+    val keyDerivationPath: String? = null,
+
+    @ColumnInfo(name = COL_SOURCE_FINGERPRINT)
+    val sourceFingerprint: String? = null
 
     //FIXME: add device uuid?
 ) {
@@ -38,13 +41,15 @@ data class Owner(
         // add types here
         IMPORTED(0),
         GENERATED(1),
-        LEDGER_NANO_X(2);
+        LEDGER_NANO_X(2),
+        KEYSTONE(3);
 
         companion object {
             fun get(value: Int) = when (value) {
                 0 -> IMPORTED
                 1 -> GENERATED
                 2 -> LEDGER_NANO_X
+                3 -> KEYSTONE
                 else -> IMPORTED
             }
         }
@@ -59,6 +64,7 @@ data class Owner(
         const val COL_PRIVATE_KEY = "private_key"
         const val COL_SEED_PHRASE = "seed_phrase"
         const val COL_KEY_DERIVATION_PATH = "derivation_path"
+        const val COL_SOURCE_FINGERPRINT = "source_fingerprint"
     }
 }
 

@@ -182,6 +182,7 @@ class ConfirmRejectionViewModel
                                     it.value.asEthereumAddressString()
                                 }.toTypedArray(),
                                 signingMode = SigningMode.REJECTION,
+                                chain = safe.chain,
                                 safeTxHash = rejectionTxHash
                             )
                         )
