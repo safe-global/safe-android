@@ -57,7 +57,6 @@ class ConfirmRejectionViewModel
                         )
                     )
                 }
-                updateState { ConfirmationRejectedViewState(ViewAction.None) }
             } else {
                 updateState { ConfirmationRejectedViewState(ConfirmRejection(owner = owner)) }
             }

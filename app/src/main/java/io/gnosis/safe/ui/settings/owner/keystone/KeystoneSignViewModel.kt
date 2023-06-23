@@ -97,6 +97,9 @@ class KeystoneSignViewModel
             updateState {
                 KeystoneSignState(UnsignedUrReady(qrCode))
             }
+            updateState {
+                KeystoneSignState(ViewAction.None)
+            }
         }
     }
 
@@ -128,6 +131,7 @@ class KeystoneSignViewModel
                             KeystoneSignState(KeystoneSignature(it))
                         } ?: KeystoneSignState(ViewAction.ShowError(KeystoneSignFailed()))
                     }
+                    updateState { KeystoneSignState(ViewAction.None) }
                 }
             }
         }
