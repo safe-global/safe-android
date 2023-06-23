@@ -13,6 +13,7 @@ import io.gnosis.safe.databinding.ViewAddressItemBinding
 import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.imageRes16dp
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -52,14 +53,10 @@ class AddressItem @JvmOverloads constructor(
             address.setOnClickListener {
                 context.copyToClipboard(
                     context.getString(R.string.address_copied),
-                    if (copyChainPrefix) {
-                        if (address.text.startsWith("${chain?.shortName}:", true)) {
-                            address.text.toString()
-                        } else {
-                            "${chain?.shortName}:${address.text}"
-                        }
+                    if (copyChainPrefix && !chain?.shortName.isNullOrBlank()) {
+                        "${chain?.shortName}:{$value?.asEthereumAddressChecksumString()}"
                     } else {
-                        address.text.removePrefix("${chain?.shortName}:").toString()
+                        "${value?.asEthereumAddressChecksumString()}"
                     }
                 ) {
                     snackbar(view = root, textId = R.string.copied_success)
