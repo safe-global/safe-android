@@ -50,11 +50,11 @@ class AddressItem @JvmOverloads constructor(
                     BlockExplorer.forChain(chain)?.showAddress(context, value)
                 }
             } ?: link.visible(false, View.INVISIBLE)
-            address.setOnClickListener {
+            root.setOnClickListener {
                 context.copyToClipboard(
                     context.getString(R.string.address_copied),
                     if (copyChainPrefix && !chain?.shortName.isNullOrBlank()) {
-                        "${chain?.shortName}:{$value?.asEthereumAddressChecksumString()}"
+                        "${chain?.shortName}:${value?.asEthereumAddressChecksumString()}"
                     } else {
                         "${value?.asEthereumAddressChecksumString()}"
                     }
