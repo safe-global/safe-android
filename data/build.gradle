@@ -32,7 +32,7 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client.staging.5afe.dev/"')
+            buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client-nest.staging.5afe.dev/"')
             buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
@@ -43,7 +43,7 @@ android {
         }
 
         profile {
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client-nest.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
@@ -54,7 +54,7 @@ android {
         }
 
         unsafe {
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client-nest.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
@@ -65,7 +65,7 @@ android {
         }
 
         internal {
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client-nest.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
