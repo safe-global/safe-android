@@ -40,6 +40,8 @@ class KeystoneRequestSignatureFragment :
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
