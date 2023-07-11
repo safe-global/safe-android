@@ -63,6 +63,19 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     R.color.primary
                 )
             )
+            fromAddressItem.name = viewModel.activeSafe.localName
+            fromAddressItem.setAddress(
+                chain = chain,
+                value = executionInfo.address,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+            )
+            toAddressItem.setAddress(
+                chain,
+                toAddress,
+                viewModel.isChainPrefixPrependEnabled(),
+                viewModel.isChainPrefixCopyEnabled()
+            )
             binding.reviewAdvanced.setOnClickListener {
                 findNavController().navigate(
                     TxReviewFragmentDirections.actionTxReviewFragmentToTxAdvancedParamsFragment(
