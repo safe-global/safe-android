@@ -68,7 +68,7 @@ sealed class DetailedExecutionInfo(
         @Json(name = "signers")
         val signers: List<AddressInfo> = emptyList(),
         @Json(name = "rejectors")
-        val rejectors: List<AddressInfo> = emptyList(),
+        val rejectors: List<AddressInfo>? = emptyList(),
         @Json(name = "confirmationsRequired")
         val confirmationsRequired: Int = 0,
         @Json(name = "confirmations")
