@@ -147,7 +147,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
 
-                val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
+                val hasBeenRejected = executionInfo.rejectors?.isNotEmpty() ?: false
                 val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
                 val awaitingExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
                 val buttonState = ButtonStateHelper(

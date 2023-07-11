@@ -143,7 +143,7 @@ class ConfirmRejectionViewModel
         val executionInfo = txDetails?.detailedExecutionInfo
         if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
             val allPossibleSigners = executionInfo.signers
-            val rejectors = executionInfo.rejectors.map { it.value }
+            val rejectors = executionInfo.rejectors?.map { it.value } ?: emptyList()
             val missingSigners = allPossibleSigners.filter { possibleSigner ->
                 rejectors.all { address ->
                     address != possibleSigner.value
