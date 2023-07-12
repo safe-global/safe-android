@@ -1,6 +1,6 @@
 dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test:runner:1.5.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:core:1.5.0'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation "io.mockk:mockk-android:${versions.mockk}"

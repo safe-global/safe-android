@@ -6,7 +6,7 @@ ext {
             firebase_crashlytics_gradle      : '2.9.1',
             google_services                  : '4.3.13',
             kotlin                           : '1.6.20',
-            jacoco                           : '0.8.8',
+            jacoco                           : '0.8.10',
 
             // Runtime dependencies
             androidx_app_compat             : '1.5.1',
