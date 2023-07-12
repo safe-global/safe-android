@@ -30,9 +30,9 @@ class KeystoneSignViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val qrCodeGenerator: QrCodeGenerator,
-    appDispatchers: AppDispatchers
+    appDispatchers: AppDispatchers,
+    private val sdk : KeystoneSDK = KeystoneSDK()
 ) : BaseStateViewModel<KeystoneSignState>(appDispatchers) {
-    private val sdk = KeystoneSDK()
     private lateinit var encoder: UREncoder
     private lateinit var ethSignRequest: EthSignRequest
     private lateinit var signingMode: SigningMode
@@ -41,10 +41,6 @@ class KeystoneSignViewModel
 
     companion object {
         const val UR_PREFIX_OF_SIGNATURE = "UR:ETH-SIGNATURE"
-    }
-
-    init {
-        sdk.resetQRDecoder()
     }
 
     override fun initialState() = KeystoneSignState(ViewAction.None)

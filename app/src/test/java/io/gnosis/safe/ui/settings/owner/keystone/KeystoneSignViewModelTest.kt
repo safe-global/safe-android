@@ -1,10 +1,10 @@
-package io.gnosis.app.test
+package io.gnosis.safe.ui.settings.owner.keystone
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.keystone.sdk.KeystoneEthereumSDK
+import com.keystone.sdk.KeystoneSDK
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
-import io.gnosis.safe.ui.settings.owner.keystone.KeystoneSignViewModel
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -19,8 +19,9 @@ class KeystoneSignViewModelTest {
     private val credentialsRepository = mockk<CredentialsRepository>()
     private val qrCodeGenerator = mockk<QrCodeGenerator>()
     private val appDispatchers = mockk<AppDispatchers>(relaxed = true)
+    private val keystoreSdk = mockk<KeystoneSDK>()
     private val viewModel =
-        KeystoneSignViewModel(credentialsRepository, qrCodeGenerator, appDispatchers)
+        KeystoneSignViewModel(credentialsRepository, qrCodeGenerator, appDispatchers, keystoreSdk)
 
     @Test
     fun parse_signature_should_return_null_when_signature_size_less_than_65() {
