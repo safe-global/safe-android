@@ -1275,12 +1275,21 @@
             app:nullable="true" />
 
         <action
+            android:id="@+id/action_txReviewFragment_to_txEditFeeLegacyFragment"
+            app:destination="@id/txEditFeeLegacyFragment"
+            app:popUpTo="@id/txReviewFragment"/>
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_txEditFee1559Fragment"
+            app:destination="@id/txEditFee1559Fragment"
+            app:popUpTo="@id/txReviewFragment"/>
+
+        <action
             android:id="@+id/action_txReviewFragment_to_txAdvancedParamsFragment"
             app:destination="@id/txAdvancedParamsFragment"
             app:popUpTo="@id/txReviewFragment" />
 
     </fragment>
-
 
     <fragment
         android:id="@+id/txSuccessFragment"

@@ -421,6 +421,7 @@
     <string name="tx_submitted">Your transaction is submitted!</string>
     <string name="tx_submitted_desc">It normally takes some time for a transaction to be executed.</string>
     <string name="tx_submitted_done">Done</string>
+    <string name="tx_submitted_view_details">View transaction details</string>
 
     <string name="tx_exec_edit_fee">Edit transaction fee</string>
 
