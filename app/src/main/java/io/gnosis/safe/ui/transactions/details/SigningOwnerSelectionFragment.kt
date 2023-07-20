@@ -157,5 +157,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 enum class SigningMode {
     CONFIRMATION,
     REJECTION,
-    INITIATE_TRANSFER
+    INITIATE_TRANSFER,
+    EXECUTION
 }

@@ -186,11 +186,18 @@ class KeystoneSignViewModel
     CONFIRMATION, REJECTION, INITIATE_TRANSFER, DELEGATE, SIGNATURE_REQUEST -> PersonalMessage
     CREATE_SAFE, REVIEW_EXECUTION, SEND_TRANSACTION -> if (isLegacy) Transaction else TypedTransaction
     */
-    private fun SigningMode.toDataType(): KeystoneEthereumSDK.DataType {
+    private fun SigningMode.toDataType(isLegacy: Boolean = false): KeystoneEthereumSDK.DataType {
         return when (this) {
             SigningMode.CONFIRMATION -> KeystoneEthereumSDK.DataType.PersonalMessage
             SigningMode.REJECTION -> KeystoneEthereumSDK.DataType.PersonalMessage
             SigningMode.INITIATE_TRANSFER -> KeystoneEthereumSDK.DataType.PersonalMessage
+            SigningMode.EXECUTION -> {
+                if (isLegacy) {
+                    KeystoneEthereumSDK.DataType.Transaction
+                } else {
+                    KeystoneEthereumSDK.DataType.TypedTransaction
+                }
+            }
         }
     }
 }

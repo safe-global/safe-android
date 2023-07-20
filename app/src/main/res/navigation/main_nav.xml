@@ -1285,6 +1285,11 @@
             app:popUpTo="@id/txReviewFragment"/>
 
         <action
+            android:id="@+id/action_txReviewFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment"
+            app:popUpTo="@id/txReviewFragment" />
+
+        <action
             android:id="@+id/action_txReviewFragment_to_txAdvancedParamsFragment"
             app:destination="@id/txAdvancedParamsFragment"
             app:popUpTo="@id/txReviewFragment" />
