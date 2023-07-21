@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,119 +7,182 @@
     android:layout_height="match_parent"
     android:background="@color/background_secondary">
 
-    <LinearLayout
-        android:id="@+id/toolbar_layout"
-        style="@style/Toolbar"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="0"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"
-            android:src="@drawable/ic_baseline_arrow_back_24" />
-
-        <TextView
-            android:id="@+id/title"
-            style="@style/ToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_weight="1"
-            android:gravity="start"
-            android:text="@string/tx_exec_review" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/chain_ribbon"
-        style="@style/ChainRibbon"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/chain_ribbon_size"
-        tools:text="Mainnet"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
+        android:background="@color/background_secondary">
+
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
+            style="@style/Toolbar"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/ToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="@string/tx_exec_review" />
+
+        </LinearLayout>
 
         <TextView
-            style="@style/Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/coins_asset_send_amount" />
-
-        <io.gnosis.safe.ui.safe.send_funds.view.TransferAmountView
-            android:id="@+id/transfer_amount"
+            android:id="@+id/chain_ribbon"
+            style="@style/ChainRibbon"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="@dimen/chain_ribbon_size"
+            tools:text="Mainnet"
+            android:visibility="visible" />
 
-        <TextView
-            style="@style/Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_small_margin"
-            android:text="@string/coins_asset_send_from" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <io.gnosis.safe.ui.settings.view.NamedAddressItem
-            android:id="@+id/from_address_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            style="@style/Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_margin"
-            android:text="@string/coins_asset_send_to" />
-
-        <io.gnosis.safe.ui.settings.view.NamedAddressItem
-            android:id="@+id/to_address_item_known"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <io.gnosis.safe.ui.settings.view.AddressItem
-            android:id="@+id/to_address_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin" />
-
-        <io.gnosis.safe.ui.settings.view.SettingItem
-            android:id="@+id/review_advanced"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/item_setting_openable_height"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/background_secondary_selectable"
-            app:setting_name="@string/coins_asset_send_review_advanced"
-            app:setting_openable="true" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/submit_button"
-        style="@style/PrimaryButton"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginBottom="24dp"
-        android:text="@string/tx_exec_submit"
-        android:enabled="false"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="24dp"
+                android:orientation="vertical">
+
+                <ViewStub
+                    android:id="@+id/stub_transfer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/transfer_details"
+                    android:layout="@layout/tx_review_transfer" />
+
+                <ViewStub
+                    android:id="@+id/stub_settings_change"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/settings_change_details"
+                    android:layout="@layout/tx_review_settings_change" />
+
+                <ViewStub
+                    android:id="@+id/stub_custom"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/custom_details"
+                    android:layout="@layout/tx_review_custom" />
+
+                <ViewStub
+                    android:id="@+id/stub_rejection"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/rejection_details"
+                    android:layout="@layout/tx_review_rejection" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginHorizontal="@dimen/default_margin"
+                    android:orientation="vertical"
+                    android:background="@drawable/background_rounded_rectangle">
+
+                    <io.gnosis.safe.ui.settings.view.SettingItem
+                        android:id="@+id/estimated_fee"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/item_setting_openable_height"
+                        android:background="@drawable/background_secondary_selectable"
+                        app:setting_name="Estimated fee"
+                        app:setting_value="0.001 ETH"
+                        app:setting_openable="true" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/item_separator_height"
+                        android:background="@color/separator" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@color/background_primary">
+
+                        <io.gnosis.safe.ui.settings.view.SettingItem
+                            android:id="@+id/payment_method"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/item_setting_openable_height"
+                            android:background="@drawable/background_primary_selectable"
+                            app:setting_name="With an owner key"
+                            app:setting_openable="false" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/item_separator_height"
+                            android:layout_marginHorizontal="@dimen/default_margin"
+                            android:background="@color/separator" />
+
+                        <io.gnosis.safe.ui.settings.view.SettingItem
+                            android:id="@+id/select_key"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/item_setting_openable_height"
+                            android:background="@drawable/background_primary_selectable"
+                            app:setting_name="Select key"
+                            app:setting_openable="true" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <io.gnosis.safe.ui.settings.view.SettingItem
+                    android:id="@+id/review_advanced"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_setting_openable_height"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:layout_marginHorizontal="@dimen/default_margin"
+                    android:background="@drawable/background_rounded_rectangle"
+                    app:setting_name="@string/coins_asset_send_review_advanced"
+                    app:setting_openable="true" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin"
+        android:background="@color/background_secondary">
+
+        <Button
+            android:id="@+id/submit_button"
+            style="@style/PrimaryButton"
+            android:layout_width="match_parent"
+            android:text="@string/tx_exec_submit"
+            android:enabled="false" />
+
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

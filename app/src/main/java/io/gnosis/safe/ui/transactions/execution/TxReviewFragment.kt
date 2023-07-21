@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTxReviewBinding
+import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
@@ -33,6 +36,8 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
     @Inject
     lateinit var viewModel: TxReviewViewModel
+
+    private lateinit var contentBinding: ViewBinding
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -63,20 +68,47 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     R.color.primary
                 )
             )
-            fromAddressItem.name = viewModel.activeSafe.localName
-            fromAddressItem.setAddress(
-                chain = chain,
-                value = executionInfo.address,
-                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
-            )
-            toAddressItem.setAddress(
-                chain,
-                toAddress,
-                viewModel.isChainPrefixPrependEnabled(),
-                viewModel.isChainPrefixCopyEnabled()
-            )
-            binding.reviewAdvanced.setOnClickListener {
+
+            val viewStub = binding.stubTransfer
+            if (viewStub.parent != null) {
+                val inflate = viewStub.inflate()
+                contentBinding = TxReviewTransferBinding.bind(inflate)
+            }
+            val transferBinding = contentBinding as TxReviewTransferBinding
+
+            with(transferBinding) {
+                fromAddressItem.name = viewModel.activeSafe.localName
+                fromAddressItem.setAddress(
+                    chain = chain,
+                    value = viewModel.activeSafe.address,
+                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                )
+            }
+
+            estimatedFee.setOnClickListener {
+                //TODO: pass actual data
+                findNavController().navigate(
+                    TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
+                        chain = chain,
+                        nonce = "1",
+                        minNonce = "0",
+                        gasLimit = "1",
+                        maxPriorityFee = "1",
+                        maxFee = "1"
+                    )
+                )
+            }
+            selectKey.setOnClickListener {
+                findNavController().navigate(
+                    TxReviewFragmentDirections.actionTxReviewFragmentToSigningOwnerSelectionFragment(
+                        missingSigners = null,
+                        signingMode = SigningMode.EXECUTION,
+                        chain = chain
+                    )
+                )
+            }
+            reviewAdvanced.setOnClickListener {
                 findNavController().navigate(
                     TxReviewFragmentDirections.actionTxReviewFragmentToTxAdvancedParamsFragment(
                         chain = chain,
