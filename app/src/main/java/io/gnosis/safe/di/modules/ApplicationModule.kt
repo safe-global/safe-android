@@ -11,6 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.keystone.sdk.KeystoneSDK
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -362,4 +363,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesIntercomPushClient(): IntercomPushClient = IntercomPushClient()
+
+    @Provides
+    fun providesKeystoneSDK(): KeystoneSDK = KeystoneSDK()
 }

@@ -1,5 +1,7 @@
 # Safe Android App 
-[![codecov](https://codecov.io/gh/gnosis/safe-android/branch/master/graph/badge.svg)](https://codecov.io/gh/gnosis/safe-android)
+
+[//]: # (unkomment after test report is working)
+[//]: # ([![codecov]&#40;https://codecov.io/gh/safe-global/safe-android/branch/master/graph/badge.svg&#41;]&#40;https://codecov.io/gh/safe-global/safe-android&#41;)
 
 ## Goal
 The Safe aims to provide all users with a convenient, yet secure way to manage their funds and interact with decentralized applications on Ethereum. 
