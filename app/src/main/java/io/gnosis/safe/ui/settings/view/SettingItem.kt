@@ -2,9 +2,11 @@ package io.gnosis.safe.ui.settings.view
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewSettingsItemBinding
 import pm.gnosis.svalinn.common.utils.visible
@@ -16,7 +18,12 @@ class SettingItem @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding by lazy { ViewSettingsItemBinding.inflate(LayoutInflater.from(context), this) }
+    private val binding by lazy {
+        ViewSettingsItemBinding.inflate(
+            LayoutInflater.from(context),
+            this
+        )
+    }
 
     init {
         readAttributesAndSetupFields(context, attrs)
@@ -59,6 +66,14 @@ class SettingItem @JvmOverloads constructor(
             field = value
         }
 
+    var subValue: CharSequence? = null
+        set(value) {
+            binding.value.setTextColor(ContextCompat.getColor(context, R.color.label_primary))
+            binding.subValue.visible(!value.isNullOrBlank())
+            binding.subValue.text = value
+            field = value
+        }
+
     var settingImage: Int? = null
         set(value) {
             value?.let {
@@ -88,6 +103,11 @@ class SettingItem @JvmOverloads constructor(
         name = a.getString(R.styleable.SettingItem_setting_name)
         description = a.getString(R.styleable.SettingItem_setting_description)
         value = a.getString(R.styleable.SettingItem_setting_value)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding.value.setTextAppearance(a.getResourceId(R.styleable.SettingItem_setting_value_style, R.style.TextMedium))
+        } else {
+            binding.value.setTextAppearance(context, a.getResourceId(R.styleable.SettingItem_setting_value_style, R.style.TextMedium))
+        }
         val imageResId = a.getResourceId(R.styleable.SettingItem_setting_image, -1)
         if (imageResId > 0) {
             binding.image.setImageResource(imageResId)
