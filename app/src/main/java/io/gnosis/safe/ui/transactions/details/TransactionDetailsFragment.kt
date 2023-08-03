@@ -364,7 +364,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         txDataDecodedSeparator.visible(false)
                     } else {
 
-                        if (decodedData.method.toLowerCase() == "multisend") {
+                        if (decodedData.method.lowercase() == "multisend") {
 
                             val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
 
