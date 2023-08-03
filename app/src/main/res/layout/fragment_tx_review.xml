@@ -140,13 +140,11 @@
                             android:layout_marginHorizontal="@dimen/default_margin"
                             android:background="@color/separator" />
 
-                        <io.gnosis.safe.ui.settings.view.SettingItem
+                        <io.gnosis.safe.ui.transactions.execution.view.SelectedKeyItem
                             android:id="@+id/select_key"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/item_setting_openable_height"
-                            android:background="@drawable/background_primary_selectable"
-                            app:setting_name="Select key"
-                            app:setting_openable="true" />
+                            android:background="@drawable/background_primary_selectable" />
 
                     </LinearLayout>
 

@@ -29,7 +29,13 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
     private val chain by lazy { navArgs.chain }
     private val hash by lazy { navArgs.hash }
     private val data by lazy { navArgs.data?.let { paramSerializer.deserializeData(it) } }
-    private val executionInfo by lazy { navArgs.executionInfo?.let { paramSerializer.deserializeExecutionInfo(it) } }
+    private val executionInfo by lazy {
+        navArgs.executionInfo?.let {
+            paramSerializer.deserializeExecutionInfo(
+                it
+            )
+        }
+    }
 
     @Inject
     lateinit var paramSerializer: ParamSerializer
@@ -42,6 +48,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
+    override fun viewModelProvider() = this
 
     override fun inflateBinding(
         inflater: LayoutInflater,
@@ -123,6 +130,13 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             when (state) {
                 is TxReviewState -> {
                     state.viewAction?.let { action ->
+                        when (action) {
+                            is DefaultKey -> {
+                                with(binding) {
+                                    selectKey.setKey(action.key)
+                                }
+                            }
+                        }
 
                     }
                 }

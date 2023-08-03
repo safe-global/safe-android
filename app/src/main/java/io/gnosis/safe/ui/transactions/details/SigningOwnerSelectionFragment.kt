@@ -78,6 +78,10 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                 SigningMode.INITIATE_TRANSFER -> {
                     description.setText(R.string.coins_asset_send_select_owner)
                 }
+                SigningMode.EXECUTION -> {
+                    title.setText(R.string.signing_owner_selection_list_execution_title)
+                    description.setText(R.string.signing_owner_selection_list_execution_description)
+                }
             }
 
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)

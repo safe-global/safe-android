@@ -507,8 +507,10 @@
     <string name="signing_owner_name_edit_remove">Remove owner key</string>
 
     <string name="signing_owner_selection_list_title">Select owner keys</string>
+    <string name="signing_owner_selection_list_execution_title">Select an execution key</string>
     <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
     <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
+    <string name="signing_owner_selection_list_execution_description">The selected key will be used to execute this transaction.</string>
     <string name="signing_owner_request_signature">Request Signature</string>
     <string name="signing_owner_request_signature_headline">Scan this QR code with your Keystone wallet</string>
     <string name="signing_owner_request_signature_description">Sign the transaction with your wallet, then click on Get signature.</string>
