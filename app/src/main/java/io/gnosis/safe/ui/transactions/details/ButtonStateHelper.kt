@@ -13,13 +13,11 @@ class ButtonStateHelper(
         when {
             isRejection && awaitingConfirmations && canSign -> true
             isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
+            isRejection && awaitingExecution && canExecute && !hasBeenRejected -> true
 
             !isRejection && awaitingConfirmations && canSign -> true
             !isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
-
-            !isRejection && awaitingExecution && !hasBeenRejected && canExecute -> true
-
-            !isRejection && awaitingExecution && hasOwnerKey && hasBeenRejected -> false
+            !isRejection && awaitingExecution && canExecute && !hasBeenRejected -> true
 
             else -> false
         }
@@ -29,9 +27,9 @@ class ButtonStateHelper(
         isRejection && awaitingConfirmations && canSign -> true
         isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> false
 
-        !isRejection && awaitingExecution && !hasBeenRejected && canExecute -> true
-
         !isRejection && awaitingConfirmations && canSign -> true
+
+        awaitingExecution && canExecute && hasOwnerKey -> true
 
         else -> false
     }

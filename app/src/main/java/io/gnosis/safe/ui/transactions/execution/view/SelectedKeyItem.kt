@@ -17,12 +17,24 @@ class SelectedKeyItem @JvmOverloads constructor(
 
     private val binding = ViewSelectedKeyItemBinding.inflate(LayoutInflater.from(context), this)
 
-    fun setKey(keyData: OwnerViewData, balance: String? = null) {
+    fun setKey(keyData: OwnerViewData?, balance: String? = null) {
         with(binding) {
-            keyName.text = keyData.name
-            blockies.setAddress(keyData.address)
-            keyType.setImageResource(keyData.type.imageRes16dp())
-            keyDataContainer.visible(true)
+            keyData?.let {
+                keyName.text = keyData.name
+                blockies.setAddress(keyData.address)
+                keyType.setImageResource(keyData.type.imageRes16dp())
+                keyDataContainer.visible(true)
+                keyBalance.text = balance
+                keyBalance.visible(!balance.isNullOrBlank())
+            } ?: run {
+                keyDataContainer.visible(false)
+                keyBalance.visible(false)
+            }
+        }
+    }
+
+    fun updateBalance(balance: String? = null) {
+        with(binding) {
             keyBalance.text = balance
             keyBalance.visible(!balance.isNullOrBlank())
         }

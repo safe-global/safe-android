@@ -21,6 +21,8 @@ class TxReviewViewModel
     lateinit var activeSafe: Safe
         private set
 
+    private var executionKey: OwnerViewData? = null
+
     init {
         safeLaunch {
             activeSafe = safeRepository.getActiveSafe()!!
@@ -40,8 +42,9 @@ class TxReviewViewModel
                         localOwner.address == it
                     }
                 }
+                executionKey = acceptedOwners.first()
                 updateState {
-                    TxReviewState(viewAction = DefaultKey(acceptedOwners.first()))
+                    TxReviewState(viewAction = DefaultKey(executionKey))
                 }
             }
         }
@@ -57,6 +60,6 @@ data class TxReviewState(
 ) : BaseStateViewModel.State
 
 data class DefaultKey(
-    val key: OwnerViewData
+    val key: OwnerViewData?
 ) : BaseStateViewModel.ViewAction
 
