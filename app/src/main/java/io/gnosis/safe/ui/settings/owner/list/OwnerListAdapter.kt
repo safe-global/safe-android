@@ -119,6 +119,7 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString(chainPrefix = null)
                 ) else owner.name
+            ownerBalance.text = owner.balance
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address, owner.type)
             }

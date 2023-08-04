@@ -7,7 +7,8 @@ import pm.gnosis.model.Solidity
 data class OwnerViewData(
     val address: Solidity.Address,
     val name: String?,
-    val type: Owner.Type
+    val type: Owner.Type,
+    val balance: String? = null,
 )
 
 fun Owner.Type.stringRes(): Int =

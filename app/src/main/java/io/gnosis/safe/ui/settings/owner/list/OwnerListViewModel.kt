@@ -1,8 +1,10 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import io.gnosis.data.backend.RpcClient
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -11,14 +13,19 @@ import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
 import io.gnosis.safe.ui.transactions.details.ConfirmRejection
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
+import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class OwnerListViewModel
 @Inject constructor(
+    private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
     private val settingsHandler: SettingsHandler,
+    private val rpcClient: RpcClient,
+    private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerListState>(appDispatchers) {
 
@@ -29,7 +36,11 @@ class OwnerListViewModel
             updateState {
                 OwnerListState(viewAction = ViewAction.Loading(true))
             }
-            val owners = credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }.sortedBy { it.name }
+            val owners = credentialsRepository.owners()
+                .map {
+                    OwnerViewData(it.address, it.name, it.type)
+                }
+                .sortedBy { it.name }
             missingSigners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     missingSigners.any {
@@ -42,7 +53,45 @@ class OwnerListViewModel
             } ?: updateState {
                 OwnerListState(viewAction = LocalOwners(owners))
             }
+        }
+    }
 
+    fun loadExecutingOwners() {
+        safeLaunch {
+            val activeSafe = safeRepository.getActiveSafe()
+            activeSafe?.let { safe ->
+                updateState {
+                    OwnerListState(viewAction = ViewAction.Loading(true))
+                }
+                val owners =
+                    credentialsRepository.owners()
+                        .map { OwnerViewData(it.address, it.name, it.type) }
+                        .sortedBy { it.name }
+                val acceptedOwners = owners.filter { localOwner ->
+                    safe.signingOwners.any {
+                        localOwner.address == it
+                    }
+                }
+                val balances = rpcClient.getBalances(acceptedOwners.map { it.address })
+                updateState {
+                    OwnerListState(
+                        viewAction =
+                        LocalOwners(
+                            owners.mapIndexed { index, ownerViewData ->
+                                ownerViewData.copy(
+                                    balance = "${
+                                        balanceFormatter.shortAmount(
+                                            balances[index]!!.value.convertAmount(
+                                                safe.chain.currency.decimals
+                                            )
+                                        )
+                                    } ${safe.chain.currency.symbol}"
+                                )
+                            }
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -53,9 +102,10 @@ class OwnerListViewModel
         chain: Chain,
         safeTxHash: String? = null
     ) {
-        val isConfirmation = signingMode == SigningMode.CONFIRMATION || signingMode == SigningMode.INITIATE_TRANSFER
+        val isConfirmation =
+            signingMode == SigningMode.CONFIRMATION || signingMode == SigningMode.INITIATE_TRANSFER
         safeLaunch {
-            when(type) {
+            when (type) {
                 Owner.Type.LEDGER_NANO_X -> {
                     updateState {
                         OwnerListState(
@@ -69,6 +119,7 @@ class OwnerListViewModel
                         )
                     }
                 }
+
                 Owner.Type.KEYSTONE -> {
                     updateState {
                         OwnerListState(
@@ -84,12 +135,15 @@ class OwnerListViewModel
                     }
                     updateState { OwnerListState(ViewAction.None) }
                 }
+
                 else -> {
                     if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {
                         updateState {
                             OwnerListState(
                                 ViewAction.NavigateTo(
-                                    SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToEnterPasscodeFragment(selectedOwner = owner.asEthereumAddressString())
+                                    SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToEnterPasscodeFragment(
+                                        selectedOwner = owner.asEthereumAddressString()
+                                    )
                                 )
                             )
                         }

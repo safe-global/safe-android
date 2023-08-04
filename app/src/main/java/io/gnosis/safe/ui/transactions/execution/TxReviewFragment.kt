@@ -133,7 +133,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                         when (action) {
                             is DefaultKey -> {
                                 with(binding) {
-                                    selectKey.setKey(action.key)
+                                    selectKey.setKey(action.key, action.balance)
                                 }
                             }
                         }

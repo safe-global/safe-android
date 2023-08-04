@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
+import io.gnosis.data.backend.RpcClient
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -8,6 +9,8 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
+import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.convertAmount
 import javax.inject.Inject
 
 class TxReviewViewModel
@@ -15,6 +18,8 @@ class TxReviewViewModel
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
     private val settingsHandler: SettingsHandler,
+    private val rpcClient: RpcClient,
+    private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TxReviewState>(appDispatchers) {
 
@@ -35,7 +40,9 @@ class TxReviewViewModel
     @VisibleForTesting
     fun loadDefaultKey() {
         safeLaunch {
-            val owners = credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }.sortedBy { it.name }
+            val owners =
+                credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }
+                    .sortedBy { it.name }
             activeSafe.signingOwners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     activeSafe.signingOwners.any {
@@ -45,6 +52,25 @@ class TxReviewViewModel
                 executionKey = acceptedOwners.first()
                 updateState {
                     TxReviewState(viewAction = DefaultKey(executionKey))
+                }
+                executionKey?.let {
+                    val balanceWei = rpcClient.getBalance(it.address)
+                    balanceWei?.let {
+                        updateState {
+                            TxReviewState(
+                                viewAction = DefaultKey(
+                                    executionKey,
+                                    "${
+                                        balanceFormatter.shortAmount(
+                                            it.value.convertAmount(
+                                                activeSafe.chain.currency.decimals
+                                            )
+                                        )
+                                    } ${activeSafe.chain.currency.symbol}",
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -60,6 +86,7 @@ data class TxReviewState(
 ) : BaseStateViewModel.State
 
 data class DefaultKey(
-    val key: OwnerViewData?
+    val key: OwnerViewData?,
+    val balance: String? = null
 ) : BaseStateViewModel.ViewAction
 

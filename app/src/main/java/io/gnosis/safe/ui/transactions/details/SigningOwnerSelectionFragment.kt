@@ -55,7 +55,11 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadOwners(missingSigners?.toList())
+        if (signingMode == SigningMode.EXECUTION) {
+            viewModel.loadExecutingOwners()
+        } else {
+            viewModel.loadOwners(missingSigners?.toList())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
