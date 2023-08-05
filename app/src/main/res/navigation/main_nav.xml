@@ -1257,21 +1257,9 @@
             app:argType="io.gnosis.data.models.Chain" />
 
         <argument
-            android:name="hash"
+            android:name="txDetails"
             android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-
-        <argument
-            android:name="data"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-
-        <argument
-            android:name="executionInfo"
-            android:defaultValue="@null"
-            app:argType="string"
+            app:argType="io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData"
             app:nullable="true" />
 
         <action

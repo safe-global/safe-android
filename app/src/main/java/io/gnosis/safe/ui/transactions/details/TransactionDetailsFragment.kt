@@ -174,9 +174,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         findNavController().navigate(
                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTxReviewFragment(
                                 chain = chain,
-                                hash = txDetails.txHash,
-                                data = paramSerializer.serializeData(txDetails.txData),
-                                executionInfo = paramSerializer.serializeExecutionInfo(txDetails.detailedExecutionInfo)
+                                txDetails = txDetails
                             )
                         )
                     } else {

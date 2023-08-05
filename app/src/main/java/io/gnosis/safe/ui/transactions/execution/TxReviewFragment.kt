@@ -7,18 +7,25 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.transaction.TransferInfo
+import io.gnosis.data.models.transaction.symbol
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTxReviewBinding
+import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.SigningMode
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
@@ -27,15 +34,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
     private val navArgs by navArgs<TxReviewFragmentArgs>()
     private val chain by lazy { navArgs.chain }
-    private val hash by lazy { navArgs.hash }
-    private val data by lazy { navArgs.data?.let { paramSerializer.deserializeData(it) } }
-    private val executionInfo by lazy {
-        navArgs.executionInfo?.let {
-            paramSerializer.deserializeExecutionInfo(
-                it
-            )
-        }
-    }
+    private val txDetails by lazy { navArgs.txDetails }
 
     @Inject
     lateinit var paramSerializer: ParamSerializer
@@ -76,21 +75,109 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 )
             )
 
-            val viewStub = binding.stubTransfer
-            if (viewStub.parent != null) {
-                val inflate = viewStub.inflate()
-                contentBinding = TxReviewTransferBinding.bind(inflate)
-            }
-            val transferBinding = contentBinding as TxReviewTransferBinding
+            when (val txInfo = txDetails!!.txInfo) {
 
-            with(transferBinding) {
-                fromAddressItem.name = viewModel.activeSafe.localName
-                fromAddressItem.setAddress(
-                    chain = chain,
-                    value = viewModel.activeSafe.address,
-                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
-                )
+                is TransactionInfoViewData.Transfer -> {
+                    val viewStub = binding.stubTransfer
+                    if (viewStub.parent != null) {
+                        val inflate = viewStub.inflate()
+                        contentBinding = TxReviewTransferBinding.bind(inflate)
+                    }
+                    val transferBinding = contentBinding as TxReviewTransferBinding
+                    val amount = txDetails!!.txData?.value ?: BigInteger.ZERO
+                    val amountDecimal = amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals)).toPlainString()
+                    with(transferBinding) {
+                        when (txInfo.transferInfo) {
+                            is TransferInfo.Erc20Transfer -> {
+                                transferAmount.setAmount(
+                                    amountDecimal = amountDecimal,
+                                    txInfo.transferInfo.symbol(chain)!!,
+                                    txInfo.transferInfo.logoUri
+                                )
+                            }
+                            is TransferInfo.Erc721Transfer -> {
+                                transferAmount.setAmount(
+                                    amountDecimal = BigDecimal.ONE.toPlainString(),
+                                    txInfo.transferInfo.symbol(chain)!!,
+                                    txInfo.transferInfo.logoUri
+                                )
+                            }
+                            is TransferInfo.NativeTransfer -> {
+                                transferAmount.setAmount(
+                                    amountDecimal = amountDecimal,
+                                    chain.currency.symbol,
+                                    chain.currency.logoUri
+                                )
+                            }
+                        }
+                        fromAddressItem.name = viewModel.activeSafe.localName
+                        fromAddressItem.setAddress(
+                            chain = chain,
+                            value = viewModel.activeSafe.address,
+                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                        )
+                        txInfo.addressName?.let {
+                            toAddressItemKnown.visible(true)
+                            toAddressItem.visible(false)
+                            toAddressItemKnown.name = it
+                            toAddressItemKnown.setAddress(
+                                chain = chain,
+                                value = txInfo.address,
+                                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                            )
+                            if (!txInfo.addressUri.isNullOrBlank()) {
+                                toAddressItemKnown.loadKnownAddressLogo(txInfo.addressUri, txInfo.address)
+                            }
+                        } ?: run {
+                            toAddressItemKnown.visible(false)
+                            toAddressItem.visible(true)
+                            toAddressItem.setAddress(
+                                chain = chain,
+                                value = txInfo.address,
+                                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                            )
+                        }
+                    }
+                }
+
+                is TransactionInfoViewData.SettingsChange -> {
+                    val viewStub = binding.stubSettingsChange
+                    if (viewStub.parent != null) {
+                        val inflate = viewStub.inflate()
+                        contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+                    }
+                    val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+                    with(settingsChangeBinding) {
+                        //TODO: setup settings change tx header
+                    }
+                }
+
+                is TransactionInfoViewData.Custom -> {
+                    val viewStub = binding.stubCustom
+                    if (viewStub.parent != null) {
+                        val inflate = viewStub.inflate()
+                        contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+                    }
+                    val customBinding = contentBinding as TxReviewSettingsChangeBinding
+                    with(customBinding) {
+                        //TODO: setup custom tx header
+                    }
+                }
+
+                is TransactionInfoViewData.Rejection -> {
+                    val viewStub = binding.stubRejection
+                    if (viewStub.parent != null) {
+                        val inflate = viewStub.inflate()
+                        contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+                    }
+                    val rejectionBinding = contentBinding as TxReviewSettingsChangeBinding
+                    with(rejectionBinding) {
+                        //TODO: setup rejection tx header
+                    }
+                }
             }
 
             estimatedFee.setOnClickListener {
@@ -119,9 +206,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 findNavController().navigate(
                     TxReviewFragmentDirections.actionTxReviewFragmentToTxAdvancedParamsFragment(
                         chain = chain,
-                        hash = hash,
-                        data = paramSerializer.serializeData(data),
-                        executionInfo = paramSerializer.serializeExecutionInfo(executionInfo)
+                        hash = txDetails!!.txHash,
+                        data = paramSerializer.serializeData(txDetails!!.txData),
+                        executionInfo = paramSerializer.serializeExecutionInfo(txDetails!!.detailedExecutionInfo)
                     )
                 )
             }
@@ -142,6 +229,10 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun ownerSelected(): Solidity.Address? {
