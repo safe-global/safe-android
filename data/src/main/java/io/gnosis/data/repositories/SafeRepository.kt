@@ -26,7 +26,7 @@ class SafeRepository(
 ) {
 
     private val keyFlow = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> offer(key) }
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> trySend(key) }
         preferencesManager.prefs.registerOnSharedPreferenceChangeListener(listener)
         awaitClose { preferencesManager.prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }

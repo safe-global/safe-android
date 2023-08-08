@@ -48,7 +48,8 @@ class HeimdallDatabaseTest {
             HeimdallDatabase.MIGRATION_4_5,
             HeimdallDatabase.MIGRATION_5_6,
             HeimdallDatabase.MIGRATION_6_7,
-            HeimdallDatabase.MIGRATION_7_8
+            HeimdallDatabase.MIGRATION_7_8,
+            HeimdallDatabase.MIGRATION_8_9
         )
 
         // Open latest version of the database. Room will validate the schema

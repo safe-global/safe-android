@@ -12,6 +12,7 @@ import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_4_5
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_5_6
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_6_7
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_7_8
+import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_8_9
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
@@ -32,7 +33,8 @@ class DatabaseModule {
                 MIGRATION_4_5,
                 MIGRATION_5_6,
                 MIGRATION_6_7,
-                MIGRATION_7_8
+                MIGRATION_7_8,
+                MIGRATION_8_9
             )
             .build()
 
