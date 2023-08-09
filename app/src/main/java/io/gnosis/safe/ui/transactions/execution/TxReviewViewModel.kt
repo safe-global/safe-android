@@ -1,7 +1,7 @@
 package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
-import io.gnosis.data.backend.RpcClient
+import io.gnosis.data.backend.rpc.RpcClient
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -37,12 +37,17 @@ class TxReviewViewModel
 
     override fun initialState() = TxReviewState(viewAction = null)
 
+    fun isLoading(): Boolean {
+        val viewAction = (state.value as TxReviewState).viewAction
+        return (viewAction is ViewAction.Loading && viewAction.isLoading)
+    }
+
     @VisibleForTesting
     fun loadDefaultKey() {
         safeLaunch {
-            val owners =
-                credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }
-                    .sortedBy { it.name }
+            val owners = credentialsRepository.owners()
+                .map { OwnerViewData(it.address, it.name, it.type) }
+                .sortedBy { it.name }
             activeSafe.signingOwners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     activeSafe.signingOwners.any {

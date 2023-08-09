@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.list
 
-import io.gnosis.data.backend.RpcClient
+import io.gnosis.data.backend.rpc.RpcClient
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository

@@ -15,6 +15,7 @@ import io.gnosis.safe.databinding.FragmentTxReviewBinding
 import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.SigningMode
@@ -212,19 +213,24 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     )
                 )
             }
+            refresh.setOnRefreshListener {
+                //TODO: reload estimates and balances
+            }
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is TxReviewState -> {
                     state.viewAction?.let { action ->
                         when (action) {
+                            is Loading -> {
+                                binding.refresh.isRefreshing = action.isLoading
+                            }
                             is DefaultKey -> {
                                 with(binding) {
                                     selectKey.setKey(action.key, action.balance)
                                 }
                             }
                         }
-
                     }
                 }
             }
