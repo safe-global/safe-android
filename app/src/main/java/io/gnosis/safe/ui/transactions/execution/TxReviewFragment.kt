@@ -12,6 +12,8 @@ import io.gnosis.data.models.transaction.symbol
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTxReviewBinding
+import io.gnosis.safe.databinding.TxReviewCustomBinding
+import io.gnosis.safe.databinding.TxReviewRejectionBinding
 import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -160,9 +162,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     val viewStub = binding.stubCustom
                     if (viewStub.parent != null) {
                         val inflate = viewStub.inflate()
-                        contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+                        contentBinding = TxReviewCustomBinding.bind(inflate)
                     }
-                    val customBinding = contentBinding as TxReviewSettingsChangeBinding
+                    val customBinding = contentBinding as TxReviewCustomBinding
                     with(customBinding) {
                         //TODO: setup custom tx header
                     }
@@ -172,9 +174,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     val viewStub = binding.stubRejection
                     if (viewStub.parent != null) {
                         val inflate = viewStub.inflate()
-                        contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+                        contentBinding = TxReviewRejectionBinding.bind(inflate)
                     }
-                    val rejectionBinding = contentBinding as TxReviewSettingsChangeBinding
+                    val rejectionBinding = contentBinding as TxReviewRejectionBinding
                     with(rejectionBinding) {
                         //TODO: setup rejection tx header
                     }
