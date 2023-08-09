@@ -26,8 +26,8 @@ class RpcClient(
     }
 
     suspend fun getBalances(addresses: List<Solidity.Address>): List<Wei?> {
-        val requests = addresses.map {
-            EthBalance(it)
+        val requests = addresses.mapIndexed { index, address ->
+            EthBalance(address = address, id = index)
         }
         val responses = ethereumRepository.request(
             BulkRequest(requests)
