@@ -11,6 +11,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
+import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class TxReviewViewModel
@@ -59,23 +60,42 @@ class TxReviewViewModel
                     TxReviewState(viewAction = DefaultKey(executionKey))
                 }
                 executionKey?.let {
-                    val balanceWei = rpcClient.getBalance(it.address)
-                    balanceWei?.let {
-                        updateState {
-                            TxReviewState(
-                                viewAction = DefaultKey(
-                                    executionKey,
-                                    "${
-                                        balanceFormatter.shortAmount(
-                                            it.value.convertAmount(
-                                                activeSafe.chain.currency.decimals
-                                            )
-                                        )
-                                    } ${activeSafe.chain.currency.symbol}",
+                    updateKeyBalance(it)
+                }
+            }
+        }
+    }
+
+    fun updateDefaultKey(address: Solidity.Address) {
+        safeLaunch {
+            address?.let {
+                val owner = credentialsRepository.owner(it)!!
+                val executionKey = OwnerViewData(owner.address, owner.name, owner.type)
+                updateState {
+                    TxReviewState(viewAction = DefaultKey(executionKey))
+                }
+                updateKeyBalance(executionKey)
+            }
+        }
+    }
+
+    private suspend fun updateKeyBalance(keyData: OwnerViewData) {
+        keyData?.let {
+            val balanceWei = rpcClient.getBalance(it.address)
+            balanceWei?.let {
+                updateState {
+                    TxReviewState(
+                        viewAction = DefaultKey(
+                            keyData,
+                            "${
+                                balanceFormatter.shortAmount(
+                                    it.value.convertAmount(
+                                        activeSafe.chain.currency.decimals
+                                    )
                                 )
-                            )
-                        }
-                    }
+                            } ${activeSafe.chain.currency.symbol}",
+                        )
+                    )
                 }
             }
         }

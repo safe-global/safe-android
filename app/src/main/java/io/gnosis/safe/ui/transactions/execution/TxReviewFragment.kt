@@ -241,6 +241,10 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
     override fun onResume() {
         super.onResume()
+        if (ownerSelected() != null) {
+            viewModel.updateDefaultKey(ownerSelected()!!)
+            resetOwnerData()
+        }
     }
 
     private fun ownerSelected(): Solidity.Address? {
