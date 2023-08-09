@@ -77,7 +77,7 @@ class OwnerListViewModel
                     OwnerListState(
                         viewAction =
                         LocalOwners(
-                            owners.mapIndexed { index, ownerViewData ->
+                            acceptedOwners.mapIndexed { index, ownerViewData ->
                                 ownerViewData.copy(
                                     balance = "${
                                         balanceFormatter.shortAmount(
