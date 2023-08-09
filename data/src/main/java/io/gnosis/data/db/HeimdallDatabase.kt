@@ -27,7 +27,8 @@ import pm.gnosis.svalinn.security.db.EncryptedString
     OwnerTypeConverter::class,
     EncryptedByteArray.NullableConverter::class,
     EncryptedString.NullableConverter::class,
-    RpcAuthenticationConverter::class
+    RpcAuthenticationConverter::class,
+    ChainFeaturesConverter::class
 )
 abstract class HeimdallDatabase : RoomDatabase() {
 
@@ -129,6 +130,9 @@ abstract class HeimdallDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     """ALTER TABLE `${Chain.TABLE_NAME}` ADD COLUMN `${Chain.COL_CHAIN_L2}` INTEGER NOT NULL DEFAULT 1"""
+                )
+                database.execSQL(
+                    """ALTER TABLE `${Chain.TABLE_NAME}` ADD COLUMN `${Chain.COL_FEATURES}` TEXT NOT NULL DEFAULT ''"""
                 )
             }
         }

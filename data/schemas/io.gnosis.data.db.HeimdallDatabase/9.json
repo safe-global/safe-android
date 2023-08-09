@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "98728d9d4d4021272cad4a27eab71636",
+    "identityHash": "6032bf6fa3a2cf724ee693b3ce6e617c",
     "entities": [
       {
         "tableName": "safes",
@@ -101,7 +101,7 @@
       },
       {
         "tableName": "chains",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `l2` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `chain_short_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `rpc_uri` TEXT NOT NULL, `rpc_authentication` INTEGER NOT NULL, `block_explorer_address_uri` TEXT NOT NULL, `block_explorer_tx_hash_uri` TEXT NOT NULL, `ens_registry_address` TEXT, PRIMARY KEY(`chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `l2` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `chain_short_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `rpc_uri` TEXT NOT NULL, `rpc_authentication` INTEGER NOT NULL, `block_explorer_address_uri` TEXT NOT NULL, `block_explorer_tx_hash_uri` TEXT NOT NULL, `ens_registry_address` TEXT, `features` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -168,6 +168,12 @@
             "columnName": "ens_registry_address",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "features",
+            "columnName": "features",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -239,7 +245,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '98728d9d4d4021272cad4a27eab71636')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6032bf6fa3a2cf724ee693b3ce6e617c')"
     ]
   }
 }

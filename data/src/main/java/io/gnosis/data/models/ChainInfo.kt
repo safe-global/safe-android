@@ -3,6 +3,7 @@ package io.gnosis.data.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import pm.gnosis.common.adapters.moshi.DecimalNumber
+import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
 
 
@@ -17,11 +18,25 @@ data class ChainInfo(
     @Json(name = "blockExplorerUriTemplate") val blockExplorerTemplate: BlockExplorerTemplate,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,
     @Json(name = "transactionService") val transactionService: String,
-    @Json(name = "theme") val theme: ChainTheme
+    @Json(name = "theme") val theme: ChainTheme,
+    @Json(name = "features") val features: List<String>
 ) {
 
     fun toChain(): Chain {
-        return Chain(chainId, l2, chainName, shortName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerTemplate.address, blockExplorerTemplate.txHash, ensRegistryAddress).apply {
+        return Chain(
+            chainId,
+            l2,
+            chainName,
+            shortName,
+            theme.textColor,
+            theme.backgroundColor,
+            rpcUri.value,
+            rpcUri.authentication,
+            blockExplorerTemplate.address,
+            blockExplorerTemplate.txHash,
+            ensRegistryAddress,
+            features.mapNotNull { nullOnThrow { Chain.Feature.valueOf(it) } }
+        ).apply {
             currency = nativeCurrency.toCurrency(chainId)
         }
     }

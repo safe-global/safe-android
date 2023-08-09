@@ -18,12 +18,17 @@ android {
         buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_NAME", asString(getKey("NATIVE_CURRENCY_NAME", "Ether"))
 
         buildConfigField (javaTypes.INT, "CHAIN_ID", "1")
+        buildConfigField (javaTypes.BOOLEAN, "CHAIN_L2", "true")
         buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#001428"))
         buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8E7E6"))
         buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Mainnet"))
         buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("eth"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://etherscan.io/"))
+        buildConfigField javaTypes.ARRAY, "CHAIN_FEATURES",
+                "new ${javaTypes.ARRAY} {" +
+                        "\"EIP1559\"" +
+                        "}"
 
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
 
@@ -55,7 +60,7 @@ android {
 
         unsafe {
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client-nest.staging.5afe.dev/"))
-            buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
+            buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
             buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Goerli"))

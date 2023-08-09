@@ -66,7 +66,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="24dp"
+                android:paddingBottom="96dp"
                 android:orientation="vertical">
 
                 <ViewStub
@@ -170,15 +170,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="@dimen/default_margin"
-        android:layout_marginRight="@dimen/default_margin"
         android:background="@color/background_secondary">
 
         <Button
             android:id="@+id/submit_button"
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginRight="@dimen/default_margin"
+            android:layout_marginBottom="24dp"
             android:text="@string/tx_exec_submit"
             android:enabled="false" />
 

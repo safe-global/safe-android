@@ -3,6 +3,7 @@ package io.gnosis.data.models
 import androidx.room.*
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Chain.Companion.TABLE_NAME
+import pm.gnosis.utils.nullOnThrow
 import java.io.Serializable
 import java.math.BigInteger
 
@@ -40,7 +41,10 @@ data class Chain(
     val blockExplorerTemplateTxHash: String,
 
     @ColumnInfo(name = COL_ENS_REGISTRY_ADDRESS)
-    val ensRegistryAddress: String?
+    val ensRegistryAddress: String?,
+
+    @ColumnInfo(name = COL_FEATURES)
+    val features: List<Feature>
 ) : Serializable {
 
     @Ignore
@@ -94,6 +98,11 @@ data class Chain(
         }
     }
 
+    enum class Feature {
+        EIP1559
+        //TODO: add more features
+    }
+
     companion object {
         const val TABLE_NAME = "chains"
 
@@ -108,6 +117,7 @@ data class Chain(
         const val COL_BLOCK_EXPLORER_TEMPLATE_TX_HASH = "block_explorer_tx_hash_uri"
         const val COL_ENS_REGISTRY_ADDRESS = "ens_registry_address"
         const val COL_TEXT_COLOR = "text_color"
+        const val COL_FEATURES = "features"
 
         val ID_MAINNET = BigInteger.valueOf(1)
         val ID_RINKEBY = BigInteger.valueOf(4)
@@ -123,7 +133,8 @@ data class Chain(
             RpcAuthentication.API_KEY_PATH,
             BuildConfig.BLOCKCHAIN_NET_URL + "address/",
             BuildConfig.BLOCKCHAIN_NET_URL + "tx/",
-            io.gnosis.contracts.BuildConfig.ENS_REGISTRY
+            io.gnosis.contracts.BuildConfig.ENS_REGISTRY,
+            BuildConfig.CHAIN_FEATURES.mapNotNull { nullOnThrow { Feature.valueOf(it) } }
         ).apply {
             currency = Currency.DEFAULT_CURRENCY
         }
