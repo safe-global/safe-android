@@ -17,6 +17,7 @@ import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerListViewModel
@@ -85,7 +86,8 @@ class OwnerListViewModel
                                                 safe.chain.currency.decimals
                                             )
                                         )
-                                    } ${safe.chain.currency.symbol}"
+                                    } ${safe.chain.currency.symbol}",
+                                    zeroBalance = balances[index]!!.value == BigInteger.ZERO
                                 )
                             }
                         )

@@ -9,6 +9,7 @@ data class OwnerViewData(
     val name: String?,
     val type: Owner.Type,
     val balance: String? = null,
+    val zeroBalance: Boolean = true
 )
 
 fun Owner.Type.stringRes(): Int =
