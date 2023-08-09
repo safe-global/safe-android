@@ -24,6 +24,7 @@ class ChainInfoRepositoryTest {
 
     private val rinkebyChainInfo = ChainInfo(
         Chain.ID_RINKEBY,
+        true,
         "Rinkeby",
         "rin",
         null,
@@ -31,11 +32,13 @@ class ChainInfoRepositoryTest {
         BlockExplorerTemplate("", ""),
         NativeCurrency("", "", 18, ""),
         "",
-        ChainTheme("", "")
+        ChainTheme("", ""),
+        listOf()
     )
     private val pagedResult: List<ChainInfo> = listOf(
         ChainInfo(
             Chain.ID_MAINNET,
+            false,
             "Mainnet",
             "eth",
             null,
@@ -43,11 +46,13 @@ class ChainInfoRepositoryTest {
             BlockExplorerTemplate("", ""),
             NativeCurrency("", "", 18, ""),
             "",
-            ChainTheme("", "")
+            ChainTheme("", ""),
+            listOf()
         ),
         rinkebyChainInfo,
         ChainInfo(
             BigInteger.valueOf(137),
+            true,
             "Matic",
             "matic",
             null,
@@ -55,7 +60,8 @@ class ChainInfoRepositoryTest {
             BlockExplorerTemplate("", ""),
             NativeCurrency("", "", 18, ""),
             "",
-            ChainTheme("", "")
+            ChainTheme("", ""),
+            listOf()
         )
     )
 
@@ -85,6 +91,7 @@ class ChainInfoRepositoryTest {
             chainDao.save(
                 Chain(
                     Chain.ID_RINKEBY,
+                    true,
                     "Rinkeby",
                     "rin",
                     "",
@@ -93,7 +100,8 @@ class ChainInfoRepositoryTest {
                     RpcAuthentication.API_KEY_PATH,
                     "",
                     "",
-                    null
+                    null,
+                    listOf()
                 )
             )
         }
