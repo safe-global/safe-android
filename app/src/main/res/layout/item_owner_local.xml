@@ -18,7 +18,7 @@
         android:singleLine="true"
         android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@id/owner_address"
-        app:layout_constraintEnd_toStartOf="@id/arrow"
+        app:layout_constraintEnd_toStartOf="@id/owner_balance"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@id/owner_address"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,7 +34,7 @@
         android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/arrow"
+        app:layout_constraintEnd_toStartOf="@id/owner_balance"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/blockies_container"
         app:layout_constraintTop_toBottomOf="@id/title"
@@ -50,6 +50,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_settings_arrow" />
+
+    <TextView
+        android:id="@+id/owner_balance"
+        style="@style/Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/arrow"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="3.05921 ETH"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/blockies_container"

@@ -67,6 +67,7 @@ class UnstoppableRepositoryTest {
         val result = repository.canResolve(
             Chain(
                 Chain.ID_MAINNET,
+                false,
                 "Mainnet",
                 "eth",
                 "",
@@ -75,7 +76,8 @@ class UnstoppableRepositoryTest {
                 RpcAuthentication.API_KEY_PATH,
                 "",
                 "",
-                null
+                null,
+                listOf()
             )
         )
 
@@ -89,6 +91,7 @@ class UnstoppableRepositoryTest {
         val result = repository.canResolve(
             Chain(
                 Chain.ID_RINKEBY,
+                true,
                 "Rinkeby",
                 "rin",
                 "",
@@ -97,7 +100,8 @@ class UnstoppableRepositoryTest {
                 RpcAuthentication.API_KEY_PATH,
                 "",
                 "",
-                null
+                null,
+                listOf()
             )
         )
 
@@ -110,6 +114,7 @@ class UnstoppableRepositoryTest {
         val result = repository.canResolve(
             Chain(
                 BigInteger.valueOf(17),
+                true,
                 "Unknown",
                 "",
                 "",
@@ -118,7 +123,8 @@ class UnstoppableRepositoryTest {
                 RpcAuthentication.API_KEY_PATH,
                 "",
                 "",
-                null
+                null,
+                listOf()
             )
         )
 

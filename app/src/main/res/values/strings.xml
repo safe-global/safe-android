@@ -421,8 +421,13 @@
     <string name="tx_submitted">Your transaction is submitted!</string>
     <string name="tx_submitted_desc">It normally takes some time for a transaction to be executed.</string>
     <string name="tx_submitted_done">Done</string>
+    <string name="tx_submitted_view_details">View transaction details</string>
 
     <string name="tx_exec_edit_fee">Edit transaction fee</string>
+
+    <string name="tx_exec_review">Execute transaction</string>
+
+    <string name="tx_exec_submit">Submit</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Safe Account base contract version</string>
@@ -502,8 +507,10 @@
     <string name="signing_owner_name_edit_remove">Remove owner key</string>
 
     <string name="signing_owner_selection_list_title">Select owner keys</string>
+    <string name="signing_owner_selection_list_execution_title">Select an execution key</string>
     <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
     <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
+    <string name="signing_owner_selection_list_execution_description">The selected key will be used to execute this transaction.</string>
     <string name="signing_owner_request_signature">Request Signature</string>
     <string name="signing_owner_request_signature_headline">Scan this QR code with your Keystone wallet</string>
     <string name="signing_owner_request_signature_description">Sign the transaction with your wallet, then click on Get signature.</string>
@@ -551,6 +558,7 @@
     <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
     <string name="reject">Reject</string>
+    <string name="execute">Execute</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
     <string name="enter_unstoppable_domain">Enter Unstoppable domain</string>

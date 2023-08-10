@@ -1,8 +1,10 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import io.gnosis.data.backend.rpc.RpcClient
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -12,6 +14,7 @@ import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
 import io.gnosis.safe.ui.transactions.details.ConfirmRejection
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
+import io.gnosis.safe.utils.BalanceFormatter
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -26,8 +29,11 @@ class OwnerListViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
+    private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
+    private val rpcClient = mockk<RpcClient>()
+    private val balanceFormatter = BalanceFormatter()
 
     private lateinit var viewModel: OwnerListViewModel
 
@@ -38,7 +44,7 @@ class OwnerListViewModelTest {
 
         coEvery { credentialsRepository.owners() } returns listOf(owner1, owner2)
 
-        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        viewModel = OwnerListViewModel(safeRepository, credentialsRepository, settingsHandler, rpcClient, balanceFormatter, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
@@ -63,7 +69,7 @@ class OwnerListViewModelTest {
         coEvery { settingsHandler.usePasscode } returns true
         coEvery { settingsHandler.requirePasscodeForConfirmations } returns true
 
-        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        viewModel = OwnerListViewModel(safeRepository, credentialsRepository, settingsHandler, rpcClient, balanceFormatter, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
@@ -87,7 +93,7 @@ class OwnerListViewModelTest {
 
         coEvery { settingsHandler.usePasscode } returns false
 
-        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        viewModel = OwnerListViewModel(safeRepository, credentialsRepository, settingsHandler, rpcClient, balanceFormatter, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
@@ -107,7 +113,7 @@ class OwnerListViewModelTest {
 
         coEvery { settingsHandler.usePasscode } returns false
 
-        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        viewModel = OwnerListViewModel(safeRepository, credentialsRepository, settingsHandler, rpcClient, balanceFormatter, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 

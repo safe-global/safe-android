@@ -103,9 +103,7 @@
             android:layout_height="wrap_content"
             android:text="@string/tx_exec_gas_limit"
             app:info_label_text="@string/tx_exec_gas_limit_desc"
-            android:layout_marginTop="@dimen/default_margin"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_marginTop="@dimen/default_margin" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/gas_limit_layout"
@@ -117,9 +115,7 @@
             app:errorIconDrawable="@null"
             app:errorTextColor="@color/error"
             app:hintTextColor="@color/label_tertiary"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-            android:visibility="gone"
-            tools:visibility="visible">
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
             <EditText
                 android:id="@+id/gas_limit_value"
@@ -139,9 +135,7 @@
             android:layout_height="wrap_content"
             android:text="@string/tx_exec_max_priority_fee"
             app:info_label_text="@string/tx_exec_max_priority_fee_desc"
-            android:layout_marginTop="@dimen/default_margin"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_marginTop="@dimen/default_margin" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/max_priority_fee_layout"
@@ -153,9 +147,7 @@
             app:errorIconDrawable="@null"
             app:errorTextColor="@color/error"
             app:hintTextColor="@color/label_tertiary"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-            android:visibility="gone"
-            tools:visibility="visible">
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
             <EditText
                 android:id="@+id/max_priority_fee_value"
@@ -175,9 +167,7 @@
             android:layout_height="wrap_content"
             android:text="@string/tx_exec_max_fee"
             app:info_label_text="@string/tx_exec_max_fee_desc"
-            android:layout_marginTop="@dimen/default_margin"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_marginTop="@dimen/default_margin" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/max_fee_layout"
@@ -189,9 +179,7 @@
             app:errorIconDrawable="@null"
             app:errorTextColor="@color/error"
             app:hintTextColor="@color/label_tertiary"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-            android:visibility="gone"
-            tools:visibility="visible">
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
             <EditText
                 android:id="@+id/max_fee_value"

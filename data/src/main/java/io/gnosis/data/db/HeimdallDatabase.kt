@@ -27,7 +27,8 @@ import pm.gnosis.svalinn.security.db.EncryptedString
     OwnerTypeConverter::class,
     EncryptedByteArray.NullableConverter::class,
     EncryptedString.NullableConverter::class,
-    RpcAuthenticationConverter::class
+    RpcAuthenticationConverter::class,
+    ChainFeaturesConverter::class
 )
 abstract class HeimdallDatabase : RoomDatabase() {
 
@@ -39,7 +40,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "safe_db"
-        const val LATEST_DB_VERSION = 8
+        const val LATEST_DB_VERSION = 9
 
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -121,6 +122,17 @@ abstract class HeimdallDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     """ALTER TABLE `${Owner.TABLE_NAME}` ADD COLUMN `${Owner.COL_SOURCE_FINGERPRINT}` TEXT"""
+                )
+            }
+        }
+
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """ALTER TABLE `${Chain.TABLE_NAME}` ADD COLUMN `${Chain.COL_CHAIN_L2}` INTEGER NOT NULL DEFAULT 1"""
+                )
+                database.execSQL(
+                    """ALTER TABLE `${Chain.TABLE_NAME}` ADD COLUMN `${Chain.COL_FEATURES}` TEXT NOT NULL DEFAULT ''"""
                 )
             }
         }

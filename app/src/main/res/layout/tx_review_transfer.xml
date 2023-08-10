@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/background_secondary"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:text="@string/coins_asset_send_amount" />
+
+    <io.gnosis.safe.ui.safe.send_funds.view.TransferAmountView
+        android:id="@+id/transfer_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_small_margin"
+        android:text="@string/coins_asset_send_from" />
+
+    <io.gnosis.safe.ui.settings.view.NamedAddressItem
+        android:id="@+id/from_address_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:text="@string/coins_asset_send_to" />
+
+    <io.gnosis.safe.ui.settings.view.NamedAddressItem
+        android:id="@+id/to_address_item_known"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <io.gnosis.safe.ui.settings.view.AddressItem
+        android:id="@+id/to_address_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin" />
+
+</LinearLayout>

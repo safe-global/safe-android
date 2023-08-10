@@ -156,6 +156,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         isRejection = isRejection,
                         awaitingExecution = awaitingExecution,
                         canSign = txDetails.canSign,
+                        canExecute = txDetails.canExecute,
                         hasOwnerKey = txDetails.hasOwnerKey
                 )
 
@@ -165,9 +166,20 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
 
                 binding.txConfirmButton.visible(buttonState.confirmationButtonIsVisible())
+                binding.txConfirmButton.text = getString(if (buttonState.canExecute) R.string.execute else R.string.confirm)
                 binding.txConfirmButton.isEnabled = buttonState.confirmationButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
-                    viewModel.startConfirmationFlow()
+                    if (buttonState.canExecute) {
+                        // start execution flow
+                        findNavController().navigate(
+                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTxReviewFragment(
+                                chain = chain,
+                                txDetails = txDetails
+                            )
+                        )
+                    } else {
+                        viewModel.startConfirmationFlow()
+                    }
                     binding.txConfirmButton.isEnabled = false
                 }
                 binding.txRejectButton.visible(buttonState.rejectionButtonIsVisible())
@@ -350,7 +362,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         txDataDecodedSeparator.visible(false)
                     } else {
 
-                        if (decodedData.method.toLowerCase() == "multisend") {
+                        if (decodedData.method.lowercase() == "multisend") {
 
                             val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
 

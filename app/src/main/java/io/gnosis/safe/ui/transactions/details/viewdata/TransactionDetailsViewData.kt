@@ -9,6 +9,7 @@ import io.gnosis.safe.ui.transactions.AddressInfoData
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
+import java.io.Serializable
 import java.math.BigInteger
 import java.util.*
 
@@ -20,10 +21,10 @@ data class TransactionDetailsViewData(
     val txData: TxData?,
     val detailedExecutionInfo: DetailedExecutionInfo?,
     val canSign: Boolean,
+    val canExecute: Boolean,
     val hasOwnerKey: Boolean,
     val owners: List<Owner>
-
-)
+): Serializable
 
 sealed class TransactionInfoViewData(
     val type: TransactionType
@@ -122,6 +123,7 @@ sealed class SettingsInfoViewData(
 fun TransactionDetails.toTransactionDetailsViewData(
     safes: List<Safe>,
     canSign: Boolean,
+    canExecute: Boolean,
     owners: List<Owner>,
     hasOwnerKey: Boolean
 ): TransactionDetailsViewData =
@@ -137,6 +139,7 @@ fun TransactionDetails.toTransactionDetailsViewData(
         txData = txData,
         detailedExecutionInfo = detailedExecutionInfo,
         canSign = canSign,
+        canExecute = canExecute,
         hasOwnerKey = hasOwnerKey,
         owners = owners
     )

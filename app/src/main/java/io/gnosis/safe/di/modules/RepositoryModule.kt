@@ -4,6 +4,7 @@ import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.backend.rpc.RpcClient
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
@@ -41,6 +42,11 @@ class RepositoryModule {
     @Singleton
     fun providesEthereumRepository(ethereumRpcConnector: EthereumRpcConnector): EthereumRepository =
         RpcEthereumRepository(ethereumRpcConnector, BuildConfig.BLOCKCHAIN_NET_URL)
+
+    @Provides
+    @Singleton
+    fun providesRpcClient(ethereumRepository: EthereumRepository): RpcClient =
+        RpcClient(ethereumRepository)
 
     @Provides
     @Singleton

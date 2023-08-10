@@ -119,9 +119,22 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString(chainPrefix = null)
                 ) else owner.name
+            ownerBalance.text = owner.balance
+            if (owner.zeroBalance) {
+                root.isEnabled = false
+                root.alpha = OPACITY_HALF
+            } else {
+                root.isEnabled = true
+                root.alpha = OPACITY_FULL
+            }
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address, owner.type)
             }
         }
+    }
+
+    companion object {
+        const val OPACITY_FULL = 1.0F
+        const val OPACITY_HALF = 0.5F
     }
 }

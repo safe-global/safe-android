@@ -8,6 +8,7 @@
         <attr name="setting_name" format="string" />
         <attr name="setting_description" format="string" />
         <attr name="setting_value" format="string" />
+        <attr name="setting_value_style" format="reference" />
         <attr name="setting_image" format="reference" />
     </declare-styleable>
 

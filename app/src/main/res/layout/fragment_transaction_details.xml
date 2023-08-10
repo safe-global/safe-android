@@ -194,10 +194,12 @@
             android:layout_weight="1"
             android:layout_marginVertical="@dimen/default_margin"
             android:text="@string/reject" />
+
         <View
             android:id="@+id/space_between_buttons"
             android:layout_width="20dp"
             android:layout_height="0dp" />
+
         <TextView
             android:id="@+id/tx_confirm_button"
             style="@style/ConfirmButton"

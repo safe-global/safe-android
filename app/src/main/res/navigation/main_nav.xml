@@ -830,6 +830,11 @@
             app:destination="@id/signingOwnerSelectionFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
+        <action
+            android:id="@+id/action_transactionDetailsFragment_to_txReviewFragment"
+            app:destination="@id/txReviewFragment"
+            app:popUpTo="@id/transactionDetailsFragment" />
+
         <argument
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
@@ -1238,6 +1243,44 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/txReviewFragment"
+        android:name="io.gnosis.safe.ui.transactions.execution.TxReviewFragment"
+        android:label="TxReviewFragment"
+        tools:layout="@layout/fragment_tx_review">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="txDetails"
+            android:defaultValue="@null"
+            app:argType="io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_txEditFeeLegacyFragment"
+            app:destination="@id/txEditFeeLegacyFragment"
+            app:popUpTo="@id/txReviewFragment"/>
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_txEditFee1559Fragment"
+            app:destination="@id/txEditFee1559Fragment"
+            app:popUpTo="@id/txReviewFragment"/>
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment"
+            app:popUpTo="@id/txReviewFragment" />
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_txAdvancedParamsFragment"
+            app:destination="@id/txAdvancedParamsFragment"
+            app:popUpTo="@id/txReviewFragment" />
 
     </fragment>
 

@@ -44,6 +44,7 @@ class AddSafeNameViewModelTest {
     private lateinit var viewModel: AddSafeNameViewModel
     private val mainnet = Chain(
         Chain.ID_MAINNET,
+        false,
         "Mainnet",
         "",
         "",
@@ -52,10 +53,12 @@ class AddSafeNameViewModelTest {
         RpcAuthentication.API_KEY_PATH,
         "",
         "",
-        null
+        null,
+        listOf()
     )
     private val rinkeby = Chain(
         Chain.ID_RINKEBY,
+        true,
         "Rinkeby",
         "",
         "",
@@ -64,7 +67,8 @@ class AddSafeNameViewModelTest {
         RpcAuthentication.API_KEY_PATH,
         "",
         "",
-        null
+        null,
+        listOf()
     )
 
     @Before

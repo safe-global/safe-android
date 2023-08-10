@@ -55,7 +55,11 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadOwners(missingSigners?.toList())
+        if (signingMode == SigningMode.EXECUTION) {
+            viewModel.loadExecutingOwners()
+        } else {
+            viewModel.loadOwners(missingSigners?.toList())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,6 +81,10 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                 }
                 SigningMode.INITIATE_TRANSFER -> {
                     description.setText(R.string.coins_asset_send_select_owner)
+                }
+                SigningMode.EXECUTION -> {
+                    title.setText(R.string.signing_owner_selection_list_execution_title)
+                    description.setText(R.string.signing_owner_selection_list_execution_description)
                 }
             }
 
@@ -157,5 +165,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 enum class SigningMode {
     CONFIRMATION,
     REJECTION,
-    INITIATE_TRANSFER
+    INITIATE_TRANSFER,
+    EXECUTION
 }

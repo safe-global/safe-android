@@ -35,6 +35,7 @@ class AddSafeViewModelTest {
 
     private val mainnet = Chain(
         Chain.ID_MAINNET,
+        false,
         "Mainnet",
         "",
         "",
@@ -43,7 +44,8 @@ class AddSafeViewModelTest {
         RpcAuthentication.API_KEY_PATH,
         "",
         "",
-        null
+        null,
+        listOf()
     )
 
     private lateinit var viewModel: AddSafeViewModel

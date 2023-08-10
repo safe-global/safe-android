@@ -18,7 +18,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import io.gnosis.safe.utils.getFromCurrent
 import io.gnosis.safe.utils.setToCurrent
 import pm.gnosis.model.Solidity

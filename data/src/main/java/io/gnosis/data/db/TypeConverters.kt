@@ -1,6 +1,7 @@
 package io.gnosis.data.db
 
 import androidx.room.TypeConverter
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.RpcAuthentication
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -32,4 +33,12 @@ class RpcAuthenticationConverter {
 
     @TypeConverter
     fun fromInt(rpcAuthenticationValue: Int) = RpcAuthentication.from(rpcAuthenticationValue)
+}
+
+class ChainFeaturesConverter {
+    @TypeConverter
+    fun toString(features: List<Chain.Feature>) = features?.joinToString(",")
+
+    @TypeConverter
+    fun fromString(featuresString: String) = featuresString.split(",").map { Chain.Feature.valueOf(it) }
 }

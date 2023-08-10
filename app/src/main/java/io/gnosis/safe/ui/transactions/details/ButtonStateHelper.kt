@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details
 
 class ButtonStateHelper(
     val canSign: Boolean,
+    val canExecute: Boolean,
     val hasOwnerKey: Boolean,
     val hasBeenRejected: Boolean,
     val isRejection: Boolean,
@@ -12,11 +13,11 @@ class ButtonStateHelper(
         when {
             isRejection && awaitingConfirmations && canSign -> true
             isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
+            isRejection && awaitingExecution && canExecute -> true
 
             !isRejection && awaitingConfirmations && canSign -> true
             !isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
-
-            !isRejection && awaitingExecution && hasOwnerKey && hasBeenRejected -> false
+            !isRejection && awaitingExecution && canExecute -> true
 
             else -> false
         }
@@ -27,6 +28,8 @@ class ButtonStateHelper(
         isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> false
 
         !isRejection && awaitingConfirmations && canSign -> true
+
+        awaitingExecution && canExecute && hasOwnerKey -> true
 
         else -> false
     }

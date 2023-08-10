@@ -88,7 +88,7 @@ class TxConfirmationsView @JvmOverloads constructor(
             }
             TransactionStatus.AWAITING_EXECUTION -> {
                 addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
-                addExecutionDescriptionItem()
+                //TODO: if execution is not supported on chain, add a warning
             }
             TransactionStatus.SUCCESS -> {
                 if (executor != null) {
@@ -175,7 +175,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         addView(namedAddressItem)
     }
 
-    private fun addExecutionDescriptionItem() {
+    private fun addExecutionDescriptionWarningItem() {
         val item = TextView(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(
@@ -282,6 +282,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.label_secondary))
                     }
                     Type.EXECUTE_READY -> {
+                        //TODO: if execution is not supported on chain, show warning icon
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_execute_ready_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_execute_ready)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.label_primary))

@@ -16,6 +16,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = true,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = false
             )
@@ -37,6 +38,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -58,6 +60,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = false,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -76,6 +79,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = true,
+                canExecute = false,
                 hasBeenRejected = false,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -94,6 +98,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -112,6 +117,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = false,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -130,6 +136,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = false,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -148,6 +155,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = awaitingConfirmations,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = !awaitingConfirmations
             )
@@ -166,6 +174,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = !awaitingExecution,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = false,
                 awaitingExecution = awaitingExecution
             )
@@ -189,6 +198,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = !awaitingExecution,
                 hasOwnerKey = true,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = awaitingExecution
             )
@@ -207,6 +217,7 @@ class ButtonStateHelperTest {
                 awaitingConfirmations = !awaitingExecution,
                 hasOwnerKey = false,
                 canSign = false,
+                canExecute = false,
                 hasBeenRejected = true,
                 awaitingExecution = awaitingExecution
             )
