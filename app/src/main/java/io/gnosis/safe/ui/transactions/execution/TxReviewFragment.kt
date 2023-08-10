@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.models.transaction.symbol
 import io.gnosis.safe.R
@@ -23,6 +24,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.setLink
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
@@ -178,7 +180,19 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     }
                     val rejectionBinding = contentBinding as TxReviewRejectionBinding
                     with(rejectionBinding) {
-                        //TODO: setup rejection tx header
+                        when (val executionInfo = txDetails!!.detailedExecutionInfo) {
+                            is DetailedExecutionInfo.MultisigExecutionDetails -> {
+                                txRejectionInfo.text = getString(R.string.tx_details_rejection_info_queued, executionInfo.nonce)
+                                txPaymentReasonLink.setLink(
+                                    url = getString(R.string.tx_details_rejection_payment_reason_link),
+                                    urlText = getString(R.string.tx_details_rejection_payment_reason),
+                                    linkIcon = R.drawable.ic_external_link_green_16dp,
+                                    underline = true
+                                )
+                            }
+                            else -> {
+                            }
+                        }
                     }
                 }
             }
