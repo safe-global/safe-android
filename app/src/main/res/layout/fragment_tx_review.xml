@@ -71,28 +71,28 @@
 
                 <ViewStub
                     android:id="@+id/stub_transfer"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inflatedId="@+id/transfer_details"
                     android:layout="@layout/tx_review_transfer" />
 
                 <ViewStub
                     android:id="@+id/stub_settings_change"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inflatedId="@+id/settings_change_details"
                     android:layout="@layout/tx_review_settings_change" />
 
                 <ViewStub
                     android:id="@+id/stub_custom"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inflatedId="@+id/custom_details"
                     android:layout="@layout/tx_review_custom" />
 
                 <ViewStub
                     android:id="@+id/stub_rejection"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inflatedId="@+id/rejection_details"
                     android:layout="@layout/tx_review_rejection" />
