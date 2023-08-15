@@ -111,7 +111,6 @@
                         android:layout_height="@dimen/item_setting_openable_height"
                         android:background="@drawable/background_secondary_selectable"
                         app:setting_name="Estimated fee"
-                        app:setting_value="0.001 ETH"
                         app:setting_value_style="@style/Body1"
                         app:setting_openable="true" />
 

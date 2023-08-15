@@ -6,6 +6,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.qrscanner.nullOnThrow
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -53,16 +54,16 @@ class TxEditFeeViewModel @Inject constructor(
             }
         }
 
-        val maxPriorityFee = nullOnThrow { BigInteger(maxPriorityFeeValue) }
-        val maxFee = nullOnThrow { BigInteger(maxFeeValue) }
+        val maxPriorityFee = nullOnThrow { BigDecimal(maxPriorityFeeValue) }
+        val maxFee = nullOnThrow { BigDecimal(maxFeeValue) }
 
         val maxPriorityFeeError = if (maxPriorityFeeValue.isNullOrBlank()) {
             context.getString(R.string.tx_exec_error_value_required)
         } else {
-            if (maxPriorityFee == null || maxPriorityFee < BigInteger.ZERO) {
+            if (maxPriorityFee == null || maxPriorityFee < BigDecimal.ZERO) {
                 context.getString(R.string.tx_exec_error_value_nan)
             } else {
-                if (maxPriorityFee == BigInteger.ZERO) {
+                if (maxPriorityFee == BigDecimal.ZERO) {
                     context.getString(R.string.tx_exec_error_value_zero)
                 } else if (maxPriorityFee > maxFee) {
                     context.getString(R.string.tx_exec_max_priority_fee_error_too_big)
@@ -75,10 +76,10 @@ class TxEditFeeViewModel @Inject constructor(
         val maxFeeError = if (maxPriorityFeeValue.isNullOrBlank()) {
             context.getString(R.string.tx_exec_error_value_required)
         } else {
-            if (maxFee == null || maxFee < BigInteger.ZERO) {
+            if (maxFee == null || maxFee < BigDecimal.ZERO) {
                 context.getString(R.string.tx_exec_error_value_nan)
             } else {
-                if (maxFee == BigInteger.ZERO) {
+                if (maxFee == BigDecimal.ZERO) {
                     context.getString(R.string.tx_exec_error_value_zero)
                 } else if (maxFee < maxPriorityFee) {
                     context.getString(R.string.tx_exec_max_fee_error_too_small)
@@ -170,13 +171,13 @@ class TxEditFeeViewModel @Inject constructor(
         gasLimitValue: String?,
         maxFeeValue: String?
     ): String {
-        val gasLimit = nullOnThrow { BigInteger(gasLimitValue) }
-        val maxFee = nullOnThrow { BigInteger(maxFeeValue) }
+        val gasLimit = nullOnThrow { BigDecimal(gasLimitValue) }
+        val maxFee = nullOnThrow { BigDecimal(maxFeeValue) }
         return if (gasLimit == null || maxFee == null) {
             context.getString(R.string.value_not_available)
         } else {
-            val totalFee = gasLimit * maxFee
-            "$totalFee ${chain.currency.symbol}"
+            val totalFee = gasLimit * maxFee.divide(BigDecimal.valueOf(1_000_000_000))
+            "${totalFee.toPlainString()} ${chain.currency.symbol}"
         }
     }
 
