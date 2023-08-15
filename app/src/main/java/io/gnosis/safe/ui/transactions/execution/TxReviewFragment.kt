@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.models.transaction.symbol
 import io.gnosis.safe.R
@@ -18,14 +20,20 @@ import io.gnosis.safe.databinding.TxReviewRejectionBinding
 import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.SigningMode
+import io.gnosis.safe.ui.transactions.details.TransactionDetailsFragmentDirections
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
+import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.setLink
 import io.gnosis.safe.utils.toColor
+import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -43,6 +51,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
     @Inject
     lateinit var paramSerializer: ParamSerializer
+
+    @Inject
+    lateinit var balanceFormatter: BalanceFormatter
 
     @Inject
     lateinit var viewModel: TxReviewViewModel
@@ -156,7 +167,12 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     }
                     val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
                     with(settingsChangeBinding) {
-                        //TODO: setup settings change tx header
+                        txAction.setActionInfoItems(
+                            chain = chain,
+                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                            actionInfoItems = txInfo.txActionInfoItems(requireContext().resources)
+                        )
                     }
                 }
 
@@ -168,7 +184,64 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     }
                     val customBinding = contentBinding as TxReviewCustomBinding
                     with(customBinding) {
-                        //TODO: setup custom tx header
+                        txAction.setActionInfo(
+                            chain = chain,
+                            outgoing = true,
+                            amount = txInfo.formattedAmount(chain, balanceFormatter),
+                            logoUri = txInfo.logoUri(chain) ?: "",
+                            address = txInfo.to,
+                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                            addressUri = txInfo.actionInfoAddressUri,
+                            addressName = txInfo.actionInfoAddressName
+                        )
+                        val decodedData = txDetails!!.txData?.dataDecoded
+                        if (decodedData == null) {
+                            txDataDecoded.visible(false)
+                            txDataDecodedSeparator.visible(false)
+                        } else {
+
+                            if (decodedData.method.lowercase() == "multisend") {
+
+                                val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
+
+                                txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+                                txDataDecoded.setOnClickListener {
+                                    txDetails!!.txData?.dataDecoded?.parameters?.getOrNull(0)?.let { param ->
+                                        if (param is Param.Bytes && param.valueDecoded != null) {
+                                            findNavController().navigate(
+                                                //TODO adjust direction
+                                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
+                                                    chain,
+                                                    paramSerializer.serializeDecodedValues(param.valueDecoded!!),
+                                                    paramSerializer.serializeAddressInfoIndex(txDetails!!.txData?.addressInfoIndex)
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+
+                                txDataDecoded.name = getString(R.string.tx_details_action, txDetails!!.txData?.dataDecoded?.method)
+                                txDataDecoded.setOnClickListener {
+                                    txDetails!!.txData?.let {
+                                        findNavController().navigate(
+                                            //TODO adjust direction
+                                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                                chain = chain,
+                                                action = it.dataDecoded?.method ?: "",
+                                                data = it.hexData ?: "",
+                                                decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
+                                                addressInfoIndex = paramSerializer.serializeAddressInfoIndex(it.addressInfoIndex)
+                                            )
+                                        )
+                                    }
+                                }
+
+                            }
+                        }
+
+                        txData.setData(txDetails!!.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
                     }
                 }
 
@@ -198,17 +271,19 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             }
 
             estimatedFee.setOnClickListener {
-                //TODO: pass actual data
-                findNavController().navigate(
-                    TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
-                        chain = chain,
-                        nonce = "1",
-                        minNonce = "0",
-                        gasLimit = "1",
-                        maxPriorityFee = "1",
-                        maxFee = "1"
+                //TODO: check tx type, save user input
+                viewModel.minNonce?.let {
+                    findNavController().navigate(
+                        TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
+                            chain = chain,
+                            nonce = viewModel.minNonce.toString(),
+                            minNonce = viewModel.nonce.toString(),
+                            gasLimit = viewModel.gasLimit.toString(),
+                            maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString() ?: "0",
+                            maxFee = viewModel.maxFeePerGas?.toPlainString() ?: "0",
+                        )
                     )
-                )
+                }
             }
             selectKey.setOnClickListener {
                 findNavController().navigate(
@@ -230,9 +305,23 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 )
             }
             refresh.setOnRefreshListener {
-                //TODO: reload estimates and balances
+                loadEstimation()
             }
         }
+
+        setFragmentResultListener(TxEditFee1559Fragment.REQUEST_EDIT_FEE) { requestKey, bundle ->
+            val nonce = bundle.getString(TxEditFee1559Fragment.RESULT_NONCE)!!
+            val gasLimit = bundle.getString(TxEditFee1559Fragment.RESULT_GAS_LIMIT)!!
+            val maxPriorityFee = bundle.getString(TxEditFee1559Fragment.RESULT_MAX_PRIORITY_FEE)!!
+            val maxFee = bundle.getString(TxEditFee1559Fragment.RESULT_MAX_FEE)!!
+            viewModel.updateEstimationParams(
+                nonce = nonce.toBigInteger(),
+                gasLimit = gasLimit.toBigInteger(),
+                maxPriorityFeePerGas = maxPriorityFee.toBigDecimal().stripTrailingZeros(),
+                maxFeePerGas = maxFee.toBigDecimal().stripTrailingZeros()
+            )
+        }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is TxReviewState -> {
@@ -243,8 +332,15 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                             }
                             is DefaultKey -> {
                                 with(binding) {
-                                    selectKey.setKey(action.key, action.balance)
+                                    selectKey.setKey(action.key, action.key?.balance)
                                 }
+                            }
+                            is UpdateFee -> {
+                                binding.estimatedFee.value = action.fee
+                                binding.refresh.isRefreshing = false
+                            }
+                            is ShowError -> {
+                                binding.refresh.isRefreshing = false
                             }
                         }
                     }
@@ -258,6 +354,15 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
         if (ownerSelected() != null) {
             viewModel.updateDefaultKey(ownerSelected()!!)
             resetOwnerData()
+        }
+        loadEstimation()
+    }
+
+    private fun loadEstimation() {
+        if (!viewModel.isLoading()) {
+            txDetails?.let {
+                viewModel.estimate(it.txData!!, it.detailedExecutionInfo!!)
+            }
         }
     }
 

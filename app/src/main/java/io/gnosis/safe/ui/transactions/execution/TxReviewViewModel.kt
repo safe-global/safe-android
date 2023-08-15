@@ -2,16 +2,24 @@ package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.backend.rpc.RpcClient
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.TransactionEip1559
+import pm.gnosis.models.Wei
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TxReviewViewModel
@@ -28,6 +36,25 @@ class TxReviewViewModel
         private set
 
     private var executionKey: OwnerViewData? = null
+
+    private var userEditedFeeData: Boolean = false
+
+    var minNonce: BigInteger? = null
+        private set
+
+    var nonce: BigInteger? = null
+        private set
+
+    var gasLimit: BigInteger? = null
+        private set
+
+    var maxPriorityFeePerGas: BigDecimal? = null
+        private set
+
+    var maxFeePerGas: BigDecimal? = null
+        private set
+
+    private var ethTx: TransactionEip1559? = null
 
     init {
         safeLaunch {
@@ -60,7 +87,7 @@ class TxReviewViewModel
                     TxReviewState(viewAction = DefaultKey(executionKey))
                 }
                 executionKey?.let {
-                    updateKeyBalance(it)
+                    updateDefaultKeyBalance()
                 }
             }
         }
@@ -70,40 +97,101 @@ class TxReviewViewModel
         safeLaunch {
             address?.let {
                 val owner = credentialsRepository.owner(it)!!
-                val executionKey = OwnerViewData(owner.address, owner.name, owner.type)
+                executionKey = OwnerViewData(owner.address, owner.name, owner.type)
                 updateState {
                     TxReviewState(viewAction = DefaultKey(executionKey))
                 }
-                updateKeyBalance(executionKey)
+                updateDefaultKeyBalance()
             }
         }
     }
 
-    private suspend fun updateKeyBalance(keyData: OwnerViewData) {
-        keyData?.let {
+    private suspend fun updateDefaultKeyBalance() {
+        executionKey?.let {
             val balanceWei = rpcClient.getBalance(it.address)
             balanceWei?.let {
+                executionKey = executionKey!!.copy(
+                    balance = balanceString(balanceWei.value),
+                    zeroBalance = balanceWei.value == BigInteger.ZERO
+                )
                 updateState {
-                    TxReviewState(
-                        viewAction = DefaultKey(
-                            keyData,
-                            "${
-                                balanceFormatter.shortAmount(
-                                    it.value.convertAmount(
-                                        activeSafe.chain.currency.decimals
-                                    )
-                                )
-                            } ${activeSafe.chain.currency.symbol}",
-                        )
-                    )
+                    TxReviewState(viewAction = DefaultKey(executionKey))
                 }
             }
         }
+    }
+
+    fun estimate(txData: TxData, executionInfo: DetailedExecutionInfo) {
+        safeLaunch {
+
+            if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
+                executionKey?.let {
+
+                    updateState {
+                        TxReviewState(viewAction = Loading(true))
+                    }
+
+                    ethTx = rpcClient.ethTransaction(activeSafe, it.address, txData, executionInfo, BigInteger.valueOf(DEFAULT_MINER_TIP))
+                    val estimationParams = rpcClient.estimate(activeSafe.chain, ethTx!!)
+
+                    executionKey = executionKey!!.copy(
+                        balance = balanceString(estimationParams.balance),
+                        zeroBalance = estimationParams.gasPrice == BigInteger.ZERO
+                    )
+
+                    updateState {
+                        TxReviewState(viewAction = DefaultKey(executionKey))
+                    }
+
+                    val gasPrice = estimationParams.gasPrice
+                    minNonce = estimationParams.nonce
+                    if (!userEditedFeeData) {
+                        nonce = minNonce
+                        gasLimit = estimationParams.estimate
+                        maxPriorityFeePerGas = Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals).plus(maxPriorityFeePerGas!!)
+                    }
+
+                    val totalFee = balanceString(gasLimit!! * (gasPrice + DEFAULT_MINER_TIP.toBigInteger()))
+
+                    updateState {
+                        TxReviewState(viewAction = UpdateFee(totalFee))
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateEstimationParams(nonce: BigInteger, gasLimit: BigInteger, maxPriorityFeePerGas: BigDecimal, maxFeePerGas: BigDecimal) {
+        this.userEditedFeeData = true
+        this.nonce = nonce
+        this.gasLimit = gasLimit
+        this.maxPriorityFeePerGas = maxPriorityFeePerGas
+        this.maxFeePerGas = maxFeePerGas
+        val totalFee = balanceString(gasLimit * (maxFeePerGas.toBigInteger() + maxPriorityFeePerGas.toBigInteger()))
+        safeLaunch {
+            updateState {
+                TxReviewState(viewAction = UpdateFee(totalFee))
+            }
+        }
+    }
+
+    private fun balanceString(balance: BigInteger): String {
+        return "${balanceFormatter.shortAmount(
+            balance.convertAmount(
+                activeSafe.chain.currency.decimals
+            )
+        )
+        } ${activeSafe.chain.currency.symbol}"
     }
 
     fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
 
     fun isChainPrefixCopyEnabled() = settingsHandler.chainPrefixCopy
+
+    companion object {
+        const val DEFAULT_MINER_TIP = 1_500_000_000L
+    }
 }
 
 data class TxReviewState(
@@ -111,7 +199,10 @@ data class TxReviewState(
 ) : BaseStateViewModel.State
 
 data class DefaultKey(
-    val key: OwnerViewData?,
-    val balance: String? = null
+    val key: OwnerViewData?
+) : BaseStateViewModel.ViewAction
+
+data class UpdateFee(
+    val fee: String?
 ) : BaseStateViewModel.ViewAction
 

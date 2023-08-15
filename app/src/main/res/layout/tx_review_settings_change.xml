@@ -9,6 +9,7 @@
         android:id="@+id/tx_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="-16dp"/>
 
 </LinearLayout>

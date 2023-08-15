@@ -137,6 +137,7 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
             }
             saveButton.isEnabled = false
         }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is TxEditFeeState -> {
@@ -188,7 +189,7 @@ class TxEditFee1559Fragment : BaseViewBindingFragment<FragmentTxEditFeeBinding>(
     }
 
     companion object {
-        const val REQUEST_EDIT_FEE = "request_edit_fee"
+        const val REQUEST_EDIT_FEE = "request_edit_fee_1559"
         const val RESULT_NONCE = "result_nonce"
         const val RESULT_GAS_LIMIT = "result_gas_limit"
         const val RESULT_MAX_PRIORITY_FEE = "result_max_priority_fee"

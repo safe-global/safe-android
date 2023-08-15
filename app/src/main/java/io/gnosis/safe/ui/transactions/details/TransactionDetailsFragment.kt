@@ -391,7 +391,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                                     action = it.dataDecoded?.method ?: "",
                                                     data = it.hexData ?: "",
                                                     decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
-                                                    addressInfoIndex = paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
+                                                    addressInfoIndex = paramSerializer.serializeAddressInfoIndex(it.addressInfoIndex)
                                             )
                                     )
                                 }

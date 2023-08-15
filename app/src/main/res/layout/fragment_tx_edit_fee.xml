@@ -154,7 +154,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:textColor="@color/label_primary"
                 android:textCursorDrawable="@drawable/cursor_drawable" />
 
@@ -186,7 +186,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:textColor="@color/label_primary"
                 android:textCursorDrawable="@drawable/cursor_drawable" />
 
