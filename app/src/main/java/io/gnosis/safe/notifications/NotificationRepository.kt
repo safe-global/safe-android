@@ -6,6 +6,7 @@ import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Error
 import io.gnosis.safe.notifications.models.PushNotification
@@ -234,7 +235,7 @@ class NotificationRepository(
             val registrationHash = registrationHashForChain.hexToByteArray()
             owners.forEach {
                 try {
-                    val signature = credentialsRepository.signWithOwner(it, registrationHash).addHexPrefix()
+                    val signature = credentialsRepository.signWithOwner(it, registrationHash).toSignatureString().addHexPrefix()
                     addSignature(signature)
                 } catch (e: Exception) {
                     Timber.e(e, "Exception while signing")

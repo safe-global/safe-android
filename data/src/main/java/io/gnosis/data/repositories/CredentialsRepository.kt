@@ -4,8 +4,8 @@ import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.data.security.HeimdallEncryptionManager
-import io.gnosis.data.utils.toSignatureString
 import kotlinx.coroutines.runBlocking
+import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
@@ -163,7 +163,7 @@ class CredentialsRepository(
         return data
     }
 
-    fun signWithOwner(owner: Owner, data: ByteArray): String {
+    fun signWithOwner(owner: Owner, data: ByteArray): ECDSASignature {
         val converter = EncryptedByteArray.Converter()
         val cryptoData =
             EncryptionManager.CryptoData.fromString(converter.toStorage(owner.privateKey!!))
@@ -173,7 +173,6 @@ class CredentialsRepository(
         val keyPair = KeyPair.fromPrivate(key)
         return keyPair
             .sign(data)
-            .toSignatureString()
     }
 }
 
