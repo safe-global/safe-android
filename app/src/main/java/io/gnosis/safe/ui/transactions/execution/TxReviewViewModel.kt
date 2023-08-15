@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.backend.rpc.RpcClient
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
@@ -9,12 +10,14 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.TransactionEip1559
+import pm.gnosis.models.Wei
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -34,6 +37,8 @@ class TxReviewViewModel
 
     private var executionKey: OwnerViewData? = null
 
+    private var userEditedFeeData: Boolean = false
+
     var minNonce: BigInteger? = null
         private set
 
@@ -48,6 +53,8 @@ class TxReviewViewModel
 
     var maxFeePerGas: BigDecimal? = null
         private set
+
+    private var ethTx: TransactionEip1559? = null
 
     init {
         safeLaunch {
@@ -124,8 +131,8 @@ class TxReviewViewModel
                         TxReviewState(viewAction = Loading(true))
                     }
 
-                    var tx = rpcClient.ethTransaction(activeSafe, it.address, txData, executionInfo, BigInteger.valueOf(DEFAULT_MINER_TIP))
-                    val estimationParams = rpcClient.estimate(activeSafe.chain, tx)
+                    ethTx = rpcClient.ethTransaction(activeSafe, it.address, txData, executionInfo, BigInteger.valueOf(DEFAULT_MINER_TIP))
+                    val estimationParams = rpcClient.estimate(activeSafe.chain, ethTx!!)
 
                     executionKey = executionKey!!.copy(
                         balance = balanceString(estimationParams.balance),
@@ -138,11 +145,11 @@ class TxReviewViewModel
 
                     val gasPrice = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
-                    if (nonce == null) {
+                    if (!userEditedFeeData) {
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
-                        maxPriorityFeePerGas = BigDecimal.valueOf(DEFAULT_MINER_TIP).divide(BigDecimal.valueOf(1_000_000_000L))
-                        maxFeePerGas = gasPrice.toBigDecimal().divide(BigDecimal.valueOf(1_000_000_000L)).plus(maxPriorityFeePerGas!!)
+                        maxPriorityFeePerGas = Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals).plus(maxPriorityFeePerGas!!)
                     }
 
                     val totalFee = balanceString(gasLimit!! * (gasPrice + DEFAULT_MINER_TIP.toBigInteger()))
@@ -156,6 +163,8 @@ class TxReviewViewModel
     }
 
     fun updateEstimationParams(nonce: BigInteger, gasLimit: BigInteger, maxPriorityFeePerGas: BigDecimal, maxFeePerGas: BigDecimal) {
+        this.userEditedFeeData = true
+        this.nonce = nonce
         this.gasLimit = gasLimit
         this.maxPriorityFeePerGas = maxPriorityFeePerGas
         this.maxFeePerGas = maxFeePerGas

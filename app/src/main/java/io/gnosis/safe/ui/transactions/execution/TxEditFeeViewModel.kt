@@ -6,6 +6,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.qrscanner.nullOnThrow
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import pm.gnosis.models.Wei
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -24,8 +25,8 @@ class TxEditFeeViewModel @Inject constructor(
         minNonce: BigInteger,
         nonceValue: String?,
         gasLimitValue: String?,
-        maxPriorityFeeValue: String?,
-        maxFeeValue: String?
+        maxPriorityFeeGWeiValue: String?,
+        maxFeeGWeiValue: String?
     ) {
 
         val nonceError = if (nonceValue.isNullOrBlank()) {
@@ -54,10 +55,10 @@ class TxEditFeeViewModel @Inject constructor(
             }
         }
 
-        val maxPriorityFee = nullOnThrow { BigDecimal(maxPriorityFeeValue) }
-        val maxFee = nullOnThrow { BigDecimal(maxFeeValue) }
+        val maxPriorityFee = nullOnThrow { BigDecimal(maxPriorityFeeGWeiValue) }
+        val maxFee = nullOnThrow { BigDecimal(maxFeeGWeiValue) }
 
-        val maxPriorityFeeError = if (maxPriorityFeeValue.isNullOrBlank()) {
+        val maxPriorityFeeError = if (maxPriorityFeeGWeiValue.isNullOrBlank()) {
             context.getString(R.string.tx_exec_error_value_required)
         } else {
             if (maxPriorityFee == null || maxPriorityFee < BigDecimal.ZERO) {
@@ -73,7 +74,7 @@ class TxEditFeeViewModel @Inject constructor(
             }
         }
 
-        val maxFeeError = if (maxPriorityFeeValue.isNullOrBlank()) {
+        val maxFeeError = if (maxPriorityFeeGWeiValue.isNullOrBlank()) {
             context.getString(R.string.tx_exec_error_value_required)
         } else {
             if (maxFee == null || maxFee < BigDecimal.ZERO) {
@@ -169,14 +170,14 @@ class TxEditFeeViewModel @Inject constructor(
         context: Context,
         chain: Chain,
         gasLimitValue: String?,
-        maxFeeValue: String?
+        maxFeeGWeiValue: String?
     ): String {
-        val gasLimit = nullOnThrow { BigDecimal(gasLimitValue) }
-        val maxFee = nullOnThrow { BigDecimal(maxFeeValue) }
+        val gasLimit = nullOnThrow { BigInteger(gasLimitValue) }
+        val maxFee = nullOnThrow { Wei.fromGWei(BigDecimal(maxFeeGWeiValue)).value }
         return if (gasLimit == null || maxFee == null) {
             context.getString(R.string.value_not_available)
         } else {
-            val totalFee = gasLimit * maxFee.divide(BigDecimal.valueOf(1_000_000_000))
+            val totalFee = Wei(gasLimit * maxFee).toEther(scale = chain.currency.decimals).stripTrailingZeros()
             "${totalFee.toPlainString()} ${chain.currency.symbol}"
         }
     }
