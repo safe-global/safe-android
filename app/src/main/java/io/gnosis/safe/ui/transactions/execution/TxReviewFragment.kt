@@ -20,6 +20,7 @@ import io.gnosis.safe.databinding.TxReviewRejectionBinding
 import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
@@ -343,6 +344,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                 binding.estimatedFee.value = action.fee
                                 binding.refresh.isRefreshing = false
                                 binding.submitButton.isEnabled = true
+                            }
+                            is NavigateTo -> {
+                                findNavController().navigate(action.navDirections)
                             }
                             is ShowError -> {
                                 binding.refresh.isRefreshing = false

@@ -230,6 +230,15 @@ class TxReviewViewModel
         safeLaunch {
             ethTxSignature?.let {
                 rpcClient.send(ethTx!!, it)
+
+                updateState {
+                    TxReviewState(
+                        viewAction =
+                        ViewAction.NavigateTo(
+                            TxReviewFragmentDirections.actionTxReviewFragmentToTxSuccessFragment()
+                        )
+                    )
+                }
             }
         }
     }

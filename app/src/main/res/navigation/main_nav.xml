@@ -1282,6 +1282,10 @@
             app:destination="@id/txAdvancedParamsFragment"
             app:popUpTo="@id/txReviewFragment" />
 
+        <action
+            android:id="@+id/action_txReviewFragment_to_txSuccessFragment"
+            app:destination="@id/txSuccessFragment" />
+
     </fragment>
 
     <fragment
