@@ -304,6 +304,10 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     )
                 )
             }
+            submitButton.setOnClickListener {
+                submitButton.isEnabled = false
+                viewModel.signAndExecute()
+            }
             refresh.setOnRefreshListener {
                 loadEstimation()
             }
@@ -338,9 +342,11 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                             is UpdateFee -> {
                                 binding.estimatedFee.value = action.fee
                                 binding.refresh.isRefreshing = false
+                                binding.submitButton.isEnabled = true
                             }
                             is ShowError -> {
                                 binding.refresh.isRefreshing = false
+                                binding.submitButton.isEnabled = false
                             }
                         }
                     }

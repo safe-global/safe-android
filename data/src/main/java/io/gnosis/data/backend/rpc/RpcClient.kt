@@ -11,6 +11,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.utils.SemVer
+import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.ethereum.BulkRequest
 import pm.gnosis.ethereum.EthBalance
 import pm.gnosis.ethereum.EthCallEip1559
@@ -22,8 +23,11 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Fee1559
 import pm.gnosis.models.TransactionEip1559
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.utils.rlp
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 
 class RpcClient(
@@ -198,5 +202,10 @@ class RpcClient(
             callSuccess = BigInteger(callSuccess.removeHexPrefix()) == BigInteger.ONE,
             estimate = estimate
         )
+    }
+
+    suspend fun send(tx: TransactionEip1559, signature: ECDSASignature) {
+        val rawTxData = byteArrayOf(tx.type.toByte(), *tx.rlp(signature))
+        ethereumRepository.sendRawTransaction(rawTxData.toHexString().addHexPrefix())
     }
 }
