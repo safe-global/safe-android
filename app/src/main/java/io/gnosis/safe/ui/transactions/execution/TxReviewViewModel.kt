@@ -157,6 +157,8 @@ class TxReviewViewModel
 
                     val gasPrice = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
+                    // If user has not edited the fee data, we set the fee values
+                    // Otherwise, we keep the user's values
                     if (!userEditedFeeData) {
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
