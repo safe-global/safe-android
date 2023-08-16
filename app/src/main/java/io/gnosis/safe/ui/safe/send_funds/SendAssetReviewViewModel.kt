@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
+import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -240,7 +241,7 @@ class SendAssetReviewViewModel
                     signature = signedSafeTxHash ?: credentialsRepository.signWithOwner(
                         selectedOwner,
                         safeTxHash.hexToByteArray()
-                    ),
+                    ).toSignatureString(),
                     safeTxGas = txExecutionInfo.safeTxGas.toLong(),
                     safeTxHash = safeTxHash,
                     sender = selectedOwner.address

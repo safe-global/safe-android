@@ -23,6 +23,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
@@ -409,7 +410,7 @@ class TransactionDetailsViewModelTest {
             val ownerAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
             val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
             coEvery { safeRepository.getActiveSafe() } returns Safe(ownerAddress, "safe_name")
-            coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
+            coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ECDSASignature(BigInteger.ZERO, BigInteger.ZERO)
             coEvery {
                 transactionRepository.submitConfirmation(
                     any(),
@@ -459,7 +460,7 @@ class TransactionDetailsViewModelTest {
             val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
             coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
             coEvery { safeRepository.getSafes() } returns emptyList()
-            coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
+            coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ECDSASignature(BigInteger.ZERO, BigInteger.ZERO)
             coEvery {
                 transactionRepository.submitConfirmation(
                     any(),

@@ -112,6 +112,7 @@ dependencies {
     api "com.github.gnosis.svalinn-kotlin:ethereum:$versions.svalinn"
     api "com.github.gnosis.svalinn-kotlin:ethereum-rpc:$versions.svalinn"
     api "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
     api "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
     api("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
