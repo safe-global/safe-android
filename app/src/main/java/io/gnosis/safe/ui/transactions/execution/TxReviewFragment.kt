@@ -20,13 +20,12 @@ import io.gnosis.safe.databinding.TxReviewRejectionBinding
 import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.SigningMode
-import io.gnosis.safe.ui.transactions.details.TransactionDetailsFragmentDirections
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
@@ -211,8 +210,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                     txDetails!!.txData?.dataDecoded?.parameters?.getOrNull(0)?.let { param ->
                                         if (param is Param.Bytes && param.valueDecoded != null) {
                                             findNavController().navigate(
-                                                //TODO adjust direction
-                                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
+                                                TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionMultisendFragment(
                                                     chain,
                                                     paramSerializer.serializeDecodedValues(param.valueDecoded!!),
                                                     paramSerializer.serializeAddressInfoIndex(txDetails!!.txData?.addressInfoIndex)
@@ -227,8 +225,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                 txDataDecoded.setOnClickListener {
                                     txDetails!!.txData?.let {
                                         findNavController().navigate(
-                                            //TODO adjust direction
-                                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                            TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionFragment(
                                                 chain = chain,
                                                 action = it.dataDecoded?.method ?: "",
                                                 data = it.hexData ?: "",
