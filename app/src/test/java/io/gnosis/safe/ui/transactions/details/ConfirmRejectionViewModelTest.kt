@@ -23,9 +23,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
+import java.math.BigInteger
 
 
 class ConfirmRejectionViewModelTest {
@@ -55,7 +57,7 @@ class ConfirmRejectionViewModelTest {
         )
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
         coEvery { safeRepository.getSafes() } returns emptyList()
-        coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
+        coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ECDSASignature(BigInteger.ZERO, BigInteger.ZERO)
         coEvery {
             transactionRepository.proposeTransaction(
                 any(),
