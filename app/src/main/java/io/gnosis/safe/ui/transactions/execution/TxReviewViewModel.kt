@@ -160,14 +160,11 @@ class TxReviewViewModel
                     if (!userEditedFeeData) {
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
-                        maxPriorityFeePerGas =
-                            Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
-                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals)
-                            .plus(maxPriorityFeePerGas!!)
+                        maxPriorityFeePerGas = Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals).plus(maxPriorityFeePerGas!!)
                     }
 
-                    val totalFee =
-                        balanceString(gasLimit!! * (gasPrice + DEFAULT_MINER_TIP.toBigInteger()))
+                    val totalFee = balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
 
                     updateState {
                         TxReviewState(viewAction = UpdateFee(totalFee))
@@ -188,8 +185,7 @@ class TxReviewViewModel
         this.gasLimit = gasLimit
         this.maxPriorityFeePerGas = maxPriorityFeePerGas
         this.maxFeePerGas = maxFeePerGas
-        val totalFee =
-            balanceString(gasLimit * (maxFeePerGas.toBigInteger() + maxPriorityFeePerGas.toBigInteger()))
+        val totalFee = balanceString(gasLimit * Wei.fromGWei(maxFeePerGas).value)
         safeLaunch {
             updateState {
                 TxReviewState(viewAction = UpdateFee(totalFee))
