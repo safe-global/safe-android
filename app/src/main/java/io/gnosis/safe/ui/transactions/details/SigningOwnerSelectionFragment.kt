@@ -18,6 +18,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.list.ExecutionKey
 import io.gnosis.safe.ui.settings.owner.list.LocalOwners
 import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter
 import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter.OwnerListener
@@ -115,20 +116,14 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                             is BaseStateViewModel.ViewAction.ShowError -> {
                                 binding.progress.visible(false)
                             }
-                            is ConfirmConfirmation -> {
-                                findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                                    action.owner.asEthereumAddressString()
-                                )
+                            is ExecutionKey -> {
+                                returnSelectedKey(action.owner)
                             }
-
+                            is ConfirmConfirmation -> {
+                                returnSelectedKey(action.owner)
+                            }
                             is ConfirmRejection -> {
-                                findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                                    action.owner.asEthereumAddressString()
-                                )
+                                returnSelectedKey(action.owner)
                             }
                             is BaseStateViewModel.ViewAction.NavigateTo -> {
                                 findNavController().navigate(action.navDirections)
@@ -144,7 +139,11 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     }
 
     override fun onOwnerClick(owner: Solidity.Address, type: Owner.Type) {
-        viewModel.selectKeyForSigning(owner, type, signingMode, chain, safeTxHash)
+        if (signingMode == SigningMode.EXECUTION) {
+            viewModel.selectKeyForExecution(owner)
+        } else {
+            viewModel.selectKeyForSigning(owner, type, signingMode, chain, safeTxHash)
+        }
     }
 
     private fun showList() {
@@ -159,6 +158,14 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
             owners.visible(false)
             emptyPlaceholder.visible(true)
         }
+    }
+
+    private fun returnSelectedKey(owner: Solidity.Address? = null) {
+        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+            owner?.asEthereumAddressString()
+        )
     }
 }
 

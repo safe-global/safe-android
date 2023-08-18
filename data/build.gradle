@@ -4,6 +4,7 @@ apply from: '../buildsystem/test_android_dependencies.gradle'
 apply from: '../buildsystem/coverage_report.gradle'
 
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 
 android {
 

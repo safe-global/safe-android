@@ -17,7 +17,9 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.utils.handleQrCodeActivityResult
+import io.gnosis.safe.utils.setToCurrent
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -30,6 +32,7 @@ class KeystoneRequestSignatureFragment :
     private val signingMode by lazy { navArgs.signingMode }
     private val chain by lazy { navArgs.chain }
     private val safeTxHash by lazy { navArgs.safeTxHash }
+    private val isLegacy by lazy { navArgs.isLegacy }
 
     override fun screenId() = ScreenId.KEYSTONE_REQUEST_SIGNATURE
 
@@ -113,7 +116,8 @@ class KeystoneRequestSignatureFragment :
                 ownerAddress = it,
                 safeTxHash = safeTxHash!!,
                 signingMode = signingMode,
-                chainId = chain.chainId.toInt()
+                chainId = chain.chainId.toInt(),
+                isLegacy = isLegacy
             )
         }
     }
@@ -131,14 +135,19 @@ class KeystoneRequestSignatureFragment :
     }
 
     private fun signSuccessfully(signedSafeTxHash: String? = null) {
-        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+        if (signingMode == SigningMode.EXECUTION) {
+            findNavController().popBackStack(R.id.keystoneRequestSignatureFragment, true)
+        } else {
+            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+        }
+        findNavController().setToCurrent(
             SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
             owner!!.asEthereumAddressString()
         )
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+        findNavController().setToCurrent(
             SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
             signedSafeTxHash
         )
+
     }
 }

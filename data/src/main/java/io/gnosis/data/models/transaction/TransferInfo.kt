@@ -1,8 +1,12 @@
 package io.gnosis.data.models.transaction
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.adapters.SolidityAddressParceler
 import io.gnosis.data.models.Chain
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -14,8 +18,10 @@ enum class TransferType {
 
 sealed class TransferInfo(
     @Json(name = "type") val type: TransferType
-) {
+) : Parcelable{
     @JsonClass(generateAdapter = true)
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Erc20Transfer(
         @Json(name = "tokenAddress")
         val tokenAddress: Solidity.Address,
@@ -32,6 +38,8 @@ sealed class TransferInfo(
     ) : TransferInfo(TransferType.ERC20)
 
     @JsonClass(generateAdapter = true)
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Erc721Transfer(
         @Json(name = "tokenAddress")
         val tokenAddress: Solidity.Address,
@@ -46,6 +54,7 @@ sealed class TransferInfo(
     ) : TransferInfo(TransferType.ERC721)
 
     @JsonClass(generateAdapter = true)
+    @Parcelize
     data class NativeTransfer(
         @Json(name = "value")
         val value: BigInteger

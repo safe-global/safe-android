@@ -163,6 +163,15 @@ class OwnerListViewModel
             }
         }
     }
+
+    fun selectKeyForExecution(
+        owner: Solidity.Address,
+    ) {
+        safeLaunch {
+            updateState { OwnerListState(ExecutionKey(owner)) }
+            updateState { OwnerListState(ViewAction.None) }
+        }
+    }
 }
 
 data class OwnerListState(
@@ -171,4 +180,8 @@ data class OwnerListState(
 
 data class LocalOwners(
     val owners: List<OwnerViewData>
+) : BaseStateViewModel.ViewAction
+
+data class ExecutionKey(
+    val owner: Solidity.Address
 ) : BaseStateViewModel.ViewAction

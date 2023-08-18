@@ -49,7 +49,8 @@ class KeystoneSignViewModel
         ownerAddress: Solidity.Address,
         safeTxHash: String,
         signingMode: SigningMode,
-        chainId: Int
+        chainId: Int,
+        isLegacy: Boolean
     ) {
         this.signingMode = signingMode
         safeLaunch {
@@ -58,7 +59,7 @@ class KeystoneSignViewModel
                 ethSignRequest = EthSignRequest(
                     requestId = UUID.randomUUID().toString(),
                     signData = safeTxHash.removeHexPrefix(),
-                    dataType = signingMode.toDataType(),
+                    dataType = signingMode.toDataType(isLegacy = isLegacy),
                     chainId = chainId,
                     path = owner.keyDerivationPath!!,
                     xfp = owner.sourceFingerprint!!,
@@ -191,13 +192,7 @@ class KeystoneSignViewModel
             SigningMode.CONFIRMATION -> KeystoneEthereumSDK.DataType.PersonalMessage
             SigningMode.REJECTION -> KeystoneEthereumSDK.DataType.PersonalMessage
             SigningMode.INITIATE_TRANSFER -> KeystoneEthereumSDK.DataType.PersonalMessage
-            SigningMode.EXECUTION -> {
-                if (isLegacy) {
-                    KeystoneEthereumSDK.DataType.Transaction
-                } else {
-                    KeystoneEthereumSDK.DataType.TypedTransaction
-                }
-            }
+            SigningMode.EXECUTION -> KeystoneEthereumSDK.DataType.PersonalMessage
         }
     }
 }

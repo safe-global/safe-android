@@ -25,13 +25,16 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.getFromCurrent
 import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.setLink
+import io.gnosis.safe.utils.setToCurrent
 import io.gnosis.safe.utils.toColor
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.model.Solidity
@@ -63,6 +66,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
+
     override fun viewModelProvider() = this
 
     override fun inflateBinding(
@@ -92,7 +96,6 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             )
 
             when (val txInfo = txDetails!!.txInfo) {
-
                 is TransactionInfoViewData.Transfer -> {
                     val viewStub = binding.stubTransfer
                     if (viewStub.parent != null) {
@@ -101,7 +104,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     }
                     val transferBinding = contentBinding as TxReviewTransferBinding
                     val amount = txDetails!!.txData?.value ?: BigInteger.ZERO
-                    val amountDecimal = amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals)).toPlainString()
+                    val amountDecimal =
+                        amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals))
+                            .toPlainString()
                     with(transferBinding) {
                         when (txInfo.transferInfo) {
                             is TransferInfo.Erc20Transfer -> {
@@ -111,6 +116,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                     txInfo.transferInfo.logoUri
                                 )
                             }
+
                             is TransferInfo.Erc721Transfer -> {
                                 transferAmount.setAmount(
                                     amountDecimal = BigDecimal.ONE.toPlainString(),
@@ -118,6 +124,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                     txInfo.transferInfo.logoUri
                                 )
                             }
+
                             is TransferInfo.NativeTransfer -> {
                                 transferAmount.setAmount(
                                     amountDecimal = amountDecimal,
@@ -144,7 +151,10 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                 copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
                             )
                             if (!txInfo.addressUri.isNullOrBlank()) {
-                                toAddressItemKnown.loadKnownAddressLogo(txInfo.addressUri, txInfo.address)
+                                toAddressItemKnown.loadKnownAddressLogo(
+                                    txInfo.addressUri,
+                                    txInfo.address
+                                )
                             }
                         } ?: run {
                             toAddressItemKnown.visible(false)
@@ -203,25 +213,35 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
                             if (decodedData.method.lowercase() == "multisend") {
 
-                                val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
+                                val valueDecoded =
+                                    (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
 
-                                txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+                                txDataDecoded.name = getString(
+                                    R.string.tx_details_action_multisend,
+                                    valueDecoded?.size ?: 0
+                                )
                                 txDataDecoded.setOnClickListener {
-                                    txDetails!!.txData?.dataDecoded?.parameters?.getOrNull(0)?.let { param ->
-                                        if (param is Param.Bytes && param.valueDecoded != null) {
-                                            findNavController().navigate(
-                                                TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionMultisendFragment(
-                                                    chain,
-                                                    paramSerializer.serializeDecodedValues(param.valueDecoded!!),
-                                                    paramSerializer.serializeAddressInfoIndex(txDetails!!.txData?.addressInfoIndex)
+                                    txDetails!!.txData?.dataDecoded?.parameters?.getOrNull(0)
+                                        ?.let { param ->
+                                            if (param is Param.Bytes && param.valueDecoded != null) {
+                                                findNavController().navigate(
+                                                    TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionMultisendFragment(
+                                                        chain,
+                                                        paramSerializer.serializeDecodedValues(param.valueDecoded!!),
+                                                        paramSerializer.serializeAddressInfoIndex(
+                                                            txDetails!!.txData?.addressInfoIndex
+                                                        )
+                                                    )
                                                 )
-                                            )
+                                            }
                                         }
-                                    }
                                 }
                             } else {
 
-                                txDataDecoded.name = getString(R.string.tx_details_action, txDetails!!.txData?.dataDecoded?.method)
+                                txDataDecoded.name = getString(
+                                    R.string.tx_details_action,
+                                    txDetails!!.txData?.dataDecoded?.method
+                                )
                                 txDataDecoded.setOnClickListener {
                                     txDetails!!.txData?.let {
                                         findNavController().navigate(
@@ -229,8 +249,14 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                                 chain = chain,
                                                 action = it.dataDecoded?.method ?: "",
                                                 data = it.hexData ?: "",
-                                                decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
-                                                addressInfoIndex = paramSerializer.serializeAddressInfoIndex(it.addressInfoIndex)
+                                                decodedData = it.dataDecoded?.let {
+                                                    paramSerializer.serializeDecodedData(
+                                                        it
+                                                    )
+                                                },
+                                                addressInfoIndex = paramSerializer.serializeAddressInfoIndex(
+                                                    it.addressInfoIndex
+                                                )
                                             )
                                         )
                                     }
@@ -239,7 +265,11 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                             }
                         }
 
-                        txData.setData(txDetails!!.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
+                        txData.setData(
+                            txDetails!!.txData?.hexData,
+                            txInfo.dataSize,
+                            getString(R.string.tx_details_data)
+                        )
                     }
                 }
 
@@ -253,7 +283,10 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                     with(rejectionBinding) {
                         when (val executionInfo = txDetails!!.detailedExecutionInfo) {
                             is DetailedExecutionInfo.MultisigExecutionDetails -> {
-                                txRejectionInfo.text = getString(R.string.tx_details_rejection_info_queued, executionInfo.nonce)
+                                txRejectionInfo.text = getString(
+                                    R.string.tx_details_rejection_info_queued,
+                                    executionInfo.nonce
+                                )
                                 txPaymentReasonLink.setLink(
                                     url = getString(R.string.tx_details_rejection_payment_reason_link),
                                     urlText = getString(R.string.tx_details_rejection_payment_reason),
@@ -261,6 +294,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                     underline = true
                                 )
                             }
+
                             else -> {
                             }
                         }
@@ -324,6 +358,12 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             )
         }
 
+        if (!viewModel.isInitialized()) {
+            viewModel.setTxData(
+                txData = txDetails!!.txData!!,
+                executionInfo = txDetails!!.detailedExecutionInfo!!
+            )
+        }
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is TxReviewState -> {
@@ -332,22 +372,33 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                             is Loading -> {
                                 binding.refresh.isRefreshing = action.isLoading
                             }
+
                             is DefaultKey -> {
                                 with(binding) {
                                     selectKey.setKey(action.key, action.key?.balance)
                                 }
                             }
+
                             is UpdateFee -> {
-                                binding.estimatedFee.value = action.fee
-                                binding.refresh.isRefreshing = false
-                                binding.submitButton.isEnabled = true
+                                with(binding) {
+                                    estimatedFee.value = action.fee
+                                    refresh.isRefreshing = false
+                                    submitButton.isEnabled = true
+                                }
                             }
+
                             is NavigateTo -> {
                                 findNavController().navigate(action.navDirections)
                             }
+
                             is ShowError -> {
-                                binding.refresh.isRefreshing = false
-                                binding.submitButton.isEnabled = false
+                                with(binding) {
+                                    refresh.isRefreshing = false
+                                    submitButton.isEnabled = false
+                                }
+                            }
+
+                            else -> {
                             }
                         }
                     }
@@ -358,40 +409,61 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
     override fun onResume() {
         super.onResume()
-        if (ownerSelected() != null) {
+        if (passcodeUnlocked()) {
+            // password protected key (imported or generated) was unlocked
+            resetPasscodeUnlocked()
+            viewModel.resumeExecutionFlow()
+        } else if (ownerSigned() != null) {
+            // retrieved signature from hardware wallet
+            viewModel.resumeExecutionFlow(ownerSigned())
+            resetOwnerData()
+        } else if (ownerSelected() != null) {
+            // default execution key changed
             viewModel.updateDefaultKey(ownerSelected()!!)
             resetOwnerData()
+        } else {
+            loadEstimation()
         }
-        loadEstimation()
     }
 
     private fun loadEstimation() {
         if (!viewModel.isLoading()) {
-            txDetails?.let {
-                viewModel.estimate(it.txData!!, it.detailedExecutionInfo!!)
-            }
+            viewModel.estimate()
         }
     }
 
+    private fun passcodeUnlocked(): Boolean {
+        return findNavController().getFromCurrent<Boolean>(
+            OwnerDetailsFragment.RESULT_PASSCODE_UNLOCKED
+        ) == true
+    }
+
+    private fun resetPasscodeUnlocked() {
+        findNavController().setToCurrent(
+            OwnerDetailsFragment.RESULT_PASSCODE_UNLOCKED,
+            null
+        )
+    }
+
     private fun ownerSelected(): Solidity.Address? {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+        return findNavController().getFromCurrent<String>(
             SafeOverviewBaseFragment.OWNER_SELECTED_RESULT
         )
             ?.asEthereumAddress()
     }
 
     private fun ownerSigned(): String? {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+        return findNavController().getFromCurrent(
             SafeOverviewBaseFragment.OWNER_SIGNED_RESULT
         )
     }
 
     private fun resetOwnerData() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+        findNavController().setToCurrent(
             SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
             null
         )
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+        findNavController().setToCurrent(
             SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
             null
         )

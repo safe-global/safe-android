@@ -8,11 +8,13 @@ import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.utils.toSignature
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.crypto.ECDSASignature
@@ -22,6 +24,8 @@ import pm.gnosis.models.Fee1559
 import pm.gnosis.models.TransactionEip1559
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.utils.rlp
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.toHexString
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -39,9 +43,8 @@ class TxReviewViewModel
     lateinit var activeSafe: Safe
         private set
 
-    private var executionKey: OwnerViewData? = null
-
-    private var userEditedFeeData: Boolean = false
+    var executionKey: OwnerViewData? = null
+        private set
 
     var minNonce: BigInteger? = null
         private set
@@ -58,6 +61,12 @@ class TxReviewViewModel
     var maxFeePerGas: BigDecimal? = null
         private set
 
+    private var txData: TxData? = null
+
+    private var executionInfo: DetailedExecutionInfo? = null
+
+    private var userEditedFeeData: Boolean = false
+
     private var ethTx: TransactionEip1559? = null
 
     private var ethTxSignature: ECDSASignature? = null
@@ -65,11 +74,18 @@ class TxReviewViewModel
     init {
         safeLaunch {
             activeSafe = safeRepository.getActiveSafe()!!
-            loadDefaultKey()
         }
     }
 
     override fun initialState() = TxReviewState(viewAction = null)
+
+    fun setTxData(txData: TxData, executionInfo: DetailedExecutionInfo) {
+        this.txData = txData
+        this.executionInfo = executionInfo
+        loadDefaultKey()
+    }
+
+    fun isInitialized(): Boolean = txData != null && executionInfo != null
 
     fun isLoading(): Boolean {
         val viewAction = (state.value as TxReviewState).viewAction
@@ -90,11 +106,10 @@ class TxReviewViewModel
                 }
                 executionKey = acceptedOwners.first()
                 updateState {
-                    TxReviewState(viewAction = DefaultKey(executionKey))
+                    TxReviewState(viewAction = DefaultKey(key = executionKey))
                 }
-                executionKey?.let {
-                    updateDefaultKeyBalance()
-                }
+                updateDefaultKeyBalance()
+                estimate()
             }
         }
     }
@@ -105,9 +120,10 @@ class TxReviewViewModel
                 val owner = credentialsRepository.owner(it)!!
                 executionKey = OwnerViewData(owner.address, owner.name, owner.type)
                 updateState {
-                    TxReviewState(viewAction = DefaultKey(executionKey))
+                    TxReviewState(viewAction = DefaultKey(key = executionKey))
                 }
                 updateDefaultKeyBalance()
+                estimate()
             }
         }
     }
@@ -127,7 +143,7 @@ class TxReviewViewModel
         }
     }
 
-    fun estimate(txData: TxData, executionInfo: DetailedExecutionInfo) {
+    fun estimate() {
         safeLaunch {
 
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
@@ -140,10 +156,11 @@ class TxReviewViewModel
                     ethTx = rpcClient.ethTransaction(
                         activeSafe,
                         it.address,
-                        txData,
-                        executionInfo,
+                        txData!!,
+                        executionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
                         BigInteger.valueOf(DEFAULT_MINER_TIP)
                     )
+
                     val estimationParams = rpcClient.estimate(activeSafe.chain, ethTx!!)
 
                     executionKey = executionKey!!.copy(
@@ -152,9 +169,10 @@ class TxReviewViewModel
                     )
 
                     updateState {
-                        TxReviewState(viewAction = DefaultKey(executionKey))
+                        TxReviewState(viewAction = DefaultKey(key = executionKey))
                     }
 
+                    //  base fee amount
                     val gasPrice = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
                     // If user has not edited the fee data, we set the fee values
@@ -162,14 +180,14 @@ class TxReviewViewModel
                     if (!userEditedFeeData) {
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
-                        maxPriorityFeePerGas = Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                        maxPriorityFeePerGas =
+                            Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                        // base fee amount + miner tip
                         maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals).plus(maxPriorityFeePerGas!!)
                     }
 
-                    val totalFee = balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
-
                     updateState {
-                        TxReviewState(viewAction = UpdateFee(totalFee))
+                        TxReviewState(viewAction = UpdateFee(fee = totalFee()))
                     }
                 }
             }
@@ -187,10 +205,9 @@ class TxReviewViewModel
         this.gasLimit = gasLimit
         this.maxPriorityFeePerGas = maxPriorityFeePerGas
         this.maxFeePerGas = maxFeePerGas
-        val totalFee = balanceString(gasLimit * Wei.fromGWei(maxFeePerGas).value)
         safeLaunch {
             updateState {
-                TxReviewState(viewAction = UpdateFee(totalFee))
+                TxReviewState(viewAction = UpdateFee(fee = totalFee()))
             }
         }
     }
@@ -205,11 +222,22 @@ class TxReviewViewModel
                     maxFeePerGas = Wei.fromGWei(maxFeePerGas!!).value
                 )
                 val owner = credentialsRepository.owner(it.address)!!
+                val ethTxHash = Sha3Utils.keccak(byteArrayOf(ethTx!!.type.toByte(), *ethTx!!.rlp()))
                 when (owner.type) {
                     Owner.Type.IMPORTED, Owner.Type.GENERATED -> {
-                        val ethTxHash = Sha3Utils.keccak(byteArrayOf(ethTx!!.type.toByte(), *ethTx!!.rlp()))
                         ethTxSignature = credentialsRepository.signWithOwner(owner, ethTxHash)
-                        sendForExecution()
+                        if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {
+                            updateState {
+                                TxReviewState(
+                                    viewAction = ViewAction.NavigateTo(
+                                        TxReviewFragmentDirections.actionTxReviewFragmentToEnterPasscodeFragment()
+                                    )
+                                )
+                            }
+
+                        } else {
+                            sendForExecution()
+                        }
                     }
 
                     Owner.Type.LEDGER_NANO_X -> {
@@ -217,10 +245,44 @@ class TxReviewViewModel
                     }
 
                     Owner.Type.KEYSTONE -> {
-
+                        updateState {
+                            TxReviewState(
+                                viewAction = ViewAction.NavigateTo(
+                                    TxReviewFragmentDirections.actionTxReviewFragmentToKeystoneRequestSignatureFragment(
+                                        SigningMode.EXECUTION,
+                                        activeSafe.chain,
+                                        it.address.asEthereumAddressString(),
+                                        ethTxHash.toHexString(),
+                                        false
+                                    )
+                                )
+                            )
+                        }
+                        updateState {
+                            TxReviewState(
+                                viewAction = ViewAction.None
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private fun setSignature(signatueString: String) {
+        ethTxSignature = signatueString.toSignature()
+        if (ethTxSignature!!.v <= 1) {
+            ethTxSignature!!.v = (ethTxSignature!!.v + 27).toByte()
+
+        }
+    }
+
+    fun resumeExecutionFlow(signatureString: String? = null) {
+        safeLaunch {
+            signatureString?.let {
+                setSignature(it)
+            }
+            sendForExecution()
         }
     }
 
@@ -228,7 +290,6 @@ class TxReviewViewModel
         safeLaunch {
             ethTxSignature?.let {
                 rpcClient.send(ethTx!!, it)
-
                 updateState {
                     TxReviewState(
                         viewAction =
@@ -249,6 +310,14 @@ class TxReviewViewModel
                 )
             )
         } ${activeSafe.chain.currency.symbol}"
+    }
+
+    fun totalFee(): String? {
+        return if (gasLimit != null && maxFeePerGas != null) {
+            balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
+        } else {
+            null
+        }
     }
 
     fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
