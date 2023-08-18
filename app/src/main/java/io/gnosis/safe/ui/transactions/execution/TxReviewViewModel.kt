@@ -61,9 +61,9 @@ class TxReviewViewModel
     var maxFeePerGas: BigDecimal? = null
         private set
 
-    private lateinit var txData: TxData
+    private var txData: TxData? = null
 
-    private lateinit var executionInfo: DetailedExecutionInfo
+    private var executionInfo: DetailedExecutionInfo? = null
 
     private var userEditedFeeData: Boolean = false
 
@@ -156,7 +156,7 @@ class TxReviewViewModel
                     ethTx = rpcClient.ethTransaction(
                         activeSafe,
                         it.address,
-                        txData,
+                        txData!!,
                         executionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
                         BigInteger.valueOf(DEFAULT_MINER_TIP)
                     )
