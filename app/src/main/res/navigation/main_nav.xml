@@ -918,6 +918,11 @@
             app:argType="string"
             app:nullable="true" />
 
+        <argument
+            android:name="isLegacy"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
     </fragment>
 
     <fragment
@@ -1289,6 +1294,16 @@
         <action
             android:id="@+id/action_txReviewFragment_to_txAdvancedParamsFragment"
             app:destination="@id/txAdvancedParamsFragment"
+            app:popUpTo="@id/txReviewFragment" />
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_enterPasscodeFragment"
+            app:destination="@id/enterPasscodeFragment"
+            app:popUpTo="@id/txReviewFragment" />
+
+        <action
+            android:id="@+id/action_txReviewFragment_to_keystoneRequestSignatureFragment"
+            app:destination="@id/keystoneRequestSignatureFragment"
             app:popUpTo="@id/txReviewFragment" />
 
         <action
