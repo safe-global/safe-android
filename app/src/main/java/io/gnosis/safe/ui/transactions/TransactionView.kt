@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions
 
+import android.os.Parcelable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -8,7 +9,8 @@ import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.safe.R
-import java.util.*
+import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 sealed class TransactionView(
     open val status: TransactionStatus?,
@@ -168,13 +170,15 @@ sealed class TransactionView(
     object Unknown : TransactionView(null, "<unused>", null)
 }
 
-sealed class AddressInfoData {
+sealed class AddressInfoData: Parcelable {
 
+    @Parcelize
     data class Local(
         val name: String?,
         val address: String
     ) : AddressInfoData()
 
+    @Parcelize
     data class Remote(
         val name: String?,
         val addressLogoUri: String?,
@@ -182,6 +186,7 @@ sealed class AddressInfoData {
         val appInfo: Boolean = false
     ) : AddressInfoData()
 
+    @Parcelize
     object Default : AddressInfoData() {
         @StringRes
         val nameResId: Int = R.string.tx_list_contract_interaction

@@ -1,8 +1,12 @@
 package io.gnosis.data.models.transaction
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.adapters.SolidityAddressParceler
 import io.gnosis.data.models.AddressInfo
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -27,6 +31,7 @@ data class TransactionDetails(
 )
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class TxData(
     @Json(name = "hexData")
     val hexData: String?,
@@ -42,7 +47,7 @@ data class TxData(
     //FIXME: suboptimal backend response structure
     @Json(name = "addressInfoIndex")
     val addressInfoIndex: Map<String, AddressInfo>? = null
-)
+) : Parcelable
 
 enum class DetailedExecutionInfoType {
     @Json(name = "MULTISIG")
@@ -53,8 +58,10 @@ enum class DetailedExecutionInfoType {
 
 sealed class DetailedExecutionInfo(
     @Json(name = "type") val type: DetailedExecutionInfoType
-) {
+) : Parcelable {
     @JsonClass(generateAdapter = true)
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class MultisigExecutionDetails(
         @Json(name = "submittedAt")
         val submittedAt: Date = Date(),
@@ -85,6 +92,7 @@ sealed class DetailedExecutionInfo(
     ) : DetailedExecutionInfo(DetailedExecutionInfoType.MULTISIG)
 
     @JsonClass(generateAdapter = true)
+    @Parcelize
     data class ModuleExecutionDetails(
         @Json(name = "address")
         val address: AddressInfo
@@ -92,6 +100,7 @@ sealed class DetailedExecutionInfo(
 }
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class Confirmations(
     @Json(name = "signer")
     val signer: AddressInfo,
@@ -99,4 +108,4 @@ data class Confirmations(
     val signature: String,
     @Json(name = "submittedAt")
     val submittedAt: Date
-)
+) : Parcelable

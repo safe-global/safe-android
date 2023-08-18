@@ -1,18 +1,24 @@
 package io.gnosis.safe.ui.transactions.details.viewdata
 
+import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.ui.transactions.AddressInfoData
+import io.gnosis.data.adapters.SolidityAddressNullableParceler
+import io.gnosis.data.adapters.SolidityAddressParceler
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
-import java.io.Serializable
 import java.math.BigInteger
 import java.util.*
 
+@Parcelize
 data class TransactionDetailsViewData(
     val txHash: String?,
     val txStatus: TransactionStatus,
@@ -23,12 +29,16 @@ data class TransactionDetailsViewData(
     val canSign: Boolean,
     val canExecute: Boolean,
     val hasOwnerKey: Boolean,
-    val owners: List<Owner>
-): Serializable
+    //FIXME: replace Owner type with OwnerViewData and remove @IgnoredOnParcel
+    @IgnoredOnParcel
+    val owners: List<Owner> = listOf()
+) : Parcelable
 
 sealed class TransactionInfoViewData(
     val type: TransactionType
-) {
+): Parcelable {
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Custom(
         val to: Solidity.Address,
         val actionInfoAddressName: String? = null,
@@ -41,11 +51,15 @@ sealed class TransactionInfoViewData(
         val methodName: String?
     ) : TransactionInfoViewData(TransactionType.Custom)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class SettingsChange(
         val dataDecoded: DataDecoded,
         val settingsInfo: SettingsInfoViewData?
     ) : TransactionInfoViewData(TransactionType.SettingsChange)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Transfer(
         val address: Solidity.Address,
         val addressUri: String?,
@@ -54,6 +68,9 @@ sealed class TransactionInfoViewData(
         val direction: TransactionDirection
     ) : TransactionInfoViewData(TransactionType.Transfer)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
+    @TypeParceler<Solidity.Address?, SolidityAddressNullableParceler>
     data class Creation(
         val creator: Solidity.Address,
         val creatorInfo: AddressInfoData?,
@@ -64,35 +81,47 @@ sealed class TransactionInfoViewData(
         val factoryInfo: AddressInfoData?
     ) : TransactionInfoViewData(TransactionType.Creation)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Rejection(
         val to: Solidity.Address,
         val addressName: String?,
         val addressUri: String?
     ) : TransactionInfoViewData(TransactionType.Custom)
 
+    @Parcelize
     object Unknown : TransactionInfoViewData(TransactionType.Unknown)
 }
 
 sealed class SettingsInfoViewData(
     val type: SettingsInfoType
-) {
+): Parcelable {
+
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class SetFallbackHandler(
         val handler: Solidity.Address,
         val handlerInfo: AddressInfoData?
     ) : SettingsInfoViewData(SettingsInfoType.SET_FALLBACK_HANDLER)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class AddOwner(
         val owner: Solidity.Address,
         val ownerInfo: AddressInfoData?,
         val threshold: Long
     ) : SettingsInfoViewData(SettingsInfoType.ADD_OWNER)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class RemoveOwner(
         val owner: Solidity.Address,
         val ownerInfo: AddressInfoData?,
         val threshold: Long
     ) : SettingsInfoViewData(SettingsInfoType.REMOVE_OWNER)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class SwapOwner(
         val oldOwner: Solidity.Address,
         val oldOwnerInfo: AddressInfoData?,
@@ -100,20 +129,27 @@ sealed class SettingsInfoViewData(
         val newOwnerInfo: AddressInfoData?
     ) : SettingsInfoViewData(SettingsInfoType.SWAP_OWNER)
 
+    @Parcelize
     data class ChangeThreshold(
         val threshold: Long
     ) : SettingsInfoViewData(SettingsInfoType.CHANGE_THRESHOLD)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class ChangeImplementation(
         val implementation: Solidity.Address,
         val implementationInfo: AddressInfoData?
     ) : SettingsInfoViewData(SettingsInfoType.CHANGE_IMPLEMENTATION)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class EnableModule(
         val module: Solidity.Address,
         val moduleInfo: AddressInfoData?
     ) : SettingsInfoViewData(SettingsInfoType.ENABLE_MODULE)
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class DisableModule(
         val module: Solidity.Address,
         val moduleInfo: AddressInfoData?
