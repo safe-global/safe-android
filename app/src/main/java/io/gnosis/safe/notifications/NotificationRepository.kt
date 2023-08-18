@@ -233,7 +233,9 @@ class NotificationRepository(
     private fun Registration.ChainData.addSignatures(registrationHashForChain: String, owners: List<Owner>) {
         if (owners.isNotEmpty()) {
             val registrationHash = registrationHashForChain.hexToByteArray()
-            owners.forEach {
+            // private keys are available only for imported or generated owners
+            // to support push notification registration for hardware wallet keys we need to use delegate keys
+            owners.filter {it.type == Owner.Type.IMPORTED || it.type == Owner.Type.GENERATED}.forEach {
                 try {
                     val signature = credentialsRepository.signWithOwner(it, registrationHash).toSignatureString().addHexPrefix()
                     addSignature(signature)
