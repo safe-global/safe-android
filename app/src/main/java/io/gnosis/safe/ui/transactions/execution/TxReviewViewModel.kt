@@ -172,6 +172,7 @@ class TxReviewViewModel
                         TxReviewState(viewAction = DefaultKey(key = executionKey))
                     }
 
+                    //  base fee amount
                     val gasPrice = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
                     // If user has not edited the fee data, we set the fee values
@@ -181,8 +182,8 @@ class TxReviewViewModel
                         gasLimit = estimationParams.estimate
                         maxPriorityFeePerGas =
                             Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
-                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals)
-                            .plus(maxPriorityFeePerGas!!)
+                        // base fee amount + miner tip
+                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals).plus(maxPriorityFeePerGas!!)
                     }
 
                     updateState {
