@@ -364,11 +364,7 @@ class TxReviewViewModel
     }
 
     private fun totalFee(): String {
-        return if (isLegacy()) {
-            balanceString(gasLimit!! * Wei.fromGWei(gasPrice!!).value)
-        } else {
-            balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
-        }
+        return balanceString(gasLimit!! * Wei.fromGWei(if (isLegacy()) gasPrice!! else maxFeePerGas!!).value)
     }
 
     fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
