@@ -187,14 +187,14 @@ class TxReviewViewModel
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
 
-                        if (activeSafe.chain.features.contains(Chain.Feature.EIP1559)) {
+                        if (isLegacy()) {
+                            gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
+                        } else {
                             maxPriorityFeePerGas =
                                 Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
                             // base fee amount + miner tip
                             maxFeePerGas = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
                                 .plus(maxPriorityFeePerGas!!)
-                        } else {
-                            gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
                         }
                     }
 
@@ -364,11 +364,11 @@ class TxReviewViewModel
         } ${activeSafe.chain.currency.symbol}"
     }
 
-    fun totalFee(): String? {
-        return if (gasLimit != null && maxFeePerGas != null) {
-            balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
+    private fun totalFee(): String {
+        return if (isLegacy()) {
+            balanceString(gasLimit!! * Wei.fromGWei(gasPrice!!).value)
         } else {
-            null
+            balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
         }
     }
 
