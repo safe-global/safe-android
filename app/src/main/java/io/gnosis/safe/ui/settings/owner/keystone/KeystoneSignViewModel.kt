@@ -192,7 +192,13 @@ class KeystoneSignViewModel
             SigningMode.CONFIRMATION -> KeystoneEthereumSDK.DataType.PersonalMessage
             SigningMode.REJECTION -> KeystoneEthereumSDK.DataType.PersonalMessage
             SigningMode.INITIATE_TRANSFER -> KeystoneEthereumSDK.DataType.PersonalMessage
-            SigningMode.EXECUTION -> KeystoneEthereumSDK.DataType.PersonalMessage
+            SigningMode.EXECUTION -> {
+                if (isLegacy) {
+                    KeystoneEthereumSDK.DataType.Transaction
+                } else {
+                    KeystoneEthereumSDK.DataType.TypedTransaction
+                }
+            }
         }
     }
 }
