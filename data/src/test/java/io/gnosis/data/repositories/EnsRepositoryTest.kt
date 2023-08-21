@@ -64,8 +64,8 @@ class EnsRepositoryTest {
             normalizerMock.normalize(address)
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = defaultChain.ensRegistryAddress?.asEthereumAddress()!!,
+                    transaction = Transaction.Legacy(
+                        to = defaultChain.ensRegistryAddress?.asEthereumAddress()!!,
                         data = GET_RESOLVER + "0000000000000000000000000000000000000000000000000000000000000000",
                         chainId = defaultChain.chainId
                     ),
@@ -81,8 +81,8 @@ class EnsRepositoryTest {
         every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     )
@@ -103,8 +103,8 @@ class EnsRepositoryTest {
             normalizerMock.normalize(address)
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     ),
@@ -113,8 +113,8 @@ class EnsRepositoryTest {
             )
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = TEST_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = TEST_ADDRESS,
                         data = GET_ADDRESS + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     ),
@@ -130,8 +130,8 @@ class EnsRepositoryTest {
         every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     )
@@ -139,8 +139,8 @@ class EnsRepositoryTest {
                     response = EthRequest.Response.Success(TEST_ADDRESS.asEthereumAddressString())
                 } andThen
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     )
@@ -162,8 +162,8 @@ class EnsRepositoryTest {
             normalizerMock.normalize(address)
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     ),
@@ -172,8 +172,8 @@ class EnsRepositoryTest {
             )
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = TEST_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = TEST_ADDRESS,
                         data = GET_ADDRESS + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
                         chainId = defaultChain.chainId
                     ),
@@ -188,8 +188,8 @@ class EnsRepositoryTest {
         every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
                         chainId = defaultChain.chainId
                     )
@@ -197,8 +197,8 @@ class EnsRepositoryTest {
                     response = EthRequest.Response.Success(ENS_ADDRESS.asEthereumAddressString())
                 } andThen
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_NAME + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
                         chainId = defaultChain.chainId
                     )
@@ -218,8 +218,8 @@ class EnsRepositoryTest {
             ethereumRepository.rpcUrl = any()
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_RESOLVER + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
                         chainId = defaultChain.chainId
                     ),
@@ -228,8 +228,8 @@ class EnsRepositoryTest {
             )
             ethereumRepository.request(
                 EthCall(
-                    transaction = Transaction(
-                        address = ENS_ADDRESS,
+                    transaction = Transaction.Legacy(
+                        to = ENS_ADDRESS,
                         data = GET_NAME + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
                         chainId = defaultChain.chainId
                     ),
