@@ -143,8 +143,8 @@ class TxEditFeeViewModel @Inject constructor(
         val gasPriceError = if (gasPriceValue.isNullOrBlank()) {
             context.getString(R.string.tx_exec_error_value_required)
         } else {
-            val gasPrice = nullOnThrow { BigInteger(gasPriceValue) }
-            if (gasPrice == null || gasPrice < BigInteger.ZERO) {
+            val gasPrice = nullOnThrow { BigDecimal(gasPriceValue) }
+            if (gasPrice == null || gasPrice < BigDecimal.ZERO) {
                 context.getString(R.string.tx_exec_error_value_nan)
             } else {
                 null
@@ -186,15 +186,15 @@ class TxEditFeeViewModel @Inject constructor(
         context: Context,
         chain: Chain,
         gasLimitValue: String?,
-        gasPriceValue: String?
+        gasPriceGWeiValue: String?
     ): String {
         val gasLimit = nullOnThrow { BigInteger(gasLimitValue) }
-        val gasPrice = nullOnThrow { BigInteger(gasPriceValue) }
+        val gasPrice = nullOnThrow { Wei.fromGWei(BigDecimal(gasPriceGWeiValue)).value }
         return if (gasLimit == null || gasPrice == null) {
             context.getString(R.string.value_not_available)
         } else {
-            val totalFee = gasLimit * gasPrice
-            "$totalFee ${chain.currency.symbol}"
+            val totalFee = Wei(gasLimit * gasPrice).toEther(scale = chain.currency.decimals).stripTrailingZeros()
+            "${totalFee.toPlainString()} ${chain.currency.symbol}"
         }
     }
 }
