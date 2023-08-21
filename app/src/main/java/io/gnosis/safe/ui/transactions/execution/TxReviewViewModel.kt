@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.backend.rpc.RpcClient
-import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
