@@ -257,7 +257,6 @@ class RpcClient(
             is Transaction.Eip1559 -> {
                 tx.rlp(signature)
             }
-
             is Transaction.Legacy -> {
                 tx.rlp(signature)
             }

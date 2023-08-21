@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.backend.rpc.RpcClient
-import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
@@ -181,20 +180,26 @@ class TxReviewViewModel
                     //  base fee amount
                     val baseFee = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
+                    // adjust nonce if it is lower than the minimum
+                    // this can happen if other transactions have been sent from the same account
+                    // while the user was on the tx review screen
+                    if (nonce ?: BigInteger.ZERO < minNonce) {
+                        nonce = minNonce
+                    }
                     // If user has not edited the fee data, we set the fee values
                     // Otherwise, we keep the user's values
                     if (!userEditedFeeData) {
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
 
-                        if (activeSafe.chain.features.contains(Chain.Feature.EIP1559)) {
+                        if (isLegacy()) {
+                            gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
+                        } else {
                             maxPriorityFeePerGas =
                                 Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
                             // base fee amount + miner tip
                             maxFeePerGas = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
                                 .plus(maxPriorityFeePerGas!!)
-                        } else {
-                            gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
                         }
                     }
 
@@ -224,6 +229,22 @@ class TxReviewViewModel
         }
     }
 
+    fun updateLegacyEstimationParams(
+        nonce: BigInteger,
+        gasLimit: BigInteger,
+        gasPrice: BigDecimal
+    ) {
+        this.userEditedFeeData = true
+        this.nonce = nonce
+        this.gasLimit = gasLimit
+        this.gasPrice = gasPrice
+        safeLaunch {
+            updateState {
+                TxReviewState(viewAction = UpdateFee(fee = totalFee()))
+            }
+        }
+    }
+
     private fun updateEthTxWithEstimationData() {
         when (ethTx) {
             is Transaction.Eip1559 -> {
@@ -233,7 +254,6 @@ class TxReviewViewModel
                 ethTxEip1559.maxFeePerGas = Wei.fromGWei(maxFeePerGas!!).value
                 ethTx = ethTxEip1559.copy(nonce = nonce!!)
             }
-
             is Transaction.Legacy -> {
                 val ethTxLegacy = ethTx as Transaction.Legacy
                 ethTxLegacy.gas = gasLimit!!
@@ -253,7 +273,6 @@ class TxReviewViewModel
                     ethTxEip1559.hash()
                 }
             }
-
             is Transaction.Legacy -> {
                 val ethTxLegacy = ethTx as Transaction.Legacy
                 if (ownerType == Owner.Type.KEYSTONE) {
@@ -262,7 +281,6 @@ class TxReviewViewModel
                     ethTxLegacy.hash()
                 }
             }
-
             else -> throw IllegalStateException("Unknown transaction type")
         }
     }
@@ -364,12 +382,8 @@ class TxReviewViewModel
         } ${activeSafe.chain.currency.symbol}"
     }
 
-    fun totalFee(): String? {
-        return if (gasLimit != null && maxFeePerGas != null) {
-            balanceString(gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value)
-        } else {
-            null
-        }
+    private fun totalFee(): String {
+        return balanceString(gasLimit!! * Wei.fromGWei(if (isLegacy()) gasPrice!! else maxFeePerGas!!).value)
     }
 
     fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
