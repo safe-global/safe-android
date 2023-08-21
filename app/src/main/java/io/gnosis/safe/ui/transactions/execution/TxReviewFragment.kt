@@ -371,6 +371,17 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             )
         }
 
+        setFragmentResultListener(TxEditFeeLegacyFragment.REQUEST_EDIT_FEE) { requestKey, bundle ->
+            val nonce = bundle.getString(TxEditFeeLegacyFragment.RESULT_NONCE)!!
+            val gasLimit = bundle.getString(TxEditFeeLegacyFragment.RESULT_GAS_LIMIT)!!
+            val gasPrice = bundle.getString(TxEditFeeLegacyFragment.RESULT_GAS_PRICE)!!
+            viewModel.updateLegacyEstimationParams(
+                nonce = nonce.toBigInteger(),
+                gasLimit = gasLimit.toBigInteger(),
+                gasPrice = gasPrice.toBigDecimal().stripTrailingZeros()
+            )
+        }
+
         if (!viewModel.isInitialized()) {
             viewModel.setTxData(
                 txData = txDetails!!.txData!!,

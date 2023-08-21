@@ -180,6 +180,12 @@ class TxReviewViewModel
                     //  base fee amount
                     val baseFee = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
+                    // adjust nonce if it is lower than the minimum
+                    // this can happen if other transactions have been sent from the same account
+                    // while the user was on the tx review screen
+                    if (nonce ?: BigInteger.ZERO < minNonce) {
+                        nonce = minNonce
+                    }
                     // If user has not edited the fee data, we set the fee values
                     // Otherwise, we keep the user's values
                     if (!userEditedFeeData) {
@@ -223,6 +229,22 @@ class TxReviewViewModel
         }
     }
 
+    fun updateLegacyEstimationParams(
+        nonce: BigInteger,
+        gasLimit: BigInteger,
+        gasPrice: BigDecimal
+    ) {
+        this.userEditedFeeData = true
+        this.nonce = nonce
+        this.gasLimit = gasLimit
+        this.gasPrice = gasPrice
+        safeLaunch {
+            updateState {
+                TxReviewState(viewAction = UpdateFee(fee = totalFee()))
+            }
+        }
+    }
+
     private fun updateEthTxWithEstimationData() {
         when (ethTx) {
             is Transaction.Eip1559 -> {
@@ -232,7 +254,6 @@ class TxReviewViewModel
                 ethTxEip1559.maxFeePerGas = Wei.fromGWei(maxFeePerGas!!).value
                 ethTx = ethTxEip1559.copy(nonce = nonce!!)
             }
-
             is Transaction.Legacy -> {
                 val ethTxLegacy = ethTx as Transaction.Legacy
                 ethTxLegacy.gas = gasLimit!!
@@ -252,7 +273,6 @@ class TxReviewViewModel
                     ethTxEip1559.hash()
                 }
             }
-
             is Transaction.Legacy -> {
                 val ethTxLegacy = ethTx as Transaction.Legacy
                 if (ownerType == Owner.Type.KEYSTONE) {
@@ -261,7 +281,6 @@ class TxReviewViewModel
                     ethTxLegacy.hash()
                 }
             }
-
             else -> throw IllegalStateException("Unknown transaction type")
         }
     }
