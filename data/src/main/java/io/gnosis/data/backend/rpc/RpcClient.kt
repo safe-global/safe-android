@@ -34,6 +34,10 @@ class RpcClient(
     private val ethereumRepository: EthereumRepository
 ) {
 
+    fun updateRpcUrl(chain: Chain) {
+        ethereumRepository.rpcUrl = chain.rpcUri
+    }
+
     suspend fun gasPrice(): BigInteger? {
         val response = ethereumRepository.request(
             EthGasPrice()
