@@ -7,6 +7,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 
@@ -37,8 +38,8 @@ class RpcAuthenticationConverter {
 
 class ChainFeaturesConverter {
     @TypeConverter
-    fun toString(features: List<Chain.Feature>) = features?.joinToString(",")
+    fun toString(features: List<Chain.Feature>) = features.joinToString(",")
 
     @TypeConverter
-    fun fromString(featuresString: String) = featuresString.split(",").map { Chain.Feature.valueOf(it) }
+    fun fromString(featuresString: String) = featuresString.split(",").mapNotNull { nullOnThrow { Chain.Feature.valueOf(it) } }
 }

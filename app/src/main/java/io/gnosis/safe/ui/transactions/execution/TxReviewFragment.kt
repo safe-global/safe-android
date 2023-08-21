@@ -303,20 +303,33 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             }
 
             estimatedFee.setOnClickListener {
-                //TODO: check tx type, save user input
                 viewModel.minNonce?.let {
-                    findNavController().navigate(
-                        TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
-                            chain = chain,
-                            nonce = viewModel.minNonce.toString(),
-                            minNonce = viewModel.nonce.toString(),
-                            gasLimit = viewModel.gasLimit.toString(),
-                            maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString() ?: "0",
-                            maxFee = viewModel.maxFeePerGas?.toPlainString() ?: "0",
+                    if (viewModel.isLegacy()) {
+                        findNavController().navigate(
+                            TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFeeLegacyFragment(
+                                chain = chain,
+                                nonce = viewModel.minNonce.toString(),
+                                minNonce = viewModel.nonce.toString(),
+                                gasLimit = viewModel.gasLimit.toString(),
+                                gasPrice = viewModel.gasPrice?.toPlainString() ?: "0"
+                            )
                         )
-                    )
+                    } else {
+                        findNavController().navigate(
+                            TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
+                                chain = chain,
+                                nonce = viewModel.minNonce.toString(),
+                                minNonce = viewModel.nonce.toString(),
+                                gasLimit = viewModel.gasLimit.toString(),
+                                maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString() ?: "0",
+                                maxFee = viewModel.maxFeePerGas?.toPlainString() ?: "0",
+                            )
+                        )
+
+                    }
                 }
             }
+
             selectKey.setOnClickListener {
                 findNavController().navigate(
                     TxReviewFragmentDirections.actionTxReviewFragmentToSigningOwnerSelectionFragment(

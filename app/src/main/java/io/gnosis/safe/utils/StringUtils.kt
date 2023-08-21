@@ -30,7 +30,7 @@ fun String.asMiddleEllipsized(prefixLength: Int, suffixLength: Int): String {
     else this
 }
 
-fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
+fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.to
 
 fun Solidity.Address.shortChecksumString(chainPrefix: String?) =
     asEthereumAddressChecksumString().abbreviateEthAddress(chainPrefix)

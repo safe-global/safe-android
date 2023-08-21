@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.backend.rpc.RpcClient
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
@@ -18,11 +19,10 @@ import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.crypto.ECDSASignature
-import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Fee1559
-import pm.gnosis.models.TransactionEip1559
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.utils.hash
 import pm.gnosis.svalinn.accounts.utils.rlp
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.toHexString
@@ -55,6 +55,9 @@ class TxReviewViewModel
     var gasLimit: BigInteger? = null
         private set
 
+    var gasPrice: BigDecimal? = null
+        private set
+
     var maxPriorityFeePerGas: BigDecimal? = null
         private set
 
@@ -67,13 +70,14 @@ class TxReviewViewModel
 
     private var userEditedFeeData: Boolean = false
 
-    private var ethTx: TransactionEip1559? = null
+    private var ethTx: Transaction? = null
 
     private var ethTxSignature: ECDSASignature? = null
 
     init {
         safeLaunch {
             activeSafe = safeRepository.getActiveSafe()!!
+            rpcClient.updateRpcUrl(activeSafe.chain)
         }
     }
 
@@ -143,6 +147,10 @@ class TxReviewViewModel
         }
     }
 
+    fun isLegacy(): Boolean {
+        return ethTx is Transaction.Legacy
+    }
+
     fun estimate() {
         safeLaunch {
 
@@ -157,11 +165,9 @@ class TxReviewViewModel
                         activeSafe,
                         it.address,
                         txData!!,
-                        executionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
-                        BigInteger.valueOf(DEFAULT_MINER_TIP)
+                        executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
                     )
-
-                    val estimationParams = rpcClient.estimate(activeSafe.chain, ethTx!!)
+                    val estimationParams = rpcClient.estimate(ethTx!!)
 
                     executionKey = executionKey!!.copy(
                         balance = balanceString(estimationParams.balance),
@@ -173,17 +179,23 @@ class TxReviewViewModel
                     }
 
                     //  base fee amount
-                    val gasPrice = estimationParams.gasPrice
+                    val baseFee = estimationParams.gasPrice
                     minNonce = estimationParams.nonce
                     // If user has not edited the fee data, we set the fee values
                     // Otherwise, we keep the user's values
                     if (!userEditedFeeData) {
                         nonce = minNonce
                         gasLimit = estimationParams.estimate
-                        maxPriorityFeePerGas =
-                            Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
-                        // base fee amount + miner tip
-                        maxFeePerGas = Wei(gasPrice).toGWei(activeSafe.chain.currency.decimals).plus(maxPriorityFeePerGas!!)
+
+                        if (activeSafe.chain.features.contains(Chain.Feature.EIP1559)) {
+                            maxPriorityFeePerGas =
+                                Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                            // base fee amount + miner tip
+                            maxFeePerGas = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
+                                .plus(maxPriorityFeePerGas!!)
+                        } else {
+                            gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
+                        }
                     }
 
                     updateState {
@@ -212,17 +224,55 @@ class TxReviewViewModel
         }
     }
 
+    private fun updateEthTxWithEstimationData() {
+        when (ethTx) {
+            is Transaction.Eip1559 -> {
+                val ethTxEip1559 = ethTx as Transaction.Eip1559
+                ethTxEip1559.gas = gasLimit!!
+                ethTxEip1559.maxPriorityFee = Wei.fromGWei(maxPriorityFeePerGas!!).value
+                ethTxEip1559.maxFeePerGas = Wei.fromGWei(maxFeePerGas!!).value
+                ethTx = ethTxEip1559.copy(nonce = nonce!!)
+            }
+
+            is Transaction.Legacy -> {
+                val ethTxLegacy = ethTx as Transaction.Legacy
+                ethTxLegacy.gas = gasLimit!!
+                ethTxLegacy.gasPrice = Wei.fromGWei(this@TxReviewViewModel.gasPrice!!).value
+                ethTx = ethTxLegacy.copy(nonce = nonce!!)
+            }
+        }
+    }
+
+    private fun getEthTxHash(ownerType: Owner.Type): ByteArray {
+        return when (ethTx) {
+            is Transaction.Eip1559 -> {
+                val ethTxEip1559 = ethTx as Transaction.Eip1559
+                if (ownerType == Owner.Type.KEYSTONE) {
+                    ethTxEip1559.rlp()
+                } else {
+                    ethTxEip1559.hash()
+                }
+            }
+
+            is Transaction.Legacy -> {
+                val ethTxLegacy = ethTx as Transaction.Legacy
+                if (ownerType == Owner.Type.KEYSTONE) {
+                    ethTxLegacy.rlp()
+                } else {
+                    ethTxLegacy.hash()
+                }
+            }
+
+            else -> throw IllegalStateException("Unknown transaction type")
+        }
+    }
+
     fun signAndExecute() {
         safeLaunch {
             executionKey?.let {
-                ethTx = ethTx!!.copy(nonce = nonce!!)
-                ethTx!!.fee = Fee1559(
-                    gas = gasLimit!!,
-                    maxPriorityFee = Wei.fromGWei(maxPriorityFeePerGas!!).value,
-                    maxFeePerGas = Wei.fromGWei(maxFeePerGas!!).value
-                )
+                updateEthTxWithEstimationData()
                 val owner = credentialsRepository.owner(it.address)!!
-                val ethTxHash = Sha3Utils.keccak(byteArrayOf(ethTx!!.type.toByte(), *ethTx!!.rlp()))
+                val ethTxHash = getEthTxHash(owner.type)
                 when (owner.type) {
                     Owner.Type.IMPORTED, Owner.Type.GENERATED -> {
                         ethTxSignature = credentialsRepository.signWithOwner(owner, ethTxHash)
@@ -253,7 +303,7 @@ class TxReviewViewModel
                                         activeSafe.chain,
                                         it.address.asEthereumAddressString(),
                                         ethTxHash.toHexString(),
-                                        false
+                                        isLegacy()
                                     )
                                 )
                             )
@@ -289,7 +339,9 @@ class TxReviewViewModel
     fun sendForExecution() {
         safeLaunch {
             ethTxSignature?.let {
+
                 rpcClient.send(ethTx!!, it)
+
                 updateState {
                     TxReviewState(
                         viewAction =

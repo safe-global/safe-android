@@ -14,17 +14,19 @@ import io.gnosis.data.utils.SemVer
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.ethereum.BulkRequest
 import pm.gnosis.ethereum.EthBalance
+import pm.gnosis.ethereum.EthCall
 import pm.gnosis.ethereum.EthCallEip1559
+import pm.gnosis.ethereum.EthEstimateGas
 import pm.gnosis.ethereum.EthEstimateGasEip1559
 import pm.gnosis.ethereum.EthGasPrice
 import pm.gnosis.ethereum.EthGetTransactionCount
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Fee1559
-import pm.gnosis.models.TransactionEip1559
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.utils.rlp
 import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.toHexString
@@ -34,6 +36,10 @@ class RpcClient(
     private val ethereumRepository: EthereumRepository
 ) {
 
+    fun updateRpcUrl(chain: Chain) {
+        ethereumRepository.rpcUrl = chain.rpcUri
+    }
+
     suspend fun gasPrice(): BigInteger? {
         val response = ethereumRepository.request(
             EthGasPrice()
@@ -41,7 +47,7 @@ class RpcClient(
         return response.result()
     }
 
-    suspend fun getBalance(address: Solidity.Address): Wei? {
+    suspend fun getBalance(address: Solidity.Address): Wei {
         return ethereumRepository.request(
             EthBalance(address)
         ).checkedResult("Could not retrieve balance")
@@ -61,14 +67,14 @@ class RpcClient(
         return responses
     }
 
-    fun ethTransaction(
+    fun ethTxInput(
         safe: Safe,
-        executionKey: Solidity.Address,
         txData: TxData,
-        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
-        minerTip: BigInteger
-    ): TransactionEip1559 {
+        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
+    ): String {
+
         val chain = safe.chain
+
         val safeVersion = SemVer.parse(safe.version!!)
 
         val signatures = executionInfo.confirmations
@@ -154,28 +160,70 @@ class RpcClient(
             }
         }
 
-//        return if (chain.features.contains(Chain.Feature.EIP1559)) {
-        return  TransactionEip1559(
-                chainId = chain.chainId,
-                from = executionKey,
-                to = txData.to.value,
-                data = input,
-                fee = Fee1559(maxPriorityFee = minerTip)
-            )
-//        } else {
-//
-//        }
+        return input
     }
 
-    suspend fun estimate(chain: Chain, tx: TransactionEip1559): EstimationParams {
+    fun ethTransaction(
+        safe: Safe,
+        executionKey: Solidity.Address,
+        txData: TxData,
+        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
+    ): Transaction {
+        return if (safe.chain.features.contains(Chain.Feature.EIP1559)) {
+            Transaction.Eip1559(
+                chainId = safe.chain.chainId,
+                from = executionKey,
+                to = txData.to.value,
+                data = ethTxInput(safe, txData, executionInfo)
+            )
+        } else {
+            Transaction.Legacy(
+                chainId = safe.chain.chainId,
+                to = txData.to.value,
+                from = executionKey,
+                value = Wei(txData.value ?: BigInteger.ZERO),
+                data = ethTxInput(safe, txData, executionInfo)
+            )
+        }
+    }
+
+    private fun removeFee(tx: Transaction) {
+        when(tx) {
+            is Transaction.Eip1559 -> {
+                tx.gas = null
+                tx.maxPriorityFee = null
+                tx.maxFeePerGas = null
+            }
+            is Transaction.Legacy -> {
+                tx.gas = null
+                tx.gasPrice = null
+            }
+        }
+    }
+
+    suspend fun estimate(tx: Transaction): EstimationParams {
         // remove the fee (it will be estimated)
-        tx.fee = Fee1559()
+        removeFee(tx)
 
         val gasPriceRequest = EthGasPrice(id = 1)
         val balanceRequest = EthBalance(address = tx.from!!, id = 2)
         val nonceRequest = EthGetTransactionCount(from = tx.from!!, id = 3)
-        val callRequest = EthCallEip1559(from = tx.from, transaction = tx, id = 4)
-        val estimateRequest = EthEstimateGasEip1559(from = tx.from, transaction = tx, id = 5)
+        val callRequest = when(tx) {
+            is Transaction.Eip1559 -> {
+                EthCallEip1559(from = tx.from, transaction = tx, id = 4)
+            }
+            is Transaction.Legacy -> {
+                EthCall(from = tx.from, transaction = tx, id = 4)
+            }
+        }
+        val estimateRequest = when(tx) {
+            is Transaction.Eip1559 -> {
+                EthEstimateGasEip1559(from = tx.from, transaction = tx, id = 5)
+            }
+            is Transaction.Legacy -> {
+                EthEstimateGas(from = tx.from, transaction = tx, id = 5)
+            }
+        }
 
         ethereumRepository.request(
             BulkRequest(
@@ -192,20 +240,28 @@ class RpcClient(
         val gasPrice = gasPriceRequest.checkedResult("Failed to get gas price")
         val banance = balanceRequest.checkedResult("Failed to get balance")
         val nonce = nonceRequest.checkedResult("Failed to get nonce")
-        val callSuccess = callRequest.checkedResult("Failed to call transaction")
+        val callResult = callRequest.checkedResult("Failed to call transaction")
         val estimate = estimateRequest.checkedResult("Failed to estimate transaction")
 
         return EstimationParams(
             gasPrice = gasPrice,
             balance = banance.value,
             nonce = nonce,
-            callSuccess = BigInteger(callSuccess.removeHexPrefix()) == BigInteger.ONE,
+            callResult = callResult.hexAsBigInteger() == BigInteger.ONE,
             estimate = estimate
         )
     }
 
-    suspend fun send(tx: TransactionEip1559, signature: ECDSASignature) {
-        val rawTxData = byteArrayOf(tx.type.toByte(), *tx.rlp(signature))
+    suspend fun send(tx: Transaction, signature: ECDSASignature) {
+        val rawTxData = when (tx) {
+            is Transaction.Eip1559 -> {
+                tx.rlp(signature)
+            }
+
+            is Transaction.Legacy -> {
+                tx.rlp(signature)
+            }
+        }
         ethereumRepository.sendRawTransaction(rawTxData.toHexString().addHexPrefix())
     }
 }
