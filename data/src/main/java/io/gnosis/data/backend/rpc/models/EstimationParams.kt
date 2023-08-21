@@ -7,6 +7,6 @@ data class EstimationParams(
     val gasPrice: BigInteger,
     val balance: BigInteger,
     val nonce: BigInteger,
-    val callSuccess: Boolean,
+    val callResult: Boolean,
     val estimate: BigInteger
 )

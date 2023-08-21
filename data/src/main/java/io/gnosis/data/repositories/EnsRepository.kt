@@ -31,8 +31,8 @@ class EnsRepository(
         val resolverAddressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
-                transaction = Transaction(
-                    address = chain.ensRegistryAddress?.asEthereumAddress() ?: ENS_ADDRESS,
+                transaction = Transaction.Legacy(
+                    to = chain.ensRegistryAddress?.asEthereumAddress() ?: ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString(),
                     chainId = chain.chainId
                 )
@@ -53,8 +53,8 @@ class EnsRepository(
         val addressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
-                transaction = Transaction(
-                    address = resolverAddress,
+                transaction = Transaction.Legacy(
+                    to = resolverAddress,
                     data = GET_ADDRESS + node.toHexString(),
                     chainId = chain.chainId
                 )
@@ -78,8 +78,8 @@ class EnsRepository(
         val resolver = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
-                transaction = Transaction(
-                    address = ENS_ADDRESS,
+                transaction = Transaction.Legacy(
+                    to = ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString(),
                     chainId = chain.chainId
                 )
@@ -89,8 +89,8 @@ class EnsRepository(
         val nameResult = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
-                transaction = Transaction(
-                    address = resolver,
+                transaction = Transaction.Legacy(
+                    to = resolver,
                     data = GET_NAME + node.toHexString(),
                     chainId = chain.chainId
                 )
