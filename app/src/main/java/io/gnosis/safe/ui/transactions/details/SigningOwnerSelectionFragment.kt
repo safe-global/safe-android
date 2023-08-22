@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwnerSelectionBinding>(), OwnerListener {
 
-    override fun screenId() = ScreenId.OWNER_LIST
+    override fun screenId() = if (signingMode == SigningMode.EXECUTION) ScreenId.TRANSACTIONS_EXEC_SELECT_KEY else ScreenId.OWNER_LIST
     private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
     private val missingSigners by lazy { navArgs.missingSigners }
     private val signingMode by lazy { navArgs.signingMode }
