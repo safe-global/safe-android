@@ -182,6 +182,18 @@ class Tracker internal constructor(
         )
     }
 
+    fun logTxExecKeyChanged() {
+        logEvent(Event.TRANSACTION_EXEC_KEY_CHANGED, null)
+    }
+
+    fun logTxExecSubmitted() {
+        logEvent(Event.TRANSACTION_EXEC_SUBMITTED, null)
+    }
+
+    fun logTxExecFailed() {
+        logEvent(Event.TRANSACTION_EXEC_FAILED, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -224,9 +236,9 @@ class Tracker internal constructor(
         val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
         val TRANSACTION_REJECTED_KEYSTONE = "user_transaction_rejected_keystone"
         val TRANSACTION_EXEC_EDIT_FEE_FIELDS = "user_edit_exec_tx_fee_fields"
-        val TRANSACTION_EXEC_KEY_CHANGE = "user_select_exec_key_change"
+        val TRANSACTION_EXEC_KEY_CHANGED = "user_select_exec_key_change"
         val TRANSACTION_EXEC_FAILED = "user_exec_tx_failed"
-        val TRANSACTIONS_EXEC_SUBMITTED = "user_transaction_exec_submitted"
+        val TRANSACTION_EXEC_SUBMITTED = "user_transaction_exec_submitted"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
         val BANNER_OWNER_SKIP = "user_banner_owner_skip"

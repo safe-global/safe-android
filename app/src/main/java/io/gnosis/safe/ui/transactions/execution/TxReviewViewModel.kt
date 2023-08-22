@@ -9,6 +9,8 @@ import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignature
+import io.gnosis.safe.Tracker
+import io.gnosis.safe.TxExecField
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
@@ -36,6 +38,7 @@ class TxReviewViewModel
     private val settingsHandler: SettingsHandler,
     private val rpcClient: RpcClient,
     private val balanceFormatter: BalanceFormatter,
+    private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TxReviewState>(appDispatchers) {
 
@@ -95,6 +98,10 @@ class TxReviewViewModel
         return (viewAction is ViewAction.Loading && viewAction.isLoading)
     }
 
+    fun isLegacy(): Boolean {
+        return ethTx is Transaction.Legacy
+    }
+
     @VisibleForTesting
     fun loadDefaultKey() {
         safeLaunch {
@@ -121,6 +128,9 @@ class TxReviewViewModel
         safeLaunch {
             address?.let {
                 val owner = credentialsRepository.owner(it)!!
+                if (executionKey?.address != address) {
+                    tracker.logTxExecKeyChanged()
+                }
                 executionKey = OwnerViewData(owner.address, owner.name, owner.type)
                 updateState {
                     TxReviewState(viewAction = DefaultKey(key = executionKey))
@@ -146,8 +156,25 @@ class TxReviewViewModel
         }
     }
 
-    fun isLegacy(): Boolean {
-        return ethTx is Transaction.Legacy
+    fun onSelectKey() {
+        safeLaunch {
+            updateState {
+                TxReviewState(
+                    viewAction = ViewAction.NavigateTo(
+                        TxReviewFragmentDirections.actionTxReviewFragmentToSigningOwnerSelectionFragment(
+                            missingSigners = null,
+                            signingMode = SigningMode.EXECUTION,
+                            chain = activeSafe.chain
+                        )
+                    )
+                )
+            }
+            updateState {
+                TxReviewState(
+                    viewAction = ViewAction.None
+                )
+            }
+        }
     }
 
     fun estimate() {
@@ -217,6 +244,26 @@ class TxReviewViewModel
         maxPriorityFeePerGas: BigDecimal,
         maxFeePerGas: BigDecimal
     ) {
+        if (nonce != this.nonce ||
+            gasLimit != this.gasLimit ||
+            maxPriorityFeePerGas != this.maxPriorityFeePerGas ||
+            maxFeePerGas != this.maxFeePerGas
+        ) {
+            val changedFieldTrackingIds = mutableListOf<TxExecField>()
+            if (nonce != this.nonce) {
+                changedFieldTrackingIds.add(TxExecField.NONCE)
+            }
+            if (gasLimit != this.gasLimit) {
+                changedFieldTrackingIds.add(TxExecField.GAS_LIMIT)
+            }
+            if (maxPriorityFeePerGas != this.maxPriorityFeePerGas) {
+                changedFieldTrackingIds.add(TxExecField.MAX_PRIORITY_FEE)
+            }
+            if (maxFeePerGas != this.maxFeePerGas) {
+                changedFieldTrackingIds.add(TxExecField.MAX_FEE)
+            }
+            tracker.logTxExecFieldsEdit(changedFieldTrackingIds)
+        }
         this.userEditedFeeData = true
         this.nonce = nonce
         this.gasLimit = gasLimit
@@ -234,6 +281,22 @@ class TxReviewViewModel
         gasLimit: BigInteger,
         gasPrice: BigDecimal
     ) {
+        if (nonce != this.nonce ||
+            gasLimit != this.gasLimit ||
+            gasPrice != this.gasPrice
+        ) {
+            val changedFieldTrackingIds = mutableListOf<TxExecField>()
+            if (nonce != this.nonce) {
+                changedFieldTrackingIds.add(TxExecField.NONCE)
+            }
+            if (gasLimit != this.gasLimit) {
+                changedFieldTrackingIds.add(TxExecField.GAS_LIMIT)
+            }
+            if (gasPrice != this.gasPrice) {
+                changedFieldTrackingIds.add(TxExecField.GAS_PRICE)
+            }
+            tracker.logTxExecFieldsEdit(changedFieldTrackingIds)
+        }
         this.userEditedFeeData = true
         this.nonce = nonce
         this.gasLimit = gasLimit

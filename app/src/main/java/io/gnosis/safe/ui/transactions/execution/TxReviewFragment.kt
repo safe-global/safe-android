@@ -26,7 +26,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
-import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
@@ -96,210 +95,10 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             )
 
             when (val txInfo = txDetails!!.txInfo) {
-                is TransactionInfoViewData.Transfer -> {
-                    val viewStub = binding.stubTransfer
-                    if (viewStub.parent != null) {
-                        val inflate = viewStub.inflate()
-                        contentBinding = TxReviewTransferBinding.bind(inflate)
-                    }
-                    val transferBinding = contentBinding as TxReviewTransferBinding
-                    val amount = txDetails!!.txData?.value ?: BigInteger.ZERO
-                    val amountDecimal =
-                        amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals))
-                            .toPlainString()
-                    with(transferBinding) {
-                        when (txInfo.transferInfo) {
-                            is TransferInfo.Erc20Transfer -> {
-                                transferAmount.setAmount(
-                                    amountDecimal = amountDecimal,
-                                    txInfo.transferInfo.symbol(chain)!!,
-                                    txInfo.transferInfo.logoUri
-                                )
-                            }
-
-                            is TransferInfo.Erc721Transfer -> {
-                                transferAmount.setAmount(
-                                    amountDecimal = BigDecimal.ONE.toPlainString(),
-                                    txInfo.transferInfo.symbol(chain)!!,
-                                    txInfo.transferInfo.logoUri
-                                )
-                            }
-
-                            is TransferInfo.NativeTransfer -> {
-                                transferAmount.setAmount(
-                                    amountDecimal = amountDecimal,
-                                    chain.currency.symbol,
-                                    chain.currency.logoUri
-                                )
-                            }
-                        }
-                        fromAddressItem.name = viewModel.activeSafe.localName
-                        fromAddressItem.setAddress(
-                            chain = chain,
-                            value = viewModel.activeSafe.address,
-                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
-                        )
-                        txInfo.addressName?.let {
-                            toAddressItemKnown.visible(true)
-                            toAddressItem.visible(false)
-                            toAddressItemKnown.name = it
-                            toAddressItemKnown.setAddress(
-                                chain = chain,
-                                value = txInfo.address,
-                                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
-                            )
-                            if (!txInfo.addressUri.isNullOrBlank()) {
-                                toAddressItemKnown.loadKnownAddressLogo(
-                                    txInfo.addressUri,
-                                    txInfo.address
-                                )
-                            }
-                        } ?: run {
-                            toAddressItemKnown.visible(false)
-                            toAddressItem.visible(true)
-                            toAddressItem.setAddress(
-                                chain = chain,
-                                value = txInfo.address,
-                                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
-                            )
-                        }
-                    }
-                }
-
-                is TransactionInfoViewData.SettingsChange -> {
-                    val viewStub = binding.stubSettingsChange
-                    if (viewStub.parent != null) {
-                        val inflate = viewStub.inflate()
-                        contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
-                    }
-                    val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
-                    with(settingsChangeBinding) {
-                        txAction.setActionInfoItems(
-                            chain = chain,
-                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
-                            actionInfoItems = txInfo.txActionInfoItems(requireContext().resources)
-                        )
-                    }
-                }
-
-                is TransactionInfoViewData.Custom -> {
-                    val viewStub = binding.stubCustom
-                    if (viewStub.parent != null) {
-                        val inflate = viewStub.inflate()
-                        contentBinding = TxReviewCustomBinding.bind(inflate)
-                    }
-                    val customBinding = contentBinding as TxReviewCustomBinding
-                    with(customBinding) {
-                        txAction.setActionInfo(
-                            chain = chain,
-                            outgoing = true,
-                            amount = txInfo.formattedAmount(chain, balanceFormatter),
-                            logoUri = txInfo.logoUri(chain) ?: "",
-                            address = txInfo.to,
-                            showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
-                            copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
-                            addressUri = txInfo.actionInfoAddressUri,
-                            addressName = txInfo.actionInfoAddressName
-                        )
-                        val decodedData = txDetails!!.txData?.dataDecoded
-                        if (decodedData == null) {
-                            txDataDecoded.visible(false)
-                            txDataDecodedSeparator.visible(false)
-                        } else {
-
-                            if (decodedData.method.lowercase() == "multisend") {
-
-                                val valueDecoded =
-                                    (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
-
-                                txDataDecoded.name = getString(
-                                    R.string.tx_details_action_multisend,
-                                    valueDecoded?.size ?: 0
-                                )
-                                txDataDecoded.setOnClickListener {
-                                    txDetails!!.txData?.dataDecoded?.parameters?.getOrNull(0)
-                                        ?.let { param ->
-                                            if (param is Param.Bytes && param.valueDecoded != null) {
-                                                findNavController().navigate(
-                                                    TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionMultisendFragment(
-                                                        chain,
-                                                        paramSerializer.serializeDecodedValues(param.valueDecoded!!),
-                                                        paramSerializer.serializeAddressInfoIndex(
-                                                            txDetails!!.txData?.addressInfoIndex
-                                                        )
-                                                    )
-                                                )
-                                            }
-                                        }
-                                }
-                            } else {
-
-                                txDataDecoded.name = getString(
-                                    R.string.tx_details_action,
-                                    txDetails!!.txData?.dataDecoded?.method
-                                )
-                                txDataDecoded.setOnClickListener {
-                                    txDetails!!.txData?.let {
-                                        findNavController().navigate(
-                                            TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionFragment(
-                                                chain = chain,
-                                                action = it.dataDecoded?.method ?: "",
-                                                data = it.hexData ?: "",
-                                                decodedData = it.dataDecoded?.let {
-                                                    paramSerializer.serializeDecodedData(
-                                                        it
-                                                    )
-                                                },
-                                                addressInfoIndex = paramSerializer.serializeAddressInfoIndex(
-                                                    it.addressInfoIndex
-                                                )
-                                            )
-                                        )
-                                    }
-                                }
-
-                            }
-                        }
-
-                        txData.setData(
-                            txDetails!!.txData?.hexData,
-                            txInfo.dataSize,
-                            getString(R.string.tx_details_data)
-                        )
-                    }
-                }
-
-                is TransactionInfoViewData.Rejection -> {
-                    val viewStub = binding.stubRejection
-                    if (viewStub.parent != null) {
-                        val inflate = viewStub.inflate()
-                        contentBinding = TxReviewRejectionBinding.bind(inflate)
-                    }
-                    val rejectionBinding = contentBinding as TxReviewRejectionBinding
-                    with(rejectionBinding) {
-                        when (val executionInfo = txDetails!!.detailedExecutionInfo) {
-                            is DetailedExecutionInfo.MultisigExecutionDetails -> {
-                                txRejectionInfo.text = getString(
-                                    R.string.tx_details_rejection_info_queued,
-                                    executionInfo.nonce
-                                )
-                                txPaymentReasonLink.setLink(
-                                    url = getString(R.string.tx_details_rejection_payment_reason_link),
-                                    urlText = getString(R.string.tx_details_rejection_payment_reason),
-                                    linkIcon = R.drawable.ic_external_link_green_16dp,
-                                    underline = true
-                                )
-                            }
-
-                            else -> {
-                            }
-                        }
-                    }
-                }
+                is TransactionInfoViewData.Transfer -> setupTransferUI(txInfo)
+                is TransactionInfoViewData.SettingsChange -> setupSettingsChangeUI(txInfo)
+                is TransactionInfoViewData.Custom -> setupCustomUI(txInfo)
+                is TransactionInfoViewData.Rejection -> setupRejectionUI(txInfo)
             }
 
             estimatedFee.setOnClickListener {
@@ -321,7 +120,8 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                 nonce = viewModel.minNonce.toString(),
                                 minNonce = viewModel.nonce.toString(),
                                 gasLimit = viewModel.gasLimit.toString(),
-                                maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString() ?: "0",
+                                maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString()
+                                    ?: "0",
                                 maxFee = viewModel.maxFeePerGas?.toPlainString() ?: "0",
                             )
                         )
@@ -331,14 +131,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             }
 
             selectKey.setOnClickListener {
-                findNavController().navigate(
-                    TxReviewFragmentDirections.actionTxReviewFragmentToSigningOwnerSelectionFragment(
-                        missingSigners = null,
-                        signingMode = SigningMode.EXECUTION,
-                        chain = chain
-                    )
-                )
+                viewModel.onSelectKey()
             }
+
             reviewAdvanced.setOnClickListener {
                 findNavController().navigate(
                     TxReviewFragmentDirections.actionTxReviewFragmentToTxAdvancedParamsFragment(
@@ -426,6 +221,205 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun setupTransferUI(txInfo: TransactionInfoViewData.Transfer) {
+        val viewStub = binding.stubTransfer
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewTransferBinding.bind(inflate)
+        }
+        val transferBinding = contentBinding as TxReviewTransferBinding
+        val amount = txDetails!!.txData?.value ?: BigInteger.ZERO
+        val amountDecimal =
+            amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals))
+                .toPlainString()
+        with(transferBinding) {
+            when (txInfo.transferInfo) {
+                is TransferInfo.Erc20Transfer -> {
+                    transferAmount.setAmount(
+                        amountDecimal = amountDecimal,
+                        txInfo.transferInfo.symbol(chain)!!,
+                        txInfo.transferInfo.logoUri
+                    )
+                }
+                is TransferInfo.Erc721Transfer -> {
+                    transferAmount.setAmount(
+                        amountDecimal = BigDecimal.ONE.toPlainString(),
+                        txInfo.transferInfo.symbol(chain)!!,
+                        txInfo.transferInfo.logoUri
+                    )
+                }
+                is TransferInfo.NativeTransfer -> {
+                    transferAmount.setAmount(
+                        amountDecimal = amountDecimal,
+                        chain.currency.symbol,
+                        chain.currency.logoUri
+                    )
+                }
+            }
+            fromAddressItem.name = viewModel.activeSafe.localName
+            fromAddressItem.setAddress(
+                chain = chain,
+                value = viewModel.activeSafe.address,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+            )
+            txInfo.addressName?.let {
+                toAddressItemKnown.visible(true)
+                toAddressItem.visible(false)
+                toAddressItemKnown.name = it
+                toAddressItemKnown.setAddress(
+                    chain = chain,
+                    value = txInfo.address,
+                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                )
+                if (!txInfo.addressUri.isNullOrBlank()) {
+                    toAddressItemKnown.loadKnownAddressLogo(
+                        txInfo.addressUri,
+                        txInfo.address
+                    )
+                }
+            } ?: run {
+                toAddressItemKnown.visible(false)
+                toAddressItem.visible(true)
+                toAddressItem.setAddress(
+                    chain = chain,
+                    value = txInfo.address,
+                    showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                    copyChainPrefix = viewModel.isChainPrefixCopyEnabled()
+                )
+            }
+        }
+    }
+
+    private fun setupSettingsChangeUI(txInfo: TransactionInfoViewData.SettingsChange) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = txInfo.txActionInfoItems(requireContext().resources)
+            )
+        }
+    }
+
+    private fun setupCustomUI(txInfo: TransactionInfoViewData.Custom) {
+        val viewStub = binding.stubCustom
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewCustomBinding.bind(inflate)
+        }
+        val customBinding = contentBinding as TxReviewCustomBinding
+        with(customBinding) {
+            txAction.setActionInfo(
+                chain = chain,
+                outgoing = true,
+                amount = txInfo.formattedAmount(chain, balanceFormatter),
+                logoUri = txInfo.logoUri(chain) ?: "",
+                address = txInfo.to,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                addressUri = txInfo.actionInfoAddressUri,
+                addressName = txInfo.actionInfoAddressName
+            )
+            val decodedData = txDetails!!.txData?.dataDecoded
+            if (decodedData == null) {
+                txDataDecoded.visible(false)
+                txDataDecodedSeparator.visible(false)
+            } else {
+                if (decodedData.method.lowercase() == "multisend") {
+                    // show multisend action item and navigate to multisend actions list when clicked
+                    val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
+                    txDataDecoded.name = getString(
+                        R.string.tx_details_action_multisend,
+                        valueDecoded?.size ?: 0
+                    )
+                    txDataDecoded.setOnClickListener {
+                        txDetails!!.txData?.dataDecoded?.parameters?.getOrNull(0)
+                            ?.let { param ->
+                                if (param is Param.Bytes && param.valueDecoded != null) {
+                                    findNavController().navigate(
+                                        TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionMultisendFragment(
+                                            chain,
+                                            paramSerializer.serializeDecodedValues(param.valueDecoded!!),
+                                            paramSerializer.serializeAddressInfoIndex(
+                                                txDetails!!.txData?.addressInfoIndex
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+                    }
+
+                } else {
+                    // show action method item and navigate to action details when clicked
+                    txDataDecoded.name = getString(
+                        R.string.tx_details_action,
+                        txDetails!!.txData?.dataDecoded?.method
+                    )
+                    txDataDecoded.setOnClickListener {
+                        txDetails!!.txData?.let {
+                            findNavController().navigate(
+                                TxReviewFragmentDirections.actionTxReviewFragmentToTransactionDetailsActionFragment(
+                                    chain = chain,
+                                    action = it.dataDecoded?.method ?: "",
+                                    data = it.hexData ?: "",
+                                    decodedData = it.dataDecoded?.let {
+                                        paramSerializer.serializeDecodedData(
+                                            it
+                                        )
+                                    },
+                                    addressInfoIndex = paramSerializer.serializeAddressInfoIndex(
+                                        it.addressInfoIndex
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            txData.setData(
+                txDetails!!.txData?.hexData,
+                txInfo.dataSize,
+                getString(R.string.tx_details_data)
+            )
+        }
+    }
+
+    private fun setupRejectionUI(txInfo: TransactionInfoViewData.Rejection) {
+        val viewStub = binding.stubRejection
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewRejectionBinding.bind(inflate)
+        }
+        val rejectionBinding = contentBinding as TxReviewRejectionBinding
+        with(rejectionBinding) {
+            when (val executionInfo = txDetails!!.detailedExecutionInfo) {
+                is DetailedExecutionInfo.MultisigExecutionDetails -> {
+                    txRejectionInfo.text = getString(
+                        R.string.tx_details_rejection_info_queued,
+                        executionInfo.nonce
+                    )
+                    txPaymentReasonLink.setLink(
+                        url = getString(R.string.tx_details_rejection_payment_reason_link),
+                        urlText = getString(R.string.tx_details_rejection_payment_reason),
+                        linkIcon = R.drawable.ic_external_link_green_16dp,
+                        underline = true
+                    )
+                }
+
+                else -> {
                 }
             }
         }
