@@ -98,6 +98,7 @@ class TransactionDetailsViewModelTest {
                 emptyList(),
                 canSign = false,
                 canExecute = false,
+                nextInLine = false,
                 owners = emptyList(),
                 hasOwnerKey = false
             )
@@ -493,6 +494,7 @@ class TransactionDetailsViewModelTest {
                             safes = emptyList(),
                             canSign = false,
                             canExecute = true,
+                            nextInLine = false,
                             hasOwnerKey = false,
                             owners = listOf(owner)
                         )
