@@ -110,8 +110,8 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                         findNavController().navigate(
                             TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFeeLegacyFragment(
                                 chain = chain,
-                                nonce = viewModel.minNonce.toString(),
-                                minNonce = viewModel.nonce.toString(),
+                                nonce = viewModel.nonce.toString(),
+                                minNonce = viewModel.minNonce.toString(),
                                 gasLimit = viewModel.gasLimit.toString(),
                                 gasPrice = viewModel.gasPrice?.toPlainString() ?: "0"
                             )
@@ -120,8 +120,8 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                         findNavController().navigate(
                             TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
                                 chain = chain,
-                                nonce = viewModel.minNonce.toString(),
-                                minNonce = viewModel.nonce.toString(),
+                                nonce = viewModel.nonce.toString(),
+                                minNonce = viewModel.minNonce.toString(),
                                 gasLimit = viewModel.gasLimit.toString(),
                                 maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString()
                                     ?: "0",
