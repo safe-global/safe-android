@@ -3,9 +3,12 @@ package io.gnosis.safe.ui.transactions.details
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.VersionState
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
@@ -24,6 +27,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.crypto.ECDSASignature
+import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
@@ -54,6 +58,20 @@ class TransactionDetailsViewModelTest {
                 someAddress,
                 "safe_name",
                 CHAIN_ID
+            )
+            coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+                AddressInfo(Solidity.Address(BigInteger.ONE)),
+                BigInteger.ONE,
+                1,
+                listOf(
+                    AddressInfo(Solidity.Address(BigInteger.ONE))
+                ),
+                AddressInfo(Solidity.Address(BigInteger.ONE)),
+                listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
+                AddressInfo(Solidity.Address(BigInteger.ONE)),
+                null,
+                "1.1.1",
+                VersionState.OUTDATED
             )
 
             viewModel = TransactionDetailsViewModel(
@@ -93,6 +111,20 @@ class TransactionDetailsViewModelTest {
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.owners() } returns listOf()
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            BigInteger.ONE,
+            1,
+            listOf(
+                AddressInfo(Solidity.Address(BigInteger.ONE))
+            ),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
+            "1.1.1",
+            VersionState.OUTDATED
+        )
         val expectedTransactionInfoViewData =
             transactionDetails.toTransactionDetailsViewData(
                 emptyList(),
