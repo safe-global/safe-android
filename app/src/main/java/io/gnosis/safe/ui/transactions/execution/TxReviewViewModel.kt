@@ -179,7 +179,6 @@ class TxReviewViewModel
 
     fun estimate() {
         safeLaunch {
-
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                 executionKey?.let {
 
@@ -187,51 +186,57 @@ class TxReviewViewModel
                         TxReviewState(viewAction = Loading(true))
                     }
 
-                    ethTx = rpcClient.ethTransaction(
-                        activeSafe,
-                        it.address,
-                        txData!!,
-                        executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-                    )
-                    val estimationParams = rpcClient.estimate(ethTx!!)
+                    kotlin.runCatching {
+                        ethTx = rpcClient.ethTransaction(
+                            activeSafe,
+                            it.address,
+                            txData!!,
+                            executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
+                        )
+                        rpcClient.estimate(ethTx!!)
 
-                    executionKey = executionKey!!.copy(
-                        balance = balanceString(estimationParams.balance),
-                        zeroBalance = estimationParams.gasPrice == BigInteger.ZERO
-                    )
+                    }.onSuccess { estimationParams ->
+                        executionKey = executionKey!!.copy(
+                            balance = balanceString(estimationParams.balance),
+                            zeroBalance = estimationParams.gasPrice == BigInteger.ZERO
+                        )
 
-                    updateState {
-                        TxReviewState(viewAction = DefaultKey(key = executionKey))
-                    }
-
-                    //  base fee amount
-                    val baseFee = estimationParams.gasPrice
-                    minNonce = estimationParams.nonce
-                    // adjust nonce if it is lower than the minimum
-                    // this can happen if other transactions have been sent from the same account
-                    // while the user was on the tx review screen
-                    if (nonce ?: BigInteger.ZERO < minNonce) {
-                        nonce = minNonce
-                    }
-                    // If user has not edited the fee data, we set the fee values
-                    // Otherwise, we keep the user's values
-                    if (!userEditedFeeData) {
-                        nonce = minNonce
-                        gasLimit = estimationParams.estimate
-
-                        if (isLegacy()) {
-                            gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
-                        } else {
-                            maxPriorityFeePerGas =
-                                Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
-                            // base fee amount + miner tip
-                            maxFeePerGas = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
-                                .plus(maxPriorityFeePerGas!!)
+                        updateState {
+                            TxReviewState(viewAction = DefaultKey(key = executionKey))
                         }
-                    }
 
-                    updateState {
-                        TxReviewState(viewAction = UpdateFee(fee = totalFee()))
+                        //  base fee amount
+                        val baseFee = estimationParams.gasPrice
+                        minNonce = estimationParams.nonce
+                        // adjust nonce if it is lower than the minimum
+                        // this can happen if other transactions have been sent from the same account
+                        // while the user was on the tx review screen
+                        if (nonce ?: BigInteger.ZERO < minNonce) {
+                            nonce = minNonce
+                        }
+                        // If user has not edited the fee data, we set the fee values
+                        // Otherwise, we keep the user's values
+                        if (!userEditedFeeData) {
+                            nonce = minNonce
+                            gasLimit = estimationParams.estimate
+
+                            if (isLegacy()) {
+                                gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
+                            } else {
+                                maxPriorityFeePerGas =
+                                    Wei(BigInteger.valueOf(DEFAULT_MINER_TIP)).toGWei(activeSafe.chain.currency.decimals)
+                                // base fee amount + miner tip
+                                maxFeePerGas = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
+                                    .plus(maxPriorityFeePerGas!!)
+                            }
+                        }
+
+                        updateState {
+                            TxReviewState(viewAction = UpdateFee(fee = totalFee()))
+                        }
+
+                    }.onFailure {
+                        throw TxEstimationFailed(it.cause ?: it)
                     }
                 }
             }
@@ -331,7 +336,7 @@ class TxReviewViewModel
             is Transaction.Eip1559 -> {
                 val ethTxEip1559 = ethTx as Transaction.Eip1559
                 if (ownerType == Owner.Type.KEYSTONE) {
-                    ethTxEip1559.rlp()
+                    byteArrayOf(ethTxEip1559.type, *ethTxEip1559.rlp())
                 } else {
                     ethTxEip1559.hash()
                 }
@@ -420,16 +425,19 @@ class TxReviewViewModel
     fun sendForExecution() {
         safeLaunch {
             ethTxSignature?.let {
-
-                rpcClient.send(ethTx!!, it)
-
-                updateState {
-                    TxReviewState(
-                        viewAction =
-                        ViewAction.NavigateTo(
-                            TxReviewFragmentDirections.actionTxReviewFragmentToTxSuccessFragment()
+                kotlin.runCatching {
+                    rpcClient.send(ethTx!!, it)
+                }.onSuccess {
+                    updateState {
+                        TxReviewState(
+                            viewAction =
+                            ViewAction.NavigateTo(
+                                TxReviewFragmentDirections.actionTxReviewFragmentToTxSuccessFragment()
+                            )
                         )
-                    )
+                    }
+                }.onFailure {
+                    throw TxSumbitFailed(it.cause ?: it)
                 }
             }
         }
@@ -469,3 +477,7 @@ data class DefaultKey(
 data class UpdateFee(
     val fee: String?
 ) : BaseStateViewModel.ViewAction
+
+class TxEstimationFailed(override val cause: Throwable) : Throwable(cause)
+
+class TxSumbitFailed(override val cause: Throwable) : Throwable(cause)

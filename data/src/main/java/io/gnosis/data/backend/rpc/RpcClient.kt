@@ -255,7 +255,7 @@ class RpcClient(
     suspend fun send(tx: Transaction, signature: ECDSASignature) {
         val rawTxData = when (tx) {
             is Transaction.Eip1559 -> {
-                tx.rlp(signature)
+                byteArrayOf(tx.type, *tx.rlp(signature))
             }
             is Transaction.Legacy -> {
                 tx.rlp(signature)

@@ -20,12 +20,15 @@ import io.gnosis.safe.databinding.TxReviewRejectionBinding
 import io.gnosis.safe.databinding.TxReviewSettingsChangeBinding
 import io.gnosis.safe.databinding.TxReviewTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
+import io.gnosis.safe.ui.transactions.details.TxConfirmationFailed
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
@@ -214,6 +217,23 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                 with(binding) {
                                     refresh.isRefreshing = false
                                     submitButton.isEnabled = false
+                                }
+                                action.error.let {
+                                    val error = it.toError()
+                                    if (error.trackingRequired) {
+                                        tracker.logException(it)
+                                    }
+                                    when (it) {
+                                        is TxEstimationFailed -> errorSnackbar(
+                                            requireView(),
+                                            error.message(requireContext(), R.string.error_description_tx_exec_estimate)
+                                        )
+                                        is TxSumbitFailed -> errorSnackbar(
+                                            requireView(),
+                                            error.message(requireContext(), R.string.error_description_tx_exec_submit)
+                                        )
+                                        else -> {}
+                                    }
                                 }
                             }
 
