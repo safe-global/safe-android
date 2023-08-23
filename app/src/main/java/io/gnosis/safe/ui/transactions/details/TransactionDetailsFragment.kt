@@ -157,7 +157,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         awaitingExecution = awaitingExecution,
                         canSign = txDetails.canSign,
                         canExecute = txDetails.canExecute,
-                        hasOwnerKey = txDetails.hasOwnerKey
+                        hasOwnerKey = txDetails.hasOwnerKey,
+                        nextInLine = txDetails.nextInLine
                 )
 
                 if (buttonState.buttonContainerIsVisible()) {

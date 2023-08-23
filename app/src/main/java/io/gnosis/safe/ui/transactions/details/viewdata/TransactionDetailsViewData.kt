@@ -29,6 +29,7 @@ data class TransactionDetailsViewData(
     val canSign: Boolean,
     val canExecute: Boolean,
     val hasOwnerKey: Boolean,
+    val nextInLine: Boolean,
     //FIXME: replace Owner type with OwnerViewData and remove @IgnoredOnParcel
     @IgnoredOnParcel
     val owners: List<Owner> = listOf()
@@ -160,6 +161,7 @@ fun TransactionDetails.toTransactionDetailsViewData(
     safes: List<Safe>,
     canSign: Boolean,
     canExecute: Boolean,
+    nextInLine: Boolean,
     owners: List<Owner>,
     hasOwnerKey: Boolean
 ): TransactionDetailsViewData =
@@ -177,6 +179,7 @@ fun TransactionDetails.toTransactionDetailsViewData(
         canSign = canSign,
         canExecute = canExecute,
         hasOwnerKey = hasOwnerKey,
+        nextInLine = nextInLine,
         owners = owners
     )
 
