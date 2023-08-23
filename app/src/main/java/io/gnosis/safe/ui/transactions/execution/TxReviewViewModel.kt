@@ -336,7 +336,7 @@ class TxReviewViewModel
             is Transaction.Eip1559 -> {
                 val ethTxEip1559 = ethTx as Transaction.Eip1559
                 if (ownerType == Owner.Type.KEYSTONE) {
-                    ethTxEip1559.rlp()
+                    byteArrayOf(ethTxEip1559.type, *ethTxEip1559.rlp())
                 } else {
                     ethTxEip1559.hash()
                 }
