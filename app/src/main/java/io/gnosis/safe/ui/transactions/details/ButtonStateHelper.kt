@@ -7,17 +7,18 @@ class ButtonStateHelper(
     val hasBeenRejected: Boolean,
     val isRejection: Boolean,
     val awaitingConfirmations: Boolean,
-    val awaitingExecution: Boolean
+    val awaitingExecution: Boolean,
+    val nextInLine: Boolean
 ) {
     fun confirmationButtonIsVisible(): Boolean =
         when {
             isRejection && awaitingConfirmations && canSign -> true
             isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
-            isRejection && awaitingExecution && canExecute -> true
+            isRejection && awaitingExecution && canExecute && nextInLine -> true
 
             !isRejection && awaitingConfirmations && canSign -> true
             !isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
-            !isRejection && awaitingExecution && canExecute -> true
+            !isRejection && awaitingExecution && canExecute && nextInLine -> true
 
             else -> false
         }

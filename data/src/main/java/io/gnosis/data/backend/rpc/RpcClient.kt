@@ -165,6 +165,7 @@ class RpcClient(
 
     fun ethTransaction(
         safe: Safe,
+        toAddress: Solidity.Address,
         executionKey: Solidity.Address,
         txData: TxData,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
@@ -173,13 +174,13 @@ class RpcClient(
             Transaction.Eip1559(
                 chainId = safe.chain.chainId,
                 from = executionKey,
-                to = txData.to.value,
+                to = toAddress,
                 data = ethTxInput(safe, txData, executionInfo)
             )
         } else {
             Transaction.Legacy(
                 chainId = safe.chain.chainId,
-                to = txData.to.value,
+                to = toAddress,
                 from = executionKey,
                 value = Wei(txData.value ?: BigInteger.ZERO),
                 data = ethTxInput(safe, txData, executionInfo)

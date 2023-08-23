@@ -40,8 +40,12 @@ class TransactionDetailsViewModel
     fun loadDetails(txId: String) {
         safeLaunch {
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
+
+            val activeSafe = safeRepository.getActiveSafe()!!
+            val safeInfo = activeSafe?.let { safeRepository.getSafeInfo(it) }
+
             txDetails = transactionRepository.getTransactionDetails(
-                safeRepository.getActiveSafe()!!.chainId,
+                activeSafe.chainId,
                 txId
             )
             val safes = safeRepository.getSafes()
@@ -55,6 +59,7 @@ class TransactionDetailsViewModel
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                 canSign = canBeSignedFromDevice(executionInfo, owners)
                 canExecute = canBeExecutedFromDevice(executionInfo, owners)
+                nextInLine = safeInfo.nonce == executionInfo.nonce
                 safeOwner = isOwner(executionInfo, owners)
             }
 
@@ -67,6 +72,7 @@ class TransactionDetailsViewModel
                             canSign = canSign,
                             canExecute = canExecute,
                             owners = owners,
+                            nextInLine = nextInLine,
                             hasOwnerKey = safeOwner
                         )
                     )
@@ -125,6 +131,8 @@ class TransactionDetailsViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
+    private var nextInLine = false
+
     fun resumeFlow(selectedOwnerAddress: Solidity.Address, signedSafeTxHash: String? = null) {
         safeLaunch {
             // update ui without reloading tx details
@@ -151,6 +159,7 @@ class TransactionDetailsViewModel
                             safes = safes,
                             canSign = canSign,
                             canExecute = canExecute,
+                            nextInLine = nextInLine,
                             owners = owners,
                             hasOwnerKey = safeOwner
                         )
@@ -253,6 +262,7 @@ class TransactionDetailsViewModel
                                 safes = safes,
                                 canSign = canSign,
                                 canExecute = canExecute,
+                                nextInLine = nextInLine,
                                 owners = owners,
                                 hasOwnerKey = safeOwner
                             )

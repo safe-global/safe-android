@@ -18,7 +18,8 @@ class ButtonStateHelperTest {
                 canSign = true,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = false
+                awaitingExecution = false,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.confirmationButtonIsVisible())
@@ -40,7 +41,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.confirmationButtonIsVisible())
@@ -62,7 +64,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertFalse(buttonStateHelper.buttonContainerIsVisible())
@@ -81,7 +84,8 @@ class ButtonStateHelperTest {
                 canSign = true,
                 canExecute = false,
                 hasBeenRejected = false,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.confirmationButtonIsVisible())
@@ -100,7 +104,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.confirmationButtonIsVisible())
@@ -119,7 +124,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = false,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.confirmationButtonIsVisible())
@@ -138,7 +144,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = false,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.rejectionButtonIsVisible())
@@ -157,7 +164,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = !awaitingConfirmations
+                awaitingExecution = !awaitingConfirmations,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.rejectionButtonIsVisible())
@@ -176,7 +184,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = false,
-                awaitingExecution = awaitingExecution
+                awaitingExecution = awaitingExecution,
+                nextInLine = false
             )
 
         assertTrue(buttonStateHelper.rejectionButtonIsVisible())
@@ -200,7 +209,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = awaitingExecution
+                awaitingExecution = awaitingExecution,
+                nextInLine = false
             )
 
         assertFalse(buttonStateHelper.buttonContainerIsVisible())
@@ -219,7 +229,8 @@ class ButtonStateHelperTest {
                 canSign = false,
                 canExecute = false,
                 hasBeenRejected = true,
-                awaitingExecution = awaitingExecution
+                awaitingExecution = awaitingExecution,
+                nextInLine = false
             )
 
         assertFalse(buttonStateHelper.buttonContainerIsVisible())

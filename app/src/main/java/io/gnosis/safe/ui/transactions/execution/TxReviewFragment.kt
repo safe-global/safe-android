@@ -110,8 +110,8 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                         findNavController().navigate(
                             TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFeeLegacyFragment(
                                 chain = chain,
-                                nonce = viewModel.minNonce.toString(),
-                                minNonce = viewModel.nonce.toString(),
+                                nonce = viewModel.nonce.toString(),
+                                minNonce = viewModel.minNonce.toString(),
                                 gasLimit = viewModel.gasLimit.toString(),
                                 gasPrice = viewModel.gasPrice?.toPlainString() ?: "0"
                             )
@@ -120,8 +120,8 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                         findNavController().navigate(
                             TxReviewFragmentDirections.actionTxReviewFragmentToTxEditFee1559Fragment(
                                 chain = chain,
-                                nonce = viewModel.minNonce.toString(),
-                                minNonce = viewModel.nonce.toString(),
+                                nonce = viewModel.nonce.toString(),
+                                minNonce = viewModel.minNonce.toString(),
                                 gasLimit = viewModel.gasLimit.toString(),
                                 maxPriorityFee = viewModel.maxPriorityFeePerGas?.toPlainString()
                                     ?: "0",
@@ -182,10 +182,12 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
         if (!viewModel.isInitialized()) {
             viewModel.setTxData(
+                txInfo = txDetails!!.txInfo,
                 txData = txDetails!!.txData!!,
                 executionInfo = txDetails!!.detailedExecutionInfo!!
             )
         }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is TxReviewState -> {
@@ -253,27 +255,27 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             contentBinding = TxReviewTransferBinding.bind(inflate)
         }
         val transferBinding = contentBinding as TxReviewTransferBinding
-        val amount = txDetails!!.txData?.value ?: BigInteger.ZERO
-        val amountDecimal =
-            amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals))
-                .toPlainString()
         with(transferBinding) {
-            when (txInfo.transferInfo) {
+            when (val transferInfo = txInfo.transferInfo) {
                 is TransferInfo.Erc20Transfer -> {
+                    val amount = transferInfo.value
+                    val amountDecimal = amount.toBigDecimal().divide(BigDecimal.TEN.pow(transferInfo.decimals!!)).toPlainString()
                     transferAmount.setAmount(
                         amountDecimal = amountDecimal,
-                        txInfo.transferInfo.symbol(chain)!!,
-                        txInfo.transferInfo.logoUri
+                        transferInfo.symbol(chain)!!,
+                        transferInfo.logoUri
                     )
                 }
                 is TransferInfo.Erc721Transfer -> {
                     transferAmount.setAmount(
                         amountDecimal = BigDecimal.ONE.toPlainString(),
-                        txInfo.transferInfo.symbol(chain)!!,
-                        txInfo.transferInfo.logoUri
+                        transferInfo.symbol(chain)!!,
+                        transferInfo.logoUri
                     )
                 }
                 is TransferInfo.NativeTransfer -> {
+                    val amount = txDetails!!.txData?.value ?: BigInteger.ZERO
+                    val amountDecimal = amount.toBigDecimal().divide(BigDecimal.TEN.pow(chain.currency.decimals)).toPlainString()
                     transferAmount.setAmount(
                         amountDecimal = amountDecimal,
                         chain.currency.symbol,

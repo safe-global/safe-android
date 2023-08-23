@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.ui.transactions.details.SigningMode
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.crypto.ECDSASignature
@@ -66,6 +67,8 @@ class TxReviewViewModel
     var maxFeePerGas: BigDecimal? = null
         private set
 
+    private var txInfo: TransactionInfoViewData? = null
+
     private var txData: TxData? = null
 
     private var executionInfo: DetailedExecutionInfo? = null
@@ -85,7 +88,8 @@ class TxReviewViewModel
 
     override fun initialState() = TxReviewState(viewAction = null)
 
-    fun setTxData(txData: TxData, executionInfo: DetailedExecutionInfo) {
+    fun setTxData(txInfo: TransactionInfoViewData, txData: TxData, executionInfo: DetailedExecutionInfo) {
+        this.txInfo = txInfo
         this.txData = txData
         this.executionInfo = executionInfo
         loadDefaultKey()
@@ -95,7 +99,7 @@ class TxReviewViewModel
 
     fun isLoading(): Boolean {
         val viewAction = (state.value as TxReviewState).viewAction
-        return (viewAction is ViewAction.Loading && viewAction.isLoading)
+        return (viewAction is Loading && viewAction.isLoading)
     }
 
     fun isLegacy(): Boolean {
@@ -119,7 +123,6 @@ class TxReviewViewModel
                     TxReviewState(viewAction = DefaultKey(key = executionKey))
                 }
                 updateDefaultKeyBalance()
-                estimate()
             }
         }
     }
@@ -135,7 +138,6 @@ class TxReviewViewModel
                 updateState {
                     TxReviewState(viewAction = DefaultKey(key = executionKey))
                 }
-                updateDefaultKeyBalance()
                 estimate()
             }
         }
@@ -187,12 +189,20 @@ class TxReviewViewModel
                     }
 
                     kotlin.runCatching {
+
+                        val toAddress = when (txInfo) {
+                            is TransactionInfoViewData.Transfer -> (txInfo as TransactionInfoViewData.Transfer).address
+                            else -> txData!!.to.value
+                        }
+
                         ethTx = rpcClient.ethTransaction(
                             activeSafe,
+                            toAddress,
                             it.address,
                             txData!!,
                             executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
                         )
+
                         rpcClient.estimate(ethTx!!)
 
                     }.onSuccess { estimationParams ->
