@@ -28,6 +28,7 @@ import pm.gnosis.svalinn.accounts.utils.rlp
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
@@ -248,7 +249,7 @@ class RpcClient(
             gasPrice = gasPrice,
             balance = banance.value,
             nonce = nonce,
-            callResult = callResult.hexAsBigInteger() == BigInteger.ONE,
+            callResult = nullOnThrow { callResult.hexAsBigInteger() } == BigInteger.ONE,
             estimate = estimate
         )
     }
