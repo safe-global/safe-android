@@ -109,20 +109,42 @@ class TxReviewViewModel
     @VisibleForTesting
     fun loadDefaultKey() {
         safeLaunch {
-            val owners = credentialsRepository.owners()
-                .map { OwnerViewData(it.address, it.name, it.type) }
-                .sortedBy { it.name }
+            updateState {
+                TxReviewState(viewAction = Loading(true))
+            }
+            val owners = credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }
             activeSafe.signingOwners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     activeSafe.signingOwners.any {
                         localOwner.address == it
                     }
                 }
-                executionKey = acceptedOwners.first()
-                updateState {
-                    TxReviewState(viewAction = DefaultKey(key = executionKey))
+                // select owner with highest balance
+                kotlin.runCatching {
+                    rpcClient.getBalances(acceptedOwners.map { it.address })
+                }.onSuccess {
+                    executionKey = acceptedOwners
+                        .mapIndexed { index, owner ->
+                            owner to it[index]
+                        }
+                        .sortedByDescending {
+                            it.second?.value
+                        }.map {
+                            it.first.copy(
+                                balance = balanceString(it.second?.value ?: BigInteger.ZERO),
+                                zeroBalance = it.second?.value == BigInteger.ZERO
+                            )
+                        }
+                        .first()
+
+                    updateState {
+                        TxReviewState(viewAction = DefaultKey(key = executionKey))
+                    }
+                    estimate()
+
+                }.onFailure {
+                    throw LoadBalancesFailed
                 }
-                updateDefaultKeyBalance()
             }
         }
     }
@@ -139,21 +161,6 @@ class TxReviewViewModel
                     TxReviewState(viewAction = DefaultKey(key = executionKey))
                 }
                 estimate()
-            }
-        }
-    }
-
-    private suspend fun updateDefaultKeyBalance() {
-        executionKey?.let {
-            val balanceWei = rpcClient.getBalance(it.address)
-            balanceWei?.let {
-                executionKey = executionKey!!.copy(
-                    balance = balanceString(balanceWei.value),
-                    zeroBalance = balanceWei.value == BigInteger.ZERO
-                )
-                updateState {
-                    TxReviewState(viewAction = DefaultKey(executionKey))
-                }
             }
         }
     }
@@ -206,6 +213,7 @@ class TxReviewViewModel
                         rpcClient.estimate(ethTx!!)
 
                     }.onSuccess { estimationParams ->
+
                         executionKey = executionKey!!.copy(
                             balance = balanceString(estimationParams.balance),
                             zeroBalance = estimationParams.gasPrice == BigInteger.ZERO
@@ -243,6 +251,10 @@ class TxReviewViewModel
 
                         updateState {
                             TxReviewState(viewAction = UpdateFee(fee = totalFee()))
+                        }
+
+                        if (totalFeeValue() > estimationParams.balance) {
+                            throw InsufficientExecutionBalance
                         }
 
                     }.onFailure {
@@ -380,6 +392,11 @@ class TxReviewViewModel
                                     )
                                 )
                             }
+                            updateState {
+                                TxReviewState(
+                                    viewAction = ViewAction.None
+                                )
+                            }
 
                         } else {
                             sendForExecution()
@@ -463,8 +480,11 @@ class TxReviewViewModel
         } ${activeSafe.chain.currency.symbol}"
     }
 
-    private fun totalFee(): String {
-        return balanceString(gasLimit!! * Wei.fromGWei(if (isLegacy()) gasPrice!! else maxFeePerGas!!).value)
+    private fun totalFeeValue(): BigInteger {
+        return gasLimit!! * Wei.fromGWei(if (isLegacy()) gasPrice!! else maxFeePerGas!!).value
+    }
+    fun totalFee(): String {
+        return balanceString(totalFeeValue())
     }
 
     fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
@@ -491,3 +511,7 @@ data class UpdateFee(
 class TxEstimationFailed(override val cause: Throwable) : Throwable(cause)
 
 class TxSumbitFailed(override val cause: Throwable) : Throwable(cause)
+
+object InsufficientExecutionBalance : Throwable()
+
+object LoadBalancesFailed : Throwable()
