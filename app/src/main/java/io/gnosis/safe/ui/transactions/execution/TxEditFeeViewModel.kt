@@ -66,7 +66,7 @@ class TxEditFeeViewModel @Inject constructor(
             } else {
                 if (maxPriorityFee == BigDecimal.ZERO) {
                     context.getString(R.string.tx_exec_error_value_zero)
-                } else if (maxPriorityFee > maxFee) {
+                } else if (maxPriorityFee > maxFee ?: BigDecimal.ZERO) {
                     context.getString(R.string.tx_exec_max_priority_fee_error_too_big)
                 } else {
                     null
@@ -82,7 +82,7 @@ class TxEditFeeViewModel @Inject constructor(
             } else {
                 if (maxFee == BigDecimal.ZERO) {
                     context.getString(R.string.tx_exec_error_value_zero)
-                } else if (maxFee < maxPriorityFee) {
+                } else if (maxFee < maxPriorityFee ?: BigDecimal.ZERO) {
                     context.getString(R.string.tx_exec_max_fee_error_too_small)
                 } else {
                     null
