@@ -1,11 +1,16 @@
 package io.gnosis.data.models
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Chain.Companion.TABLE_NAME
 import pm.gnosis.utils.nullOnThrow
 import java.io.Serializable
 import java.math.BigInteger
+import java.net.URI
 
 @Entity(tableName = TABLE_NAME)
 data class Chain(
@@ -138,5 +143,13 @@ data class Chain(
         ).apply {
             currency = Currency.DEFAULT_CURRENCY
         }
+    }
+}
+
+fun Chain.baseRpcUrl(): String {
+    return if (rpcAuthentication == RpcAuthentication.API_KEY_PATH) {
+        URI.create(rpcUri).resolve(BuildConfig.INFURA_API_KEY).toString()
+    } else {
+        rpcUri
     }
 }

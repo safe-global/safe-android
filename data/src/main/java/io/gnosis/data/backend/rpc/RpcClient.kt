@@ -8,6 +8,7 @@ import io.gnosis.contracts.GnosisSafe_v1_3_0
 import io.gnosis.data.backend.rpc.models.EstimationParams
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.baseRpcUrl
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.utils.SemVer
@@ -38,7 +39,7 @@ class RpcClient(
 ) {
 
     fun updateRpcUrl(chain: Chain) {
-        ethereumRepository.rpcUrl = chain.rpcUri
+        ethereumRepository.rpcUrl = chain.baseRpcUrl()
     }
 
     suspend fun gasPrice(): BigInteger? {

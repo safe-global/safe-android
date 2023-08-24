@@ -150,7 +150,8 @@ class ApplicationModule(private val application: Application) {
         @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
     ): OkHttpClient =
         okHttpClient.newBuilder().apply {
-            interceptors.forEach {
+            // omit api key interceptor
+            interceptors.subList(1, interceptors.size).forEach {
                 addInterceptor(it)
             }
         }.build()
