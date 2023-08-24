@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
@@ -28,7 +29,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
-import io.gnosis.safe.ui.transactions.details.TxConfirmationFailed
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
@@ -152,7 +152,29 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 viewModel.signAndExecute()
             }
             refresh.setOnRefreshListener {
+                if (viewModel.executionKey == null) {
+                    viewModel.loadDefaultKey()
+                }
                 loadEstimation()
+            }
+
+            if (!viewModel.isInitialized()) {
+                viewModel.setTxData(
+                    txInfo = txDetails!!.txInfo,
+                    txData = txDetails!!.txData!!,
+                    executionInfo = txDetails!!.detailedExecutionInfo!!
+                )
+            } else {
+                if (ownerSelected() != null) {
+                    // default execution key changed
+                    viewModel.updateDefaultKey(ownerSelected()!!)
+                    resetOwnerSelected()
+                } else {
+                    estimatedFee.value = viewModel.totalFee()
+                    viewModel.executionKey.let {
+                        selectKey.setKey(it, it?.balance)
+                    }
+                }
             }
         }
 
@@ -180,14 +202,6 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             )
         }
 
-        if (!viewModel.isInitialized()) {
-            viewModel.setTxData(
-                txInfo = txDetails!!.txInfo,
-                txData = txDetails!!.txData!!,
-                executionInfo = txDetails!!.detailedExecutionInfo!!
-            )
-        }
-
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is TxReviewState -> {
@@ -200,6 +214,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                             is DefaultKey -> {
                                 with(binding) {
                                     selectKey.setKey(action.key, action.key?.balance)
+                                    selectKey.requestLayout()
                                 }
                             }
 
@@ -220,21 +235,32 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                     refresh.isRefreshing = false
                                     submitButton.isEnabled = false
                                 }
-                                action.error.let {
-                                    val error = it.toError()
-                                    if (error.trackingRequired) {
-                                        tracker.logException(it)
-                                    }
-                                    when (it) {
-                                        is TxEstimationFailed -> errorSnackbar(
-                                            requireView(),
-                                            error.message(requireContext(), R.string.error_description_tx_exec_estimate)
-                                        )
-                                        is TxSumbitFailed -> errorSnackbar(
-                                            requireView(),
-                                            error.message(requireContext(), R.string.error_description_tx_exec_submit)
-                                        )
-                                        else -> {}
+                                // prevents showing previous error when coming back from background
+                                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                                    action.error.let {
+                                        val error = it.toError()
+                                        if (error.trackingRequired) {
+                                            tracker.logException(it)
+                                        }
+                                        when (it) {
+                                            is LoadBalancesFailed -> errorSnackbar(
+                                                requireView(),
+                                                getString(R.string.error_description_tx_exec_balances)
+                                            )
+                                            is InsufficientExecutionBalance -> errorSnackbar(
+                                                requireView(),
+                                                getString(R.string.error_description_tx_exec_insufficient_balance)
+                                            )
+                                            is TxEstimationFailed -> errorSnackbar(
+                                                requireView(),
+                                                getString(R.string.error_description_tx_exec_estimate)
+                                            )
+                                            is TxSumbitFailed -> errorSnackbar(
+                                                requireView(),
+                                                getString(R.string.error_description_tx_exec_submit)
+                                            )
+                                            else -> {}
+                                        }
                                     }
                                 }
                             }
@@ -456,11 +482,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
         } else if (ownerSigned() != null) {
             // retrieved signature from hardware wallet
             viewModel.resumeExecutionFlow(ownerSigned())
-            resetOwnerData()
-        } else if (ownerSelected() != null) {
-            // default execution key changed
-            viewModel.updateDefaultKey(ownerSelected()!!)
-            resetOwnerData()
+            resetOwnerSigned()
         } else {
             loadEstimation()
         }
@@ -492,17 +514,20 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
             ?.asEthereumAddress()
     }
 
+    private fun resetOwnerSelected() {
+        findNavController().setToCurrent(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+            null
+        )
+    }
+
     private fun ownerSigned(): String? {
         return findNavController().getFromCurrent(
             SafeOverviewBaseFragment.OWNER_SIGNED_RESULT
         )
     }
 
-    private fun resetOwnerData() {
-        findNavController().setToCurrent(
-            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-            null
-        )
+    private fun resetOwnerSigned() {
         findNavController().setToCurrent(
             SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
             null
