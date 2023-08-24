@@ -1,7 +1,14 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.models.Chain
-import io.mockk.*
+import io.mockk.Called
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
 import org.junit.Before

@@ -253,8 +253,10 @@ class TxReviewViewModel
                             TxReviewState(viewAction = UpdateFee(fee = totalFee()))
                         }
 
-                        if (totalFeeValue() > estimationParams.balance) {
+                        if (totalFeeValue() ?: BigInteger.ZERO > estimationParams.balance) {
                             throw InsufficientExecutionBalance
+                        } else if (!estimationParams.callResult) {
+                            throw TxWillFail
                         }
 
                     }.onFailure {
@@ -480,11 +482,23 @@ class TxReviewViewModel
         } ${activeSafe.chain.currency.symbol}"
     }
 
-    private fun totalFeeValue(): BigInteger {
-        return gasLimit!! * Wei.fromGWei(if (isLegacy()) gasPrice!! else maxFeePerGas!!).value
+    private fun totalFeeValue(): BigInteger? {
+        return if (isLegacy()) {
+            if (gasLimit == null || gasPrice == null) {
+                null
+            } else {
+                gasLimit!! * Wei.fromGWei(gasPrice!!).value
+            }
+        } else {
+            if (gasLimit == null || maxFeePerGas == null) {
+                null
+            } else {
+                gasLimit!! * Wei.fromGWei(maxFeePerGas!!).value
+            }
+        }
     }
-    fun totalFee(): String {
-        return balanceString(totalFeeValue())
+    fun totalFee(): String? {
+        return totalFeeValue()?.let { balanceString(it) }
     }
 
     fun isChainPrefixPrependEnabled() = settingsHandler.chainPrefixPrepend
@@ -511,6 +525,8 @@ data class UpdateFee(
 class TxEstimationFailed(override val cause: Throwable) : Throwable(cause)
 
 class TxSumbitFailed(override val cause: Throwable) : Throwable(cause)
+
+object TxWillFail : Throwable()
 
 object InsufficientExecutionBalance : Throwable()
 

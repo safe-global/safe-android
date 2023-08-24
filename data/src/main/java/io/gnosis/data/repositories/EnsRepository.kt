@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.contracts.BuildConfig
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.baseRpcUrl
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.ethereum.Block
 import pm.gnosis.ethereum.EthCall
@@ -24,7 +25,7 @@ class EnsRepository(
 
     suspend fun resolve(url: String, chain: Chain): Solidity.Address {
 
-        ethereumRepository.rpcUrl = chain.rpcUri
+        ethereumRepository.rpcUrl = chain.baseRpcUrl()
 
         val node = ensNormalizer.normalize(url).nameHash()
 

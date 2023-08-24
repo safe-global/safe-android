@@ -8,6 +8,7 @@ import io.gnosis.contracts.GnosisSafe_v1_3_0
 import io.gnosis.data.backend.rpc.models.EstimationParams
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.baseRpcUrl
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.utils.SemVer
@@ -28,6 +29,7 @@ import pm.gnosis.svalinn.accounts.utils.rlp
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
@@ -37,7 +39,7 @@ class RpcClient(
 ) {
 
     fun updateRpcUrl(chain: Chain) {
-        ethereumRepository.rpcUrl = chain.rpcUri
+        ethereumRepository.rpcUrl = chain.baseRpcUrl()
     }
 
     suspend fun gasPrice(): BigInteger? {
@@ -248,7 +250,7 @@ class RpcClient(
             gasPrice = gasPrice,
             balance = banance.value,
             nonce = nonce,
-            callResult = callResult.hexAsBigInteger() == BigInteger.ONE,
+            callResult = nullOnThrow { callResult.hexAsBigInteger() } == BigInteger.ONE,
             estimate = estimate
         )
     }

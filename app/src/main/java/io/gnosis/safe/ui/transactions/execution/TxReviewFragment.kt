@@ -253,7 +253,11 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                                             )
                                             is TxEstimationFailed -> errorSnackbar(
                                                 requireView(),
-                                                getString(R.string.error_description_tx_exec_estimate)
+                                                getString(R.string.error_description_tx_exec_estimate) + ": ${it.cause.localizedMessage}"
+                                            )
+                                            is TxWillFail -> errorSnackbar(
+                                                requireView(),
+                                                getString(R.string.error_description_tx_exec_will_fail)
                                             )
                                             is TxSumbitFailed -> errorSnackbar(
                                                 requireView(),

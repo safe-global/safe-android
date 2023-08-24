@@ -78,6 +78,7 @@
     <string name="error_description_tx_sign">Failed to sign transaction</string>
     <string name="error_description_tx_exec_balances">Failed to load balances</string>
     <string name="error_description_tx_exec_insufficient_balance">Insufficient balance for network fees</string>
+    <string name="error_description_tx_exec_will_fail">This transaction will most likely fail. To save gas costs, avoid executing the transaction.</string>
     <string name="error_description_tx_exec_estimate">Estimation failed</string>
     <string name="error_description_tx_exec_submit">Failed to submit transaction</string>
 
