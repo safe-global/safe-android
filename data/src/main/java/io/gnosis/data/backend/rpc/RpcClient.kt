@@ -22,6 +22,7 @@ import pm.gnosis.ethereum.EthEstimateGasEip1559
 import pm.gnosis.ethereum.EthGasPrice
 import pm.gnosis.ethereum.EthGetTransactionCount
 import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -167,7 +168,6 @@ class RpcClient(
 
     fun ethTransaction(
         safe: Safe,
-        toAddress: Solidity.Address,
         executionKey: Solidity.Address,
         txData: TxData,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
@@ -176,13 +176,13 @@ class RpcClient(
             Transaction.Eip1559(
                 chainId = safe.chain.chainId,
                 from = executionKey,
-                to = toAddress,
+                to = safe.address,
                 data = ethTxInput(safe, txData, executionInfo)
             )
         } else {
             Transaction.Legacy(
                 chainId = safe.chain.chainId,
-                to = toAddress,
+                to = safe.address,
                 from = executionKey,
                 value = Wei(txData.value ?: BigInteger.ZERO),
                 data = ethTxInput(safe, txData, executionInfo)
@@ -211,6 +211,7 @@ class RpcClient(
         val gasPriceRequest = EthGasPrice(id = 1)
         val balanceRequest = EthBalance(address = tx.from!!, id = 2)
         val nonceRequest = EthGetTransactionCount(from = tx.from!!, id = 3)
+
         val callRequest = when(tx) {
             is Transaction.Eip1559 -> {
                 EthCallEip1559(from = tx.from, transaction = tx, id = 4)
@@ -255,7 +256,7 @@ class RpcClient(
         )
     }
 
-    suspend fun send(tx: Transaction, signature: ECDSASignature) {
+    suspend fun send(tx: Transaction, signature: ECDSASignature): String {
         val rawTxData = when (tx) {
             is Transaction.Eip1559 -> {
                 byteArrayOf(tx.type, *tx.rlp(signature))
@@ -264,6 +265,11 @@ class RpcClient(
                 tx.rlp(signature)
             }
         }
-        ethereumRepository.sendRawTransaction(rawTxData.toHexString().addHexPrefix())
+        return ethereumRepository.sendRawTransaction(rawTxData.toHexString().addHexPrefix())
+    }
+
+    suspend fun getTransactionReceipt(chain: Chain, txHash: String): TransactionReceipt {
+        updateRpcUrl(chain)
+        return ethereumRepository.getTransactionReceipt(txHash)
     }
 }

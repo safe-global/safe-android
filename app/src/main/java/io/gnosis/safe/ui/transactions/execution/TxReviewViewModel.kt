@@ -17,7 +17,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.ui.transactions.details.SigningMode
-import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import pm.gnosis.crypto.ECDSASignature
@@ -67,8 +66,6 @@ class TxReviewViewModel
     var maxFeePerGas: BigDecimal? = null
         private set
 
-    private var txInfo: TransactionInfoViewData? = null
-
     private var txData: TxData? = null
 
     private var executionInfo: DetailedExecutionInfo? = null
@@ -88,8 +85,7 @@ class TxReviewViewModel
 
     override fun initialState() = TxReviewState(viewAction = null)
 
-    fun setTxData(txInfo: TransactionInfoViewData, txData: TxData, executionInfo: DetailedExecutionInfo) {
-        this.txInfo = txInfo
+    fun setTxData(txData: TxData, executionInfo: DetailedExecutionInfo) {
         this.txData = txData
         this.executionInfo = executionInfo
         loadDefaultKey()
@@ -197,14 +193,8 @@ class TxReviewViewModel
 
                     kotlin.runCatching {
 
-                        val toAddress = when (txInfo) {
-                            is TransactionInfoViewData.Transfer -> (txInfo as TransactionInfoViewData.Transfer).address
-                            else -> txData!!.to.value
-                        }
-
                         ethTx = rpcClient.ethTransaction(
                             activeSafe,
-                            toAddress,
                             it.address,
                             txData!!,
                             executionInfo as DetailedExecutionInfo.MultisigExecutionDetails

@@ -160,7 +160,6 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
 
             if (!viewModel.isInitialized()) {
                 viewModel.setTxData(
-                    txInfo = txDetails!!.txInfo,
                     txData = txDetails!!.txData!!,
                     executionInfo = txDetails!!.detailedExecutionInfo!!
                 )
