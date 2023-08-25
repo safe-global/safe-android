@@ -168,7 +168,6 @@ class RpcClient(
 
     fun ethTransaction(
         safe: Safe,
-        toAddress: Solidity.Address,
         executionKey: Solidity.Address,
         txData: TxData,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
@@ -177,13 +176,13 @@ class RpcClient(
             Transaction.Eip1559(
                 chainId = safe.chain.chainId,
                 from = executionKey,
-                to = toAddress,
+                to = safe.address,
                 data = ethTxInput(safe, txData, executionInfo)
             )
         } else {
             Transaction.Legacy(
                 chainId = safe.chain.chainId,
-                to = toAddress,
+                to = safe.address,
                 from = executionKey,
                 value = Wei(txData.value ?: BigInteger.ZERO),
                 data = ethTxInput(safe, txData, executionInfo)
@@ -213,21 +212,20 @@ class RpcClient(
         val balanceRequest = EthBalance(address = tx.from!!, id = 2)
         val nonceRequest = EthGetTransactionCount(from = tx.from!!, id = 3)
 
-        // use safe address as "to" field value to get correct estimation
         val callRequest = when(tx) {
             is Transaction.Eip1559 -> {
-                EthCallEip1559(from = tx.from, transaction = tx.copy(to = safe.address), id = 4)
+                EthCallEip1559(from = tx.from, transaction = tx, id = 4)
             }
             is Transaction.Legacy -> {
-                EthCall(from = tx.from, transaction = tx.copy(to = safe.address), id = 4)
+                EthCall(from = tx.from, transaction = tx, id = 4)
             }
         }
         val estimateRequest = when(tx) {
             is Transaction.Eip1559 -> {
-                EthEstimateGasEip1559(from = tx.from, transaction = tx.copy(to = safe.address), id = 5)
+                EthEstimateGasEip1559(from = tx.from, transaction = tx, id = 5)
             }
             is Transaction.Legacy -> {
-                EthEstimateGas(from = tx.from, transaction = tx.copy(to = safe.address), id = 5)
+                EthEstimateGas(from = tx.from, transaction = tx, id = 5)
             }
         }
 
