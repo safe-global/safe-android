@@ -204,7 +204,7 @@ class RpcClient(
         }
     }
 
-    suspend fun estimate(safe: Safe, tx: Transaction): EstimationParams {
+    suspend fun estimate(tx: Transaction): EstimationParams {
         // remove the fee (it will be estimated)
         removeFee(tx)
 
