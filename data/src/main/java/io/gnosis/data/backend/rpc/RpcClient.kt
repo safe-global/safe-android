@@ -22,6 +22,7 @@ import pm.gnosis.ethereum.EthEstimateGasEip1559
 import pm.gnosis.ethereum.EthGasPrice
 import pm.gnosis.ethereum.EthGetTransactionCount
 import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -204,27 +205,29 @@ class RpcClient(
         }
     }
 
-    suspend fun estimate(tx: Transaction): EstimationParams {
+    suspend fun estimate(safe: Safe, tx: Transaction): EstimationParams {
         // remove the fee (it will be estimated)
         removeFee(tx)
 
         val gasPriceRequest = EthGasPrice(id = 1)
         val balanceRequest = EthBalance(address = tx.from!!, id = 2)
         val nonceRequest = EthGetTransactionCount(from = tx.from!!, id = 3)
+
+        // use safe address as "to" field value to get correct estimation
         val callRequest = when(tx) {
             is Transaction.Eip1559 -> {
-                EthCallEip1559(from = tx.from, transaction = tx, id = 4)
+                EthCallEip1559(from = tx.from, transaction = tx.copy(to = safe.address), id = 4)
             }
             is Transaction.Legacy -> {
-                EthCall(from = tx.from, transaction = tx, id = 4)
+                EthCall(from = tx.from, transaction = tx.copy(to = safe.address), id = 4)
             }
         }
         val estimateRequest = when(tx) {
             is Transaction.Eip1559 -> {
-                EthEstimateGasEip1559(from = tx.from, transaction = tx, id = 5)
+                EthEstimateGasEip1559(from = tx.from, transaction = tx.copy(to = safe.address), id = 5)
             }
             is Transaction.Legacy -> {
-                EthEstimateGas(from = tx.from, transaction = tx, id = 5)
+                EthEstimateGas(from = tx.from, transaction = tx.copy(to = safe.address), id = 5)
             }
         }
 
@@ -255,7 +258,7 @@ class RpcClient(
         )
     }
 
-    suspend fun send(tx: Transaction, signature: ECDSASignature) {
+    suspend fun send(tx: Transaction, signature: ECDSASignature): String {
         val rawTxData = when (tx) {
             is Transaction.Eip1559 -> {
                 byteArrayOf(tx.type, *tx.rlp(signature))
@@ -264,6 +267,11 @@ class RpcClient(
                 tx.rlp(signature)
             }
         }
-        ethereumRepository.sendRawTransaction(rawTxData.toHexString().addHexPrefix())
+        return ethereumRepository.sendRawTransaction(rawTxData.toHexString().addHexPrefix())
+    }
+
+    suspend fun getTransactionReceipt(chain: Chain, txHash: String): TransactionReceipt {
+        updateRpcUrl(chain)
+        return ethereumRepository.getTransactionReceipt(txHash)
     }
 }

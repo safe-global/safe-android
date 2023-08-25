@@ -210,7 +210,7 @@ class TxReviewViewModel
                             executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
                         )
 
-                        rpcClient.estimate(ethTx!!)
+                        rpcClient.estimate(activeSafe, ethTx!!)
 
                     }.onSuccess { estimationParams ->
 
