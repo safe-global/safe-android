@@ -36,7 +36,7 @@ class UnstoppableRepositoryTest {
 
 
         val addr = runBlocking {
-            repository.resolve(SUCCESS_DOMAIN, Chain.ID_RINKEBY)
+            repository.resolve(SUCCESS_DOMAIN, Chain.ID_GOERLI)
         }
 
         coVerify { resolutionLib.getAddress(SUCCESS_DOMAIN, "eth") }
@@ -54,7 +54,7 @@ class UnstoppableRepositoryTest {
         )
 
         try {
-            repository.resolve(FAIL_DOMAIN, Chain.ID_RINKEBY)
+            repository.resolve(FAIL_DOMAIN, Chain.ID_GOERLI)
         } catch (err: NamingServiceException) {
             assertTrue(err.code == NSExceptionCode.UnregisteredDomain)
         }
@@ -90,10 +90,10 @@ class UnstoppableRepositoryTest {
 
         val result = repository.canResolve(
             Chain(
-                Chain.ID_RINKEBY,
+                Chain.ID_GOERLI,
                 true,
-                "Rinkeby",
-                "rin",
+                "Goerli",
+                "gor",
                 "",
                 "",
                 "",

@@ -23,10 +23,10 @@ class ChainInfoRepositoryTest {
     private val chainInfoRepository = ChainInfoRepository(chainDao, gatewayApi)
 
     private val rinkebyChainInfo = ChainInfo(
-        Chain.ID_RINKEBY,
+        Chain.ID_GOERLI,
         true,
-        "Rinkeby",
-        "rin",
+        "Goerli",
+        "gor",
         null,
         RpcUri(RpcAuthentication.API_KEY_PATH, ""),
         BlockExplorerTemplate("", ""),
@@ -83,17 +83,17 @@ class ChainInfoRepositoryTest {
     fun updateChainInfo() = runBlocking {
         coEvery { chainDao.save(any()) } just Runs
         coEvery { chainDao.saveCurrency(any()) } just Runs
-        val safes = listOf(Safe("0x00".asEthereumAddress()!!, "", Chain.ID_RINKEBY))
+        val safes = listOf(Safe("0x00".asEthereumAddress()!!, "", Chain.ID_GOERLI))
 
         chainInfoRepository.updateChainInfo(pagedResult, safes)
 
         coVerify(exactly = 1) {
             chainDao.save(
                 Chain(
-                    Chain.ID_RINKEBY,
+                    Chain.ID_GOERLI,
                     true,
-                    "Rinkeby",
-                    "rin",
+                    "Goerli",
+                    "gor",
                     "",
                     "",
                     "",
