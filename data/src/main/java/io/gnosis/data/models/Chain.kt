@@ -125,7 +125,8 @@ data class Chain(
         const val COL_FEATURES = "features"
 
         val ID_MAINNET = BigInteger.valueOf(1)
-        val ID_RINKEBY = BigInteger.valueOf(4)
+        val ID_GOERLI = BigInteger.valueOf(5)
+        val ID_GNOSIS = BigInteger.valueOf(100)
 
         val DEFAULT_CHAIN =  Chain(
             BuildConfig.CHAIN_ID.toBigInteger(),
