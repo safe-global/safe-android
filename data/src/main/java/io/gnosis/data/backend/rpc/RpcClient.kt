@@ -191,12 +191,13 @@ class RpcClient(
     }
 
     private fun removeFee(tx: Transaction) {
-        when(tx) {
+        when (tx) {
             is Transaction.Eip1559 -> {
                 tx.gas = null
                 tx.maxPriorityFee = null
                 tx.maxFeePerGas = null
             }
+
             is Transaction.Legacy -> {
                 tx.gas = null
                 tx.gasPrice = null
@@ -212,18 +213,20 @@ class RpcClient(
         val balanceRequest = EthBalance(address = tx.from!!, id = 2)
         val nonceRequest = EthGetTransactionCount(from = tx.from!!, id = 3)
 
-        val callRequest = when(tx) {
+        val callRequest = when (tx) {
             is Transaction.Eip1559 -> {
                 EthCallEip1559(from = tx.from, transaction = tx, id = 4)
             }
+
             is Transaction.Legacy -> {
                 EthCall(from = tx.from, transaction = tx, id = 4)
             }
         }
-        val estimateRequest = when(tx) {
+        val estimateRequest = when (tx) {
             is Transaction.Eip1559 -> {
                 EthEstimateGasEip1559(from = tx.from, transaction = tx, id = 5)
             }
+
             is Transaction.Legacy -> {
                 EthEstimateGas(from = tx.from, transaction = tx, id = 5)
             }
@@ -261,6 +264,7 @@ class RpcClient(
             is Transaction.Eip1559 -> {
                 byteArrayOf(tx.type, *tx.rlp(signature))
             }
+
             is Transaction.Legacy -> {
                 tx.rlp(signature)
             }
