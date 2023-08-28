@@ -120,6 +120,7 @@ class TransactionDetailsViewModelTest {
                 any()
             )
         } returns transactionDetails
+        coEvery { transactionLocalRepository.updateLocalTx(any(), any<String>()) } returns null
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.owners() } returns listOf()
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
