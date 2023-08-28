@@ -85,7 +85,7 @@ class UnstoppableRepositoryTest {
     }
 
     @Test
-    fun `canResolve - (4) should succeed for Rinkeby`() {
+    fun `canResolve - (5) should succeed for Goerli`() {
         repository = UnstoppableDomainsRepository()
 
         val result = repository.canResolve(
