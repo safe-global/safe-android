@@ -7,6 +7,7 @@ import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.rpc.RpcClient
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.db.daos.TransactionLocalDao
 import io.gnosis.data.repositories.*
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.workers.WorkRepository
@@ -74,6 +75,11 @@ class RepositoryModule {
     @Singleton
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
+
+    @Provides
+    @Singleton
+    fun providesTransactionLocalRepository(localTxDao: TransactionLocalDao, rpcClient: RpcClient): TransactionLocalRepository =
+        TransactionLocalRepository(localTxDao, rpcClient)
 
     @Provides
     @Singleton
