@@ -14,10 +14,19 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
-import io.gnosis.safe.*
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.Tracker
+import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.readJsonFrom
+import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -141,7 +150,7 @@ class ConfirmRejectionViewModelTest {
         val rejectionTxHash =
             calculateSafeTxHash(
                 implementationVersion = SemVer(1, 1, 0),
-                chainId = Chain.ID_RINKEBY,
+                chainId = Chain.ID_GOERLI,
                 safeAddress = safeAddress,
                 transaction = rejectionTxDetails,
                 executionInfo = rejectionExecutionInfo

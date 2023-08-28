@@ -57,9 +57,9 @@ class AddSafeNameViewModelTest {
         listOf()
     )
     private val rinkeby = Chain(
-        Chain.ID_RINKEBY,
+        Chain.ID_GOERLI,
         true,
-        "Rinkeby",
+        "Goerli",
         "",
         "",
         "",

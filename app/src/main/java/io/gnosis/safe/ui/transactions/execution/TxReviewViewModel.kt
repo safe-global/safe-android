@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.execution
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.backend.rpc.RpcClient
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
@@ -228,6 +229,13 @@ class TxReviewViewModel
                             nonce = minNonce
                             gasLimit = estimationParams.estimate
 
+                            // fix for a bug in Nethermind requiring 30% increase in the gas estimation
+                            // on gnosis chain for transactions with positive safeTxGas
+                            if (activeSafe.chainId == Chain.ID_GNOSIS &&
+                                (executionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxGas > BigInteger.ZERO) {
+                                gasLimit = gasLimit!!.multiply(BigInteger.valueOf(130)).divide(BigInteger.valueOf(100))
+                            }
+
                             if (isLegacy()) {
                                 gasPrice = Wei(baseFee).toGWei(activeSafe.chain.currency.decimals)
                             } else {
@@ -246,7 +254,7 @@ class TxReviewViewModel
                         if (totalFeeValue() ?: BigInteger.ZERO > estimationParams.balance) {
                             throw InsufficientExecutionBalance
                         } else if (!estimationParams.callResult) {
-                            throw TxWillFail
+                            throw TxFails
                         }
 
                     }.onFailure {
@@ -516,7 +524,7 @@ class TxEstimationFailed(override val cause: Throwable) : Throwable(cause)
 
 class TxSumbitFailed(override val cause: Throwable) : Throwable(cause)
 
-object TxWillFail : Throwable()
+object TxFails : Throwable()
 
 object InsufficientExecutionBalance : Throwable()
 

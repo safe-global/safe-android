@@ -24,7 +24,7 @@ class UnstoppableDomainsRepository(private val resolution: DomainResolution = Du
     fun canResolve(chain: Chain): Boolean = providesDomainResolutionLibrary(chain.chainId) != null
 
     private fun providesDomainResolutionLibrary(chainId: BigInteger): DomainResolution? {
-        if (chainId != Chain.ID_MAINNET && chainId != Chain.ID_RINKEBY) {
+        if (chainId != Chain.ID_MAINNET && chainId != Chain.ID_GOERLI) {
             return null
         }
         return if (resolution is DummyDomainResolution) {
