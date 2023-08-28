@@ -14,12 +14,22 @@ import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.safe.*
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.Tracker
+import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.readJsonFrom
+import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -38,6 +48,7 @@ class TransactionDetailsViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val transactionRepository = mockk<TransactionRepository>()
+    private val transactionLocalRepository = mockk<TransactionLocalRepository>()
     private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
@@ -76,6 +87,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -137,6 +149,7 @@ class TransactionDetailsViewModelTest {
 
         viewModel = TransactionDetailsViewModel(
             transactionRepository,
+            transactionLocalRepository,
             safeRepository,
             credentialsRepository,
             settingsHandler,
@@ -169,6 +182,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -195,6 +209,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -223,6 +238,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -258,6 +274,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -293,6 +310,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -328,6 +346,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -362,6 +381,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -407,6 +427,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -457,6 +478,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -508,6 +530,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,
@@ -556,6 +579,7 @@ class TransactionDetailsViewModelTest {
 
             viewModel = TransactionDetailsViewModel(
                 transactionRepository,
+                transactionLocalRepository,
                 safeRepository,
                 credentialsRepository,
                 settingsHandler,

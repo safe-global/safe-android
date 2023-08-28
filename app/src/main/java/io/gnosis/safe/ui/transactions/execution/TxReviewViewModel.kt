@@ -8,6 +8,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignature
 import io.gnosis.safe.Tracker
@@ -36,6 +37,7 @@ class TxReviewViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
+    private val localTxRepository: TransactionLocalRepository,
     private val settingsHandler: SettingsHandler,
     private val rpcClient: RpcClient,
     private val balanceFormatter: BalanceFormatter,
@@ -453,7 +455,13 @@ class TxReviewViewModel
         safeLaunch {
             ethTxSignature?.let {
                 kotlin.runCatching {
-                    rpcClient.send(ethTx!!, it)
+                    val txHash = rpcClient.send(ethTx!!, it)
+                    localTxRepository.saveLocally(
+                        tx = ethTx!!,
+                        txHash = txHash,
+                        safeTxHash = (executionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash,
+                        safeTxNonce = (executionInfo as DetailedExecutionInfo.MultisigExecutionDetails).nonce
+                    )
                 }.onSuccess {
                     updateState {
                         TxReviewState(

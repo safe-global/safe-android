@@ -3,11 +3,13 @@ package io.gnosis.safe.ui.transactions.details
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.TransactionLocal
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
@@ -28,6 +30,7 @@ import javax.inject.Inject
 class TransactionDetailsViewModel
 @Inject constructor(
     private val transactionRepository: TransactionRepository,
+    private val transactionLocalRepository: TransactionLocalRepository,
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
     private val settingsHandler: SettingsHandler,
@@ -48,6 +51,8 @@ class TransactionDetailsViewModel
                 activeSafe.chainId,
                 txId
             )
+            var txLocal: TransactionLocal? = null
+
             val safes = safeRepository.getSafes()
 
             val executionInfo = txDetails?.detailedExecutionInfo
@@ -61,20 +66,37 @@ class TransactionDetailsViewModel
                 canExecute = canBeExecutedFromDevice(executionInfo, owners)
                 nextInLine = safeInfo.nonce == executionInfo.nonce
                 safeOwner = isOwner(executionInfo, owners)
+                txLocal = transactionLocalRepository.updateLocalTx(activeSafe, executionInfo.safeTxHash)
+            }
+
+            var txDetailsViewData = txDetails?.toTransactionDetailsViewData(
+                safes = safes,
+                canSign = canSign,
+                canExecute = canExecute,
+                owners = owners,
+                nextInLine = nextInLine,
+                hasOwnerKey = safeOwner
+            )
+
+            txLocal?.let {
+                when {
+                    txDetailsViewData?.txStatus == TransactionStatus.AWAITING_EXECUTION -> {
+                        txDetailsViewData = txDetailsViewData?.copy(txStatus = TransactionStatus.PENDING)
+                    }
+                    txDetailsViewData?.txStatus == TransactionStatus.SUCCESS ||
+                            txDetailsViewData?.txStatus == TransactionStatus.FAILED -> {
+                        // tx was indexed by the transaction service
+                        // local transaction can be deleted
+                        transactionLocalRepository.delete(it)
+                    }
+                }
             }
 
             updateState { TransactionDetailsViewState(ViewAction.Loading(false)) }
             updateState {
                 TransactionDetailsViewState(
                     UpdateDetails(
-                        txDetails?.toTransactionDetailsViewData(
-                            safes = safes,
-                            canSign = canSign,
-                            canExecute = canExecute,
-                            owners = owners,
-                            nextInLine = nextInLine,
-                            hasOwnerKey = safeOwner
-                        )
+                        txDetailsViewData
                     )
                 )
             }
@@ -254,6 +276,9 @@ class TransactionDetailsViewModel
                 val canSign = canBeSignedFromDevice(newExecutionInfo, owners)
                 val canExecute = canBeExecutedFromDevice(newExecutionInfo, owners)
                 val safeOwner = isOwner(newExecutionInfo, owners)
+
+////                 reload details
+//                loadDetails(newExecutionInfo.safeTxHash)
 
                 updateState {
                     TransactionDetailsViewState(

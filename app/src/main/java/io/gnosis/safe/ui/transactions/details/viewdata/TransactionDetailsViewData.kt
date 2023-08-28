@@ -2,13 +2,24 @@ package io.gnosis.safe.ui.transactions.details.viewdata
 
 import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
+import io.gnosis.data.adapters.SolidityAddressNullableParceler
+import io.gnosis.data.adapters.SolidityAddressParceler
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.DataDecoded
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.SafeAppInfo
+import io.gnosis.data.models.transaction.SettingsInfo
+import io.gnosis.data.models.transaction.SettingsInfoType
+import io.gnosis.data.models.transaction.TransactionDetails
+import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransactionInfo
+import io.gnosis.data.models.transaction.TransactionStatus
+import io.gnosis.data.models.transaction.TransactionType
+import io.gnosis.data.models.transaction.TransferInfo
+import io.gnosis.data.models.transaction.TxData
 import io.gnosis.safe.ui.transactions.AddressInfoData
-import io.gnosis.data.adapters.SolidityAddressNullableParceler
-import io.gnosis.data.adapters.SolidityAddressParceler
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
@@ -16,7 +27,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
-import java.util.*
+import java.util.Date
 
 @Parcelize
 data class TransactionDetailsViewData(
