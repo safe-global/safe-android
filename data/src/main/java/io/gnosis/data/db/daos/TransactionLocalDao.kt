@@ -17,12 +17,11 @@ interface TransactionLocalDao {
 
     @Delete
     suspend fun delete(tx: TransactionLocal)
-
-    @Query("DELETE FROM ${TransactionLocal.TABLE_NAME}")
-    abstract fun deleteAll()
+    @Query("DELETE FROM ${TransactionLocal.TABLE_NAME} WHERE ${TransactionLocal.COL_CHAIN_ID} = :chainId AND ${TransactionLocal.COL_SAFE_ADDRESS} = :safeAddress")
+    suspend fun clearOldRecords(chainId: BigInteger, safeAddress: Solidity.Address)
 
     @Query("SELECT * FROM ${TransactionLocal.TABLE_NAME} WHERE ${TransactionLocal.COL_CHAIN_ID} = :chainId AND ${TransactionLocal.COL_SAFE_ADDRESS} = :safeAddress AND ${TransactionLocal.COL_SAFE_TX_HASH} = :safeTxHash")
-    suspend fun loadyByEthTxHash(chainId: BigInteger, safeAddress: Solidity.Address, safeTxHash: String): TransactionLocal?
+    suspend fun loadyBySafeTxHash(chainId: BigInteger, safeAddress: Solidity.Address, safeTxHash: String): TransactionLocal?
 
     @Query("SELECT * FROM ${TransactionLocal.TABLE_NAME} WHERE ${TransactionLocal.COL_CHAIN_ID} = :chainId AND ${TransactionLocal.COL_SAFE_ADDRESS} = :safeAddress ORDER BY ${TransactionLocal.COL_SAFE_TX_NONCE} DESC LIMIT 1")
     suspend fun loadLatest(chainId: BigInteger, safeAddress: Solidity.Address): TransactionLocal?

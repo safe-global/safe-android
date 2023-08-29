@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 10,
-    "identityHash": "8c491039b43bd8018d232bb2c807bb49",
+    "identityHash": "2e9a1088f3438046177df042dfb4f0bd",
     "entities": [
       {
         "tableName": "safes",
@@ -243,7 +243,7 @@
       },
       {
         "tableName": "local_transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `safe_address` TEXT NOT NULL, `safe_tx_nonce` TEXT NOT NULL, `safe_tx_hash` TEXT NOT NULL, `eth_tx_hash` TEXT NOT NULL, `status` TEXT NOT NULL, PRIMARY KEY(`chain_id`, `safe_address`, `safe_tx_hash`), FOREIGN KEY(`chain_id`, `safe_address`) REFERENCES `safes`(`chain_id`, `address`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `safe_address` TEXT NOT NULL, `safe_tx_nonce` TEXT NOT NULL, `safe_tx_hash` TEXT NOT NULL, `eth_tx_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `submitted_at` INTEGER NOT NULL, PRIMARY KEY(`safe_address`, `chain_id`, `safe_tx_hash`))",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -280,38 +280,30 @@
             "columnName": "status",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "submittedAt",
+            "columnName": "submitted_at",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "chain_id",
             "safe_address",
+            "chain_id",
             "safe_tx_hash"
           ],
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "safes",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "chain_id",
-              "safe_address"
-            ],
-            "referencedColumns": [
-              "chain_id",
-              "address"
-            ]
-          }
-        ]
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8c491039b43bd8018d232bb2c807bb49')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2e9a1088f3438046177df042dfb4f0bd')"
     ]
   }
 }

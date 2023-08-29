@@ -144,7 +144,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
         val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """CREATE TABLE IF NOT EXISTS `${TransactionLocal.TABLE_NAME}` (`${TransactionLocal.COL_CHAIN_ID}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_ADDRESS}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_TX_NONCE}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_TX_HASH}` TEXT NOT NULL, `${TransactionLocal.COL_ETH_TX_HASH}` TEXT NOT NULL, `${TransactionLocal.COL_STATUS}` TEXT NOT NULL, PRIMARY KEY(`${TransactionLocal.COL_CHAIN_ID}`, `${TransactionLocal.COL_SAFE_ADDRESS}`, `${TransactionLocal.COL_SAFE_TX_HASH}`), FOREIGN KEY(`${TransactionLocal.COL_CHAIN_ID}`, `${TransactionLocal.COL_SAFE_ADDRESS}`) REFERENCES `${Safe.TABLE_NAME}`(`${Safe.COL_CHAIN_ID}`, `${Safe.COL_ADDRESS}`) ON UPDATE CASCADE ON DELETE CASCADE )"""
+                    """CREATE TABLE IF NOT EXISTS `${TransactionLocal.TABLE_NAME}` (`${TransactionLocal.COL_CHAIN_ID}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_ADDRESS}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_TX_NONCE}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_TX_HASH}` TEXT NOT NULL, `${TransactionLocal.COL_ETH_TX_HASH}` TEXT NOT NULL, `${TransactionLocal.COL_STATUS}` TEXT NOT NULL, `${TransactionLocal.COL_SUBMITTED_AT}` INTEGER NOT NULL, PRIMARY KEY(`${TransactionLocal.COL_SAFE_ADDRESS}`, `${TransactionLocal.COL_CHAIN_ID}`, `${TransactionLocal.COL_SAFE_TX_HASH}`))"""
                 )
             }
         }

@@ -455,14 +455,16 @@ class TxReviewViewModel
         safeLaunch {
             ethTxSignature?.let {
                 kotlin.runCatching {
-                    val txHash = rpcClient.send(ethTx!!, it)
+                    rpcClient.send(ethTx!!, it)
+                }.onSuccess {
+                    val executionInfo = executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
                     localTxRepository.saveLocally(
                         tx = ethTx!!,
-                        txHash = txHash,
-                        safeTxHash = (executionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash,
-                        safeTxNonce = (executionInfo as DetailedExecutionInfo.MultisigExecutionDetails).nonce
+                        txHash = it,
+                        safeTxHash = executionInfo.safeTxHash,
+                        safeTxNonce = executionInfo.nonce,
+                        submittedAt = executionInfo.submittedAt.time
                     )
-                }.onSuccess {
                     updateState {
                         TxReviewState(
                             viewAction =

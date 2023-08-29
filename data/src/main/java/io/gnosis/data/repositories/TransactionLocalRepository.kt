@@ -13,17 +13,16 @@ class TransactionLocalRepository(
     private val rpcClient: RpcClient
 ) {
 
-    suspend fun saveLocally(tx: Transaction, txHash: String, safeTxHash: String, safeTxNonce: BigInteger) {
-        // clean up old txs
-        // only latest tx submitted for execution is relevant
-        localTxDao.deleteAll()
+    suspend fun saveLocally(tx: Transaction, txHash: String, safeTxHash: String, safeTxNonce: BigInteger, submittedAt: Long) {
+        localTxDao.clearOldRecords(tx.chainId, tx.to)
         val localTx = TransactionLocal(
             safeAddress = tx.to,
             chainId = tx.chainId,
             safeTxNonce = safeTxNonce,
             safeTxHash = safeTxHash,
             ethTxHash = txHash,
-            status = TransactionStatus.PENDING
+            status = TransactionStatus.PENDING,
+            submittedAt = submittedAt
         )
         localTxDao.save(localTx)
     }
@@ -37,7 +36,7 @@ class TransactionLocalRepository(
     }
 
     suspend fun getLocalTx(safe: Safe, safeTxHash: String): TransactionLocal? =
-        localTxDao.loadyByEthTxHash(safe.chainId, safe.address, safeTxHash)
+        localTxDao.loadyBySafeTxHash(safe.chainId, safe.address, safeTxHash)
 
     suspend fun getLocalTxLatest(safe: Safe): TransactionLocal? =
         localTxDao.loadLatest(safe.chainId, safe.address)

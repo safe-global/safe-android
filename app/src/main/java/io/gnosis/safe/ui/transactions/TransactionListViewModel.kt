@@ -104,7 +104,8 @@ class TransactionListViewModel
                                 // conflict is resolved if there is local tx with same nonce
                                 // that was submitted for execution
                                 if (txLocal?.safeTxNonce == txListEntry.transaction.executionInfo?.nonce) {
-                                    if (txLocal?.safeTxHash == txListEntry.transaction.id.split("_").last() && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
+                                    // use submittedAt timestamp to distinguish between conflicting transactions
+                                    if (txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
                                         val tx = txListEntry.transaction.copy(txStatus = TransactionStatus.PENDING)
                                         txListEntry.transaction
                                         getTransactionView(
