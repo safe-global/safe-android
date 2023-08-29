@@ -172,6 +172,7 @@ class TransactionDetailsViewModelTest {
                 CHAIN_ID,
                 "tx_details_id"
             )
+            transactionLocalRepository.updateLocalTx(any(), any<String>())
         }
     }
 
