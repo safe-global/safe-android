@@ -25,6 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class TxReviewViewModelTest {
@@ -109,7 +110,7 @@ class TxReviewViewModelTest {
     }
 
     @Test
-    fun `updateDefaultKey(different address) emit DefaultKey and track key changed`() {
+    fun `updateDefaultKey(different address) should emit DefaultKey and track key changed`() {
         coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
             signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
         }
@@ -149,7 +150,7 @@ class TxReviewViewModelTest {
     }
 
     @Test
-    fun `updateDefaultKey(same address) emit DefaultKey and not track key changed`() {
+    fun `updateDefaultKey(same address) should emit DefaultKey and not track key changed`() {
         coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
             signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
         }
@@ -188,6 +189,35 @@ class TxReviewViewModelTest {
 
         coVerify(exactly = 0) {
             tracker.logTxExecKeyChanged()
+        }
+    }
+
+    @Test
+    fun `updateEstimationParams should emit UpdateFee`() {
+        coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
+            signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
+        }
+        coEvery { tracker.logTxExecFieldsEdit(any()) } just Runs
+
+        viewModel = TxReviewViewModel(
+            safeRepository,
+            credentialsRepository,
+            localTxRepository,
+            settingsHandler,
+            rpcClient,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
+
+        viewModel.updateEstimationParams(BigInteger.ZERO, BigInteger.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
+
+        with(viewModel.state.test().values()) {
+            Assert.assertEquals(
+                UpdateFee(
+                    "0 ${Chain.DEFAULT_CHAIN.currency.symbol}"
+                ), this[0].viewAction
+            )
         }
     }
 
