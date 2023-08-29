@@ -53,7 +53,7 @@ class TxReviewViewModelTest {
     private lateinit var viewModel: TxReviewViewModel
 
     @Test
-    fun `loadDefaultKey(success) should emit executionKey`() {
+    fun `loadDefaultKey(success, one owner key) should emit executionKey`() {
         coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
             signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
         }
@@ -79,6 +79,45 @@ class TxReviewViewModelTest {
                     OwnerViewData(
                         TEST_SAFE_OWNER1.address,
                         TEST_SAFE_OWNER1.name,
+                        Owner.Type.IMPORTED,
+                        "1 ${Chain.DEFAULT_CHAIN.currency.symbol}",
+                        false
+                    )
+                ), this[0].viewAction
+            )
+        }
+    }
+
+    @Test
+    fun `loadDefaultKey(success, several owner keys) should emit executionKey with highest balance`() {
+        coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
+            signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
+        }
+        coEvery { credentialsRepository.owners() } returns listOf(TEST_SAFE_OWNER1, TEST_SAFE_OWNER2)
+        coEvery { rpcClient.getBalances(listOf(TEST_SAFE_OWNER1.address, TEST_SAFE_OWNER2.address)) } returns listOf(
+            Wei(BigInteger.ONE),
+            Wei(BigInteger.TEN.pow(Chain.DEFAULT_CHAIN.currency.decimals))
+        )
+
+        viewModel = TxReviewViewModel(
+            safeRepository,
+            credentialsRepository,
+            localTxRepository,
+            settingsHandler,
+            rpcClient,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
+
+        viewModel.loadDefaultKey()
+
+        with(viewModel.state.test().values()) {
+            Assert.assertEquals(
+                DefaultKey(
+                    OwnerViewData(
+                        TEST_SAFE_OWNER2.address,
+                        TEST_SAFE_OWNER2.name,
                         Owner.Type.IMPORTED,
                         "1 ${Chain.DEFAULT_CHAIN.currency.symbol}",
                         false
