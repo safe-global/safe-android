@@ -1,9 +1,14 @@
 package io.gnosis.safe.ui.transactions.execution
 
 import io.gnosis.data.backend.rpc.RpcClient
+import io.gnosis.data.backend.rpc.models.EstimationParams
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.Operation
+import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionLocalRepository
@@ -24,9 +29,12 @@ import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.Instant
+import java.util.Date
 
 class TxReviewViewModelTest {
 
@@ -44,7 +52,7 @@ class TxReviewViewModelTest {
     private lateinit var viewModel: TxReviewViewModel
 
     @Test
-    fun `loadDefaultKey() (success) should emit executionKey`() {
+    fun `loadDefaultKey(success) should emit executionKey`() {
         coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
             signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
         }
@@ -80,7 +88,7 @@ class TxReviewViewModelTest {
     }
 
     @Test
-    fun `loadDefaultKey() (getBalances failure) should emit LoadBalancesFailed`() {
+    fun `loadDefaultKey(getBalances failure) should emit LoadBalancesFailed`() {
         coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
             signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
         }
@@ -211,6 +219,62 @@ class TxReviewViewModelTest {
         )
 
         viewModel.updateEstimationParams(BigInteger.ZERO, BigInteger.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
+
+        with(viewModel.state.test().values()) {
+            Assert.assertEquals(
+                UpdateFee(
+                    "0 ${Chain.DEFAULT_CHAIN.currency.symbol}"
+                ), this[0].viewAction
+            )
+        }
+    }
+
+    @Test
+    fun `estimate(success) should emit UpdateFee`() {
+        coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
+            signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
+        }
+        coEvery { credentialsRepository.owners() } returns listOf(TEST_SAFE_OWNER1)
+        coEvery { rpcClient.getBalances(any()) } returns listOf(Wei(BigInteger.TEN.pow(Chain.DEFAULT_CHAIN.currency.decimals)))
+        coEvery { rpcClient.updateRpcUrl(any()) } just Runs
+        coEvery { rpcClient.ethTransaction(any(), any(), any(), any()) } returns Transaction.Legacy(
+            Chain.DEFAULT_CHAIN.chainId,
+            Solidity.Address(BigInteger.ZERO),
+            Solidity.Address(BigInteger.ZERO),
+            Wei(BigInteger.ZERO)
+        )
+        coEvery { rpcClient.estimate(any()) } returns EstimationParams(
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            true,
+            BigInteger.ZERO
+        )
+
+        viewModel = TxReviewViewModel(
+            safeRepository,
+            credentialsRepository,
+            localTxRepository,
+            settingsHandler,
+            rpcClient,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
+
+        viewModel.setTxData(
+            TxData(
+                "",
+                null,
+                AddressInfo(value = Solidity.Address(BigInteger.ZERO)),
+                BigInteger.ZERO,
+                Operation.CALL
+            ),
+            DetailedExecutionInfo.MultisigExecutionDetails(
+                Date.from(Instant.now()),
+                BigInteger.ZERO
+            )
+        )
 
         with(viewModel.state.test().values()) {
             Assert.assertEquals(
