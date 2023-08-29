@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions
 
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -89,71 +90,81 @@ class TransactionListViewModel
         owners: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
-
         var txLocal: TransactionLocal? = null
         if (type == TransactionPagingSource.Type.QUEUE ) {
             txLocal = transactionLocalRepository.updateLocalTxLatest(safe)
         }
-
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
-                        when (txListEntry) {
-                            is TxListEntry.Transaction -> {
-                                // conflict is resolved if there is local tx with same nonce
-                                // that was submitted for execution
-                                if (txLocal?.safeTxNonce == txListEntry.transaction.executionInfo?.nonce) {
-                                    // use submittedAt timestamp to distinguish between conflicting transactions
-                                    if (txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
-                                        val tx = txListEntry.transaction.copy(txStatus = TransactionStatus.PENDING)
-                                        txListEntry.transaction
-                                        getTransactionView(
-                                            chain = safe.chain,
-                                            transaction = tx,
-                                            safes = safes,
-                                            needsYourConfirmation = false,
-                                            isConflict = false,
-                                            localOwners = owners
-                                        )
-                                    } else {
-                                        TransactionView.Unknown
-                                    }
-                                } else {
-                                    val isConflict = txListEntry.conflictType != ConflictType.None
-                                    val txView =
-                                        getTransactionView(
-                                            chain = safe.chain,
-                                            transaction = txListEntry.transaction,
-                                            safes = safes,
-                                            needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
-                                            isConflict = isConflict,
-                                            localOwners = owners
-                                        )
-                                    if (isConflict) {
-                                        TransactionView.Conflict(txView, txListEntry.conflictType)
-                                    } else txView
-                                }
-                            }
-                            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
-                            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
-                            is TxListEntry.ConflictHeader -> {
-                                // conflict is resolved if there is local tx with same nonce
-                                // that was submitted for execution
-                                if (txLocal?.safeTxNonce == txListEntry.nonce.toBigInteger()) {
-                                    TransactionView.Unknown
-                                } else {
-                                    TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
-                                }
-                            }
-                            else -> TransactionView.Unknown
-                        }
+                       mapTxListEntry(txListEntry, safe, safes, owners, type, txLocal)
                     }
                     .filter { it !is TransactionView.Unknown }
             }
             .cachedIn(viewModelScope)
 
         return safeTxItems
+    }
+
+    @VisibleForTesting
+    fun mapTxListEntry(
+        txListEntry: TxListEntry,
+        safe: Safe,
+        safes: List<Safe>,
+        owners: List<Owner>,
+        type: TransactionPagingSource.Type,
+        txLocal: TransactionLocal? = null
+    ): TransactionView {
+        return when (txListEntry) {
+            is TxListEntry.Transaction -> {
+                // conflict is resolved if there is local tx with same nonce
+                // that was submitted for execution
+                if (txLocal?.safeTxNonce == txListEntry.transaction.executionInfo?.nonce) {
+                    // use submittedAt timestamp to distinguish between conflicting transactions
+                    if (txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
+                        val tx = txListEntry.transaction.copy(txStatus = TransactionStatus.PENDING)
+                        txListEntry.transaction
+                        getTransactionView(
+                            chain = safe.chain,
+                            transaction = tx,
+                            safes = safes,
+                            needsYourConfirmation = false,
+                            isConflict = false,
+                            localOwners = owners
+                        )
+                    } else {
+                        TransactionView.Unknown
+                    }
+                } else {
+                    val isConflict = txListEntry.conflictType != ConflictType.None
+                    val txView =
+                        getTransactionView(
+                            chain = safe.chain,
+                            transaction = txListEntry.transaction,
+                            safes = safes,
+                            needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
+                            isConflict = isConflict,
+                            localOwners = owners
+                        )
+                    if (isConflict) {
+                        TransactionView.Conflict(txView, txListEntry.conflictType)
+                    } else txView
+                }
+            }
+            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
+            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
+            is TxListEntry.ConflictHeader -> {
+                // conflict is resolved if there is local tx with same nonce
+                // that was submitted for execution
+                if (txLocal?.safeTxNonce == txListEntry.nonce.toBigInteger()) {
+                    TransactionView.Unknown
+                } else {
+                    TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
+                }
+            }
+            else -> TransactionView.Unknown
+        }
     }
 
     fun getTransactionView(
