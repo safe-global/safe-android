@@ -98,7 +98,7 @@ class TransactionListViewModel
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
-                       mapTxListEntry(txListEntry, safe, safes, owners, type, txLocal)
+                       mapTxListEntry(txListEntry, safe, safes, owners, txLocal)
                     }
                     .filter { it !is TransactionView.Unknown }
             }
@@ -113,7 +113,6 @@ class TransactionListViewModel
         safe: Safe,
         safes: List<Safe>,
         owners: List<Owner>,
-        type: TransactionPagingSource.Type,
         txLocal: TransactionLocal? = null
     ): TransactionView {
         return when (txListEntry) {
