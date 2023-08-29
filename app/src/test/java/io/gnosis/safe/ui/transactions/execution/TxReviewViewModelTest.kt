@@ -16,7 +16,7 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.test
-import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.utils.BalanceFormatter
@@ -28,6 +28,7 @@ import io.mockk.mockk
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
+import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -110,7 +111,7 @@ class TxReviewViewModelTest {
 
         with(viewModel.state.test().values()) {
             Assert.assertEquals(
-                BaseStateViewModel.ViewAction.ShowError(
+                ShowError(
                     LoadBalancesFailed
                 ), this[0].viewAction
             )
@@ -282,6 +283,74 @@ class TxReviewViewModelTest {
                     "0 ${Chain.DEFAULT_CHAIN.currency.symbol}"
                 ), this[0].viewAction
             )
+        }
+    }
+
+    @Test
+    fun `sendForExecution(success) should send ethTx, save it locally, and emit NavigateTo`() {
+        coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
+            signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
+        }
+        coEvery { credentialsRepository.owners() } returns listOf(TEST_SAFE_OWNER1)
+        coEvery { credentialsRepository.owner(any()) } returns TEST_SAFE_OWNER1
+        coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ECDSASignature(BigInteger.ONE, BigInteger.ONE)
+        coEvery { settingsHandler.usePasscode } returns false
+        coEvery { rpcClient.getBalances(any()) } returns listOf(Wei(BigInteger.TEN.pow(Chain.DEFAULT_CHAIN.currency.decimals)))
+        coEvery { rpcClient.updateRpcUrl(any()) } just Runs
+        coEvery { rpcClient.ethTransaction(any(), any(), any(), any()) } returns Transaction.Legacy(
+            Chain.DEFAULT_CHAIN.chainId,
+            Solidity.Address(BigInteger.ZERO),
+            Solidity.Address(BigInteger.ZERO),
+            Wei(BigInteger.ZERO)
+        )
+        coEvery { rpcClient.estimate(any()) } returns EstimationParams(
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            true,
+            BigInteger.ZERO
+        )
+        coEvery { rpcClient.send(any(), any()) } returns "0x0"
+        coEvery { localTxRepository.saveLocally(any(), any(), any(), any(), any()) } just Runs
+        coEvery { tracker.logTxExecSubmitted() } just Runs
+
+        viewModel = TxReviewViewModel(
+            safeRepository,
+            credentialsRepository,
+            localTxRepository,
+            settingsHandler,
+            rpcClient,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
+
+        viewModel.setTxData(
+            TxData(
+                "",
+                null,
+                AddressInfo(value = Solidity.Address(BigInteger.ZERO)),
+                BigInteger.ZERO,
+                Operation.CALL
+            ),
+            DetailedExecutionInfo.MultisigExecutionDetails(
+                Date.from(Instant.now()),
+                BigInteger.ZERO
+            )
+        )
+        viewModel.signAndExecute()
+
+        with(viewModel.state.test().values()) {
+            Assert.assertEquals(
+                NavigateTo(
+                    TxReviewFragmentDirections.actionTxReviewFragmentToTxSuccessFragment()
+                ), this[0].viewAction
+            )
+        }
+
+        coVerify(exactly = 1) {
+            tracker.logTxExecSubmitted()
+            localTxRepository.saveLocally(any(), any(), any(), any(), any())
         }
     }
 

@@ -17,6 +17,7 @@ interface TransactionLocalDao {
 
     @Delete
     suspend fun delete(tx: TransactionLocal)
+
     @Query("DELETE FROM ${TransactionLocal.TABLE_NAME} WHERE ${TransactionLocal.COL_CHAIN_ID} = :chainId AND ${TransactionLocal.COL_SAFE_ADDRESS} = :safeAddress")
     suspend fun clearOldRecords(chainId: BigInteger, safeAddress: Solidity.Address)
 
