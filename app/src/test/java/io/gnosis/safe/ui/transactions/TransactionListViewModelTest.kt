@@ -254,7 +254,12 @@ class TransactionListViewModelTest {
         transactionListViewModel =
             TransactionListViewModel(transactionPagingProvider, transactionLocalRepository, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
-        val transactionView = transactionListViewModel.mapTxListEntry(txListEnry, safe, listOf(safe), listOf())
+        val transactionView = transactionListViewModel.mapTxListEntry(
+            txListEnry,
+            safe,
+            listOf(safe),
+            listOf()
+        )
 
         assertEquals(TransactionView.TransferQueued(
             "",
@@ -263,7 +268,7 @@ class TransactionListViewModelTest {
             R.string.tx_status_needs_execution,
             R.color.warning,
             "< -0.00001 ETH",
-            Date(0),
+            transfer.timestamp,
             R.drawable.ic_arrow_red_10dp,
             R.string.tx_list_send,
             R.color.label_primary,
@@ -310,7 +315,7 @@ class TransactionListViewModelTest {
             R.string.tx_status_pending,
             R.color.warning,
             "< -0.00001 ETH",
-            Date(0),
+            transfer.timestamp,
             R.drawable.ic_arrow_red_10dp,
             R.string.tx_list_send,
             R.color.label_primary,
