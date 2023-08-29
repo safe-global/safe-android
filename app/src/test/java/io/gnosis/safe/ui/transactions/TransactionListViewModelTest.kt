@@ -199,6 +199,50 @@ class TransactionListViewModelTest {
     }
 
     @Test
+    fun `load - (queue) should check latest local tx`() {
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe").apply {
+            chain = CHAIN
+        }
+        val testObserver = TestLiveDataObserver<TransactionsViewState>()
+        coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
+        coEvery { safeRepository.getActiveSafe() } returns safe
+        coEvery { safeRepository.getSafes() } returns listOf(safe)
+        coEvery { credentialsRepository.ownerCount() } returns 0
+        coEvery { credentialsRepository.owners() } returns listOf()
+        coEvery {
+            transactionPagingProvider.getTransactionsStream(
+                any(),
+                TransactionPagingSource.Type.QUEUE
+            )
+        } returns flow { emit(PagingData.empty<TxListEntry>()) }
+        coEvery { transactionLocalRepository.updateLocalTxLatest(any()) } returns TransactionLocal(
+            CHAIN.chainId,
+            Solidity.Address(BigInteger.ZERO),
+            BigInteger.ONE,
+            "",
+            "",
+            PENDING,
+            0
+        )
+        transactionListViewModel =
+            TransactionListViewModel(transactionPagingProvider, transactionLocalRepository, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
+        transactionListViewModel.load(TransactionPagingSource.Type.QUEUE)
+
+        transactionListViewModel.state.observeForever(testObserver)
+
+        with(testObserver.values()[0]) {
+            assertEquals(true, viewAction is LoadTransactions)
+        }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            safeRepository.getSafes()
+            credentialsRepository.owners()
+            transactionLocalRepository.updateLocalTxLatest(any())
+        }
+    }
+
+    @Test
     fun `mapTxListEntry(Transaction, localTx is null) should map to TransactionView with same state`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe").apply {
             chain = CHAIN
