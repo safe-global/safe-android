@@ -7,8 +7,10 @@ import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.TransactionLocal
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
+import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.ExecutionInfo
 import io.gnosis.data.models.transaction.Param
@@ -194,6 +196,86 @@ class TransactionListViewModelTest {
             safeRepository.getSafes()
             safeRepository.getSafeInfo(safe) wasNot Called
         }
+    }
+
+    @Test
+    fun `mapTxListEntry(Transaction, localTx is null) should map to TransactionView with same state`() {
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe").apply {
+            chain = CHAIN
+        }
+
+        val transfer = buildTransfer(status = AWAITING_EXECUTION, confirmations = 1, threshold = 1)
+        val txListEnry = TxListEntry.Transaction(transfer, ConflictType.None)
+
+        transactionListViewModel =
+            TransactionListViewModel(transactionPagingProvider, transactionLocalRepository, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
+
+        val transactionView = transactionListViewModel.mapTxListEntry(txListEnry, safe, listOf(safe), listOf())
+
+        assertEquals(TransactionView.TransferQueued(
+            "",
+            AWAITING_EXECUTION,
+            Chain.DEFAULT_CHAIN,
+            R.string.tx_status_needs_execution,
+            R.color.warning,
+            "< -0.00001 ETH",
+            Date(0),
+            R.drawable.ic_arrow_red_10dp,
+            R.string.tx_list_send,
+            R.color.label_primary,
+            1,
+            1,
+            R.color.success,
+            R.drawable.ic_confirmations_green_16dp,
+            "1"
+        ), transactionView)
+    }
+
+    @Test
+    fun `mapTxListEntry(Transaction, localTx) should map to TransactionView with pending state`() {
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe").apply {
+            chain = CHAIN
+        }
+
+        val transfer = buildTransfer(status = AWAITING_EXECUTION, confirmations = 1, threshold = 1)
+        val txListEnry = TxListEntry.Transaction(transfer, ConflictType.None)
+
+        transactionListViewModel =
+            TransactionListViewModel(transactionPagingProvider, transactionLocalRepository, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
+
+        val transactionView = transactionListViewModel.mapTxListEntry(
+            txListEnry,
+            safe,
+            listOf(safe),
+            listOf(),
+            TransactionLocal(
+                CHAIN.chainId,
+                Solidity.Address(BigInteger.ZERO),
+                BigInteger.ONE,
+                "",
+                "",
+                PENDING,
+                0
+            )
+        )
+
+        assertEquals(TransactionView.TransferQueued(
+            "",
+            PENDING,
+            Chain.DEFAULT_CHAIN,
+            R.string.tx_status_pending,
+            R.color.warning,
+            "< -0.00001 ETH",
+            Date(0),
+            R.drawable.ic_arrow_red_10dp,
+            R.string.tx_list_send,
+            R.color.label_primary,
+            1,
+            1,
+            R.color.success,
+            R.drawable.ic_confirmations_green_16dp,
+            "1"
+        ), transactionView)
     }
 
     @Test
@@ -1105,7 +1187,8 @@ class TransactionListViewModelTest {
         value: BigInteger = BigInteger.ONE,
         date: Date = Date(0),
         serviceTokenInfo: TokenInfo = NATIVE_CURRENCY_INFO,
-        nonce: BigInteger = defaultNonce
+        nonce: BigInteger = defaultNonce,
+        threshold: Int = defaultThreshold
     ): Transaction =
         Transaction(
             id = "",
@@ -1118,7 +1201,7 @@ class TransactionListViewModelTest {
             ),
             executionInfo = ExecutionInfo(
                 nonce = nonce,
-                confirmationsRequired = defaultThreshold,
+                confirmationsRequired = threshold,
                 confirmationsSubmitted = confirmations,
                 missingSigners = missingSigners
             ),
