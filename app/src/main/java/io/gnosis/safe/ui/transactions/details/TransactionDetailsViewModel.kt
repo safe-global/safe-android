@@ -277,9 +277,6 @@ class TransactionDetailsViewModel
                 val canExecute = canBeExecutedFromDevice(newExecutionInfo, owners)
                 val safeOwner = isOwner(newExecutionInfo, owners)
 
-////                 reload details
-//                loadDetails(newExecutionInfo.safeTxHash)
-
                 updateState {
                     TransactionDetailsViewState(
                         ConfirmationSubmitted(

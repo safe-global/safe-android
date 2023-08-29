@@ -457,6 +457,7 @@ class TxReviewViewModel
                 kotlin.runCatching {
                     rpcClient.send(ethTx!!, it)
                 }.onSuccess {
+                    tracker.logTxExecSubmitted()
                     val executionInfo = executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
                     localTxRepository.saveLocally(
                         tx = ethTx!!,
