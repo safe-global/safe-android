@@ -248,6 +248,85 @@ class TransactionDetailsViewModelTest {
                 "tx_details_id"
             )
         }
+        coVerify(exactly = 0) {
+            transactionLocalRepository.delete(any())
+        }
+    }
+
+    @Test
+    fun `loadDetails (successful, success with local pending tx) should emit txDetails and delete local tx`() = runTest(UnconfinedTestDispatcher()) {
+        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+        val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+
+        coEvery {
+            transactionRepository.getTransactionDetails(
+                any(),
+                any()
+            )
+        } returns transactionDetails
+        coEvery { transactionLocalRepository.updateLocalTx(any(), any<String>()) } returns TransactionLocal(
+            CHAIN_ID,
+            Solidity.Address(BigInteger.ZERO),
+            BigInteger.ZERO,
+            (transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash,
+            "",
+            TransactionStatus.PENDING,
+            0
+        )
+        coEvery { transactionLocalRepository.delete(any()) } just Runs
+        coEvery { safeRepository.getSafes() } returns emptyList()
+        coEvery { credentialsRepository.owners() } returns listOf()
+        coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            BigInteger.ONE,
+            1,
+            listOf(
+                AddressInfo(Solidity.Address(BigInteger.ONE))
+            ),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
+            "1.1.1",
+            VersionState.OUTDATED
+        )
+        val expectedTransactionInfoViewData =
+            transactionDetails.toTransactionDetailsViewData(
+                emptyList(),
+                canSign = false,
+                canExecute = false,
+                nextInLine = false,
+                owners = emptyList(),
+                hasOwnerKey = false
+            )
+
+        viewModel = TransactionDetailsViewModel(
+            transactionRepository,
+            transactionLocalRepository,
+            safeRepository,
+            credentialsRepository,
+            settingsHandler,
+            tracker,
+            appDispatchers
+        )
+
+        viewModel.loadDetails("tx_details_id")
+
+        with(viewModel.state.test().values()) {
+            assertEquals(
+                UpdateDetails(txDetails = expectedTransactionInfoViewData),
+                this[0].viewAction
+            )
+        }
+        coVerify(exactly = 1) {
+            transactionRepository.getTransactionDetails(
+                CHAIN_ID,
+                "tx_details_id"
+            )
+            transactionLocalRepository.delete(any())
+        }
     }
 
     @Test
