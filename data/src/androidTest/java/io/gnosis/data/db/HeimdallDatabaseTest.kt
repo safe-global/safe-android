@@ -49,7 +49,8 @@ class HeimdallDatabaseTest {
             HeimdallDatabase.MIGRATION_5_6,
             HeimdallDatabase.MIGRATION_6_7,
             HeimdallDatabase.MIGRATION_7_8,
-            HeimdallDatabase.MIGRATION_8_9
+            HeimdallDatabase.MIGRATION_8_9,
+            HeimdallDatabase.MIGRATION_9_10
         )
 
         // Open latest version of the database. Room will validate the schema
@@ -242,6 +243,7 @@ class HeimdallDatabaseTest {
     fun migrate6To7() {
         val chain = Chain(
             Chain.ID_MAINNET,
+            false,
             "Mainnet",
             "eth",
             "",
@@ -250,7 +252,8 @@ class HeimdallDatabaseTest {
             RpcAuthentication.API_KEY_PATH,
             "",
             "",
-            null
+            null,
+            listOf()
         )
 
         helper.createDatabase(TEST_DB, 6).apply {

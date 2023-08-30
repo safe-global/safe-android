@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions
 
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -10,17 +11,33 @@ import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.TransactionLocal
+import io.gnosis.data.models.transaction.ConflictType
+import io.gnosis.data.models.transaction.SafeAppInfo
+import io.gnosis.data.models.transaction.Transaction
+import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransactionInfo
+import io.gnosis.data.models.transaction.TransactionStatus
+import io.gnosis.data.models.transaction.TransferInfo
+import io.gnosis.data.models.transaction.TransferType
+import io.gnosis.data.models.transaction.TxListEntry
+import io.gnosis.data.models.transaction.decimals
+import io.gnosis.data.models.transaction.symbol
+import io.gnosis.data.models.transaction.value
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
-import io.gnosis.safe.utils.*
+import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.DEFAULT_ERC20_SYMBOL
+import io.gnosis.safe.utils.DEFAULT_ERC721_SYMBOL
+import io.gnosis.safe.utils.formatBackendDateTime
+import io.gnosis.safe.utils.formatBackendTimeOfDay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.utils.asEthereumAddressString
@@ -30,6 +47,7 @@ import javax.inject.Inject
 class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
+    private val transactionLocalRepository: TransactionLocalRepository,
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
     private val balanceFormatter: BalanceFormatter,
@@ -66,44 +84,86 @@ class TransactionListViewModel
         }
     }
 
-    private fun getTransactions(
+    private suspend fun getTransactions(
         safe: Safe,
         safes: List<Safe>,
         owners: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
-
+        var txLocal: TransactionLocal? = null
+        if (type == TransactionPagingSource.Type.QUEUE ) {
+            txLocal = transactionLocalRepository.updateLocalTxLatest(safe)
+        }
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
-                        when (txListEntry) {
-                            is TxListEntry.Transaction -> {
-                                val isConflict = txListEntry.conflictType != ConflictType.None
-                                val txView =
-                                    getTransactionView(
-                                        chain = safe.chain,
-                                        transaction = txListEntry.transaction,
-                                        safes = safes,
-                                        needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
-                                        isConflict = isConflict,
-                                        localOwners = owners
-                                    )
-                                if (isConflict) {
-                                    TransactionView.Conflict(txView, txListEntry.conflictType)
-                                } else txView
-                            }
-                            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
-                            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
-                            is TxListEntry.ConflictHeader -> TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
-                            TxListEntry.Unknown -> TransactionView.Unknown
-                        }
+                       mapTxListEntry(txListEntry, safe, safes, owners, txLocal)
                     }
                     .filter { it !is TransactionView.Unknown }
             }
             .cachedIn(viewModelScope)
 
         return safeTxItems
+    }
+
+    @VisibleForTesting
+    fun mapTxListEntry(
+        txListEntry: TxListEntry,
+        safe: Safe,
+        safes: List<Safe>,
+        owners: List<Owner>,
+        txLocal: TransactionLocal? = null
+    ): TransactionView {
+        return when (txListEntry) {
+            is TxListEntry.Transaction -> {
+                // conflict is resolved if there is local tx with same nonce
+                // that was submitted for execution
+                if (txLocal?.safeTxNonce == txListEntry.transaction.executionInfo?.nonce) {
+                    // use submittedAt timestamp to distinguish between conflicting transactions
+                    if (txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
+                        val tx = txListEntry.transaction.copy(txStatus = TransactionStatus.PENDING)
+                        txListEntry.transaction
+                        getTransactionView(
+                            chain = safe.chain,
+                            transaction = tx,
+                            safes = safes,
+                            needsYourConfirmation = false,
+                            isConflict = false,
+                            localOwners = owners
+                        )
+                    } else {
+                        TransactionView.Unknown
+                    }
+                } else {
+                    val isConflict = txListEntry.conflictType != ConflictType.None
+                    val txView =
+                        getTransactionView(
+                            chain = safe.chain,
+                            transaction = txListEntry.transaction,
+                            safes = safes,
+                            needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
+                            isConflict = isConflict,
+                            localOwners = owners
+                        )
+                    if (isConflict) {
+                        TransactionView.Conflict(txView, txListEntry.conflictType)
+                    } else txView
+                }
+            }
+            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
+            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
+            is TxListEntry.ConflictHeader -> {
+                // conflict is resolved if there is local tx with same nonce
+                // that was submitted for execution
+                if (txLocal?.safeTxNonce == txListEntry.nonce.toBigInteger()) {
+                    TransactionView.Unknown
+                } else {
+                    TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
+                }
+            }
+            else -> TransactionView.Unknown
+        }
     }
 
     fun getTransactionView(

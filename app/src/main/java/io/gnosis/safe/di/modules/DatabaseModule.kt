@@ -13,9 +13,11 @@ import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_5_6
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_6_7
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_7_8
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_8_9
+import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_9_10
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.db.daos.TransactionLocalDao
 import io.gnosis.safe.di.ApplicationContext
 import javax.inject.Singleton
 
@@ -34,7 +36,8 @@ class DatabaseModule {
                 MIGRATION_5_6,
                 MIGRATION_6_7,
                 MIGRATION_7_8,
-                MIGRATION_8_9
+                MIGRATION_8_9,
+                MIGRATION_9_10
             )
             .build()
 
@@ -49,4 +52,8 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun providesChainDao(heimdallDatabase: HeimdallDatabase): ChainDao = heimdallDatabase.chainDao()
+
+    @Provides
+    @Singleton
+    fun providesTransactionLocalDao(heimdallDatabase: HeimdallDatabase): TransactionLocalDao = heimdallDatabase.transactionLocalDao()
 }

@@ -9,6 +9,7 @@ import io.gnosis.data.BuildConfig
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.db.daos.TransactionLocalDao
 import io.gnosis.data.models.*
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.svalinn.security.db.EncryptedString
@@ -18,7 +19,8 @@ import pm.gnosis.svalinn.security.db.EncryptedString
         Safe::class,
         Owner::class,
         Chain::class,
-        Chain.Currency::class
+        Chain.Currency::class,
+        TransactionLocal::class
     ], version = HeimdallDatabase.LATEST_DB_VERSION
 )
 @TypeConverters(
@@ -38,9 +40,11 @@ abstract class HeimdallDatabase : RoomDatabase() {
 
     abstract fun chainDao(): ChainDao
 
+    abstract fun transactionLocalDao(): TransactionLocalDao
+
     companion object {
         const val DB_NAME = "safe_db"
-        const val LATEST_DB_VERSION = 9
+        const val LATEST_DB_VERSION = 10
 
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -133,6 +137,14 @@ abstract class HeimdallDatabase : RoomDatabase() {
                 )
                 database.execSQL(
                     """ALTER TABLE `${Chain.TABLE_NAME}` ADD COLUMN `${Chain.COL_FEATURES}` TEXT NOT NULL DEFAULT ''"""
+                )
+            }
+        }
+
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `${TransactionLocal.TABLE_NAME}` (`${TransactionLocal.COL_CHAIN_ID}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_ADDRESS}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_TX_NONCE}` TEXT NOT NULL, `${TransactionLocal.COL_SAFE_TX_HASH}` TEXT NOT NULL, `${TransactionLocal.COL_ETH_TX_HASH}` TEXT NOT NULL, `${TransactionLocal.COL_STATUS}` TEXT NOT NULL, `${TransactionLocal.COL_SUBMITTED_AT}` INTEGER NOT NULL, PRIMARY KEY(`${TransactionLocal.COL_SAFE_ADDRESS}`, `${TransactionLocal.COL_CHAIN_ID}`, `${TransactionLocal.COL_SAFE_TX_HASH}`))"""
                 )
             }
         }
