@@ -174,8 +174,7 @@ class SafeRepository(
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
         fun isUpToDateVersion(version: SemVer?): Boolean {
-            //FIXME: adjust when 1.1.1 and 1.2.0 should not be regarded as up to date
-            return version != null && version >= SemVer(1, 1, 1)
+            return version != null && version >= SemVer(1, 3, 0)
         }
 
         fun isSupportedVersion(version: SemVer?): Boolean {
