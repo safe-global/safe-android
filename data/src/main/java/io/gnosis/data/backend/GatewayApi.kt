@@ -62,14 +62,14 @@ interface GatewayApi {
     suspend fun loadTransactionsHistory(
         @Path("chainId") chainId: BigInteger,
         @Path("address") address: String,
-        @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)
+        @Query("timezone_offset") timezoneOffset: Int = 0
     ): Page<TxListEntry>
 
     @GET("/v1/chains/{chainId}/safes/{address}/transactions/queued")
     suspend fun loadTransactionsQueue(
         @Path("chainId") chainId: BigInteger,
         @Path("address") address: String,
-        @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)
+        @Query("timezone_offset") timezoneOffset: Int = 0
     ): Page<TxListEntry>
 
     @GET
