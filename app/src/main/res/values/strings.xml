@@ -466,6 +466,7 @@
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>
     <string name="tx_confirmations_rejection_created">On-chain rejection created</string>
+    <string name="tx_confirmations_pending">Pending</string>
 
     <string name="signing_owner_add_key">Add owner key</string>
     <string name="signing_owner_import_existing_title">Import existing owner key</string>
