@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions.details
 
 import androidx.annotation.VisibleForTesting
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.TransactionLocal
@@ -135,7 +136,8 @@ class TransactionDetailsViewModel
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         localOwners: List<Owner>
     ): Boolean {
-        return localOwners.isNotEmpty() && executionInfo.confirmations.size == executionInfo.confirmationsRequired
+        val ownersThatCanExecute = localOwners.filter { it.type != Owner.Type.LEDGER_NANO_X && executionInfo.signers.contains(AddressInfo(it.address))}
+        return ownersThatCanExecute.isNotEmpty() && executionInfo.confirmations.size == executionInfo.confirmationsRequired
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
