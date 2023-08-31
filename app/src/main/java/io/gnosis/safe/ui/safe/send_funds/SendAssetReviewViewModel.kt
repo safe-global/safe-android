@@ -251,10 +251,10 @@ class SendAssetReviewViewModel
                     SendAssetReviewState(
                         ViewAction.NavigateTo(
                             SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToSendAssetSuccessFragment(
-                                activeSafe.chain,
-                                safeTxHash,
-                                amountString,
-                                selectedAsset.symbol
+                                chain = activeSafe.chain,
+                                txId = safeTxHash, // to get non cached updates later we need the txId not the hash
+                                amount = amountString,
+                                token = selectedAsset.symbol
                             )
                         )
                     )

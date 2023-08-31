@@ -14,6 +14,8 @@ import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class TransactionDetails(
+    @Json(name = "txId")
+    val txId: String? = null,
     @Json(name = "txHash")
     val txHash: String? = null,
     @Json(name = "txStatus")
