@@ -70,7 +70,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 Navigation.findNavController(root).navigateUp()
             }
             refresh.setOnRefreshListener {
-                viewModel.loadDetails(txId)
+                viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
             }
         }
 
@@ -130,7 +130,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             viewModel.resumeFlow(ownerSelected()!!, ownerSigned())
             resetOwnerData()
         } else {
-            viewModel.loadDetails(txId)
+            viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
         }
     }
 
