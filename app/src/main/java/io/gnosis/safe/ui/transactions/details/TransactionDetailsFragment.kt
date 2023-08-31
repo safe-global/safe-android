@@ -456,7 +456,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 TransactionStatus.SUCCESS -> R.color.success
                 TransactionStatus.CANCELLED -> R.color.label_secondary
                 TransactionStatus.FAILED -> R.color.error
-                TransactionStatus.PENDING -> R.color.label_secondary
+                TransactionStatus.PENDING -> R.color.warning
             }
 
     @StringRes
