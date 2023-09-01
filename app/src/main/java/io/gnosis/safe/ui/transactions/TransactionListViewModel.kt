@@ -121,7 +121,7 @@ class TransactionListViewModel
                 // that was submitted for execution
                 if (txLocal?.safeTxNonce == txListEntry.transaction.executionInfo?.nonce) {
                     // use submittedAt timestamp to distinguish between conflicting transactions
-                    if (txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
+                    if (txLocal?.submittedAt == null || txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
                         val tx = txListEntry.transaction.copy(txStatus = TransactionStatus.PENDING)
                         txListEntry.transaction
                         getTransactionView(
