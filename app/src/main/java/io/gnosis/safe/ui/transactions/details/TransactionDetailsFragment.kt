@@ -70,6 +70,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 Navigation.findNavController(root).navigateUp()
             }
             refresh.setOnRefreshListener {
+                // Use txDetails.txId here to generate a non cached url
                 viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
             }
         }
@@ -130,6 +131,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             viewModel.resumeFlow(ownerSelected()!!, ownerSigned())
             resetOwnerData()
         } else {
+            //Use txDetails.txId here to generate a non cached url
             viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
         }
     }

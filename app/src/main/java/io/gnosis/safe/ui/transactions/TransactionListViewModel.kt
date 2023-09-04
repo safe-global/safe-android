@@ -132,6 +132,7 @@ class TransactionListViewModel
                             localOwners = owners
                         )
                     } else {
+                        // txLocal?.submittedAt is null for incoming history transfers. ALso for safe creation tx
                         getTransactionView(
                             chain = safe.chain,
                             transaction = txListEntry.transaction,
