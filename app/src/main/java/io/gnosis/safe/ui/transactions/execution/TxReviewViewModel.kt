@@ -123,6 +123,7 @@ class TxReviewViewModel
                     rpcClient.getBalances(acceptedOwners.map { it.address })
                 }.onSuccess {
                     executionKey = acceptedOwners
+                        // TODO: Remove this filter when Ledger tx execution is implemented
                         .filter {
                             it.type != Owner.Type.LEDGER_NANO_X
                         }

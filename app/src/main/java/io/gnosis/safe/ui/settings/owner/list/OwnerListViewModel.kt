@@ -70,6 +70,7 @@ class OwnerListViewModel
                         .sortedBy { it.name }
                 val acceptedOwners = owners.filter { localOwner ->
                     safe.signingOwners.any {
+                        //TODO: Modify this check when we have tx execution on Ledger Nano X
                         localOwner.address == it && localOwner.type != Owner.Type.LEDGER_NANO_X
                     }
                 }
