@@ -131,7 +131,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             viewModel.resumeFlow(ownerSelected()!!, ownerSigned())
             resetOwnerData()
         } else {
-            //Use txDetails.txId here to generate a non cached url
+            // Use txDetails.txId here to generate a non cached url
             viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
         }
     }

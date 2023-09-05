@@ -90,10 +90,7 @@ class TransactionListViewModel
         owners: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
-        var txLocal: TransactionLocal? = null
-        if (type == TransactionPagingSource.Type.QUEUE ) {
-            txLocal = transactionLocalRepository.updateLocalTxLatest(safe)
-        }
+        val txLocal = if (type == TransactionPagingSource.Type.QUEUE ) transactionLocalRepository.updateLocalTxLatest(safe) else null
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
@@ -132,15 +129,8 @@ class TransactionListViewModel
                             localOwners = owners
                         )
                     } else {
-                        // txLocal?.submittedAt is null for incoming history transfers. ALso for safe creation tx
-                        getTransactionView(
-                            chain = safe.chain,
-                            transaction = txListEntry.transaction,
-                            safes = safes,
-                            needsYourConfirmation = false,
-                            isConflict = false,
-                            localOwners = owners
-                        )
+                        // do not show other conflicting transaction with same nonce that were not selected for execution
+                        TransactionView.Unknown
                     }
                 } else {
                     val isConflict = txListEntry.conflictType != ConflictType.None
