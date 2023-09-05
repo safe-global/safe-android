@@ -136,6 +136,7 @@ class TransactionDetailsViewModel
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         localOwners: List<Owner>
     ): Boolean {
+        //TODO: Modify this check when we have tx execution on Ledger Nano X
         val ownersThatCanExecute = localOwners.filter { it.type != Owner.Type.LEDGER_NANO_X && executionInfo.signers.contains(AddressInfo(it.address))}
         return ownersThatCanExecute.isNotEmpty() && executionInfo.confirmations.size == executionInfo.confirmationsRequired
     }
