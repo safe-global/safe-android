@@ -90,10 +90,7 @@ class TransactionListViewModel
         owners: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
-        var txLocal: TransactionLocal? = null
-        if (type == TransactionPagingSource.Type.QUEUE ) {
-            txLocal = transactionLocalRepository.updateLocalTxLatest(safe)
-        }
+        val txLocal = if (type == TransactionPagingSource.Type.QUEUE ) transactionLocalRepository.updateLocalTxLatest(safe) else null
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
@@ -121,9 +118,8 @@ class TransactionListViewModel
                 // that was submitted for execution
                 if (txLocal?.safeTxNonce == txListEntry.transaction.executionInfo?.nonce) {
                     // use submittedAt timestamp to distinguish between conflicting transactions
-                    if (txLocal?.submittedAt == txListEntry.transaction.timestamp.time && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
+                    if ((txLocal?.submittedAt == null || txLocal?.submittedAt == txListEntry.transaction.timestamp.time) && txListEntry.transaction.txStatus == TransactionStatus.AWAITING_EXECUTION) {
                         val tx = txListEntry.transaction.copy(txStatus = TransactionStatus.PENDING)
-                        txListEntry.transaction
                         getTransactionView(
                             chain = safe.chain,
                             transaction = tx,
@@ -133,6 +129,7 @@ class TransactionListViewModel
                             localOwners = owners
                         )
                     } else {
+                        // do not show other conflicting transaction with same nonce that were not selected for execution
                         TransactionView.Unknown
                     }
                 } else {

@@ -121,6 +121,9 @@ class TxConfirmationsView @JvmOverloads constructor(
             TransactionStatus.FAILED -> {
                 addExecutionStep(TxExecutionStep.Type.FAILED)
             }
+            TransactionStatus.PENDING -> {
+                addExecutionStep(TxExecutionStep.Type.PENDING)
+            }
         }
     }
 
@@ -241,7 +244,8 @@ class TxConfirmationsView @JvmOverloads constructor(
             EXECUTE_WAITING,
             EXECUTE_READY,
             EXECUTE_DONE,
-            REJECTION_CREATED
+            REJECTION_CREATED,
+            PENDING
         }
 
         private val binding by lazy { ViewTxConfirmationsExecutionStepBinding.inflate(LayoutInflater.from(context), this) }
@@ -296,6 +300,11 @@ class TxConfirmationsView @JvmOverloads constructor(
                         stepIcon.setImageResource(R.drawable.ic_circle_cross_red_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_rejection_created)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.error))
+                    }
+                    Type.PENDING -> {
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_execute_ready_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_pending)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
                     }
                 }
             }

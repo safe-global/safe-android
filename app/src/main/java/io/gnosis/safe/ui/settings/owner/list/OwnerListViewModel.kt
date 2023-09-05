@@ -70,7 +70,8 @@ class OwnerListViewModel
                         .sortedBy { it.name }
                 val acceptedOwners = owners.filter { localOwner ->
                     safe.signingOwners.any {
-                        localOwner.address == it
+                        //TODO: Modify this check when we have tx execution on Ledger Nano X
+                        localOwner.address == it && localOwner.type != Owner.Type.LEDGER_NANO_X
                     }
                 }
                 val balances = rpcClient.getBalances(acceptedOwners.map { it.address })

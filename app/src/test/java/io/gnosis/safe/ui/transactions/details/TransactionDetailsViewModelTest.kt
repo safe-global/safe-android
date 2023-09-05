@@ -720,7 +720,7 @@ class TransactionDetailsViewModelTest {
                         txDetails = transactionDetails.toTransactionDetailsViewData(
                             safes = emptyList(),
                             canSign = false,
-                            canExecute = true,
+                            canExecute = false,
                             nextInLine = false,
                             hasOwnerKey = false,
                             owners = listOf(owner)

@@ -70,7 +70,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 Navigation.findNavController(root).navigateUp()
             }
             refresh.setOnRefreshListener {
-                viewModel.loadDetails(txId)
+                // Use txDetails.txId here to generate a non cached url
+                viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
             }
         }
 
@@ -130,7 +131,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             viewModel.resumeFlow(ownerSelected()!!, ownerSigned())
             resetOwnerData()
         } else {
-            viewModel.loadDetails(txId)
+            // Use txDetails.txId here to generate a non cached url
+            viewModel.loadDetails(viewModel.txDetails?.txId ?: txId)
         }
     }
 
@@ -456,7 +458,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 TransactionStatus.SUCCESS -> R.color.success
                 TransactionStatus.CANCELLED -> R.color.label_secondary
                 TransactionStatus.FAILED -> R.color.error
-                TransactionStatus.PENDING -> R.color.label_secondary
+                TransactionStatus.PENDING -> R.color.warning
             }
 
     @StringRes
