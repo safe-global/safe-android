@@ -10,6 +10,33 @@ object LedgerWrapper {
 
     private const val TAG_APDU = 0x05
 
+    fun chunkDataAPDU(data: ByteArray, chunkSize: Int): List<ByteArray> {
+        var chunkPayloadStartIndex = 0
+        var chunkPayloadEndIndex = 0
+        var chunk = 0
+        val chunks = mutableListOf<ByteArray>()
+        while (chunkPayloadEndIndex < data.size) {
+            chunkPayloadEndIndex = if (chunkPayloadStartIndex + chunkSize >= data.size) data.size else chunkPayloadStartIndex + chunkSize
+            if (chunk == 0) {
+                chunkPayloadEndIndex -= 5
+            } else if (chunkPayloadEndIndex - chunkPayloadStartIndex == chunkSize) {
+                chunkPayloadEndIndex -= 3
+            }
+            val chunkBytes = ByteArrayOutputStream()
+            chunkBytes.write(TAG_APDU)
+            SerializeHelper.writeUint16BE(chunkBytes, chunk.toLong())
+            if (chunk == 0) {
+                SerializeHelper.writeUint16BE(chunkBytes, data.count().toLong())
+            }
+            chunkBytes.write(data, chunkPayloadStartIndex, chunkPayloadEndIndex - chunkPayloadStartIndex)
+
+            chunks.add(chunkBytes.toByteArray())
+            chunk += 1
+            chunkPayloadStartIndex = chunkPayloadEndIndex
+        }
+        return chunks
+    }
+
     fun wrapAPDU(data: ByteArray): ByteArray {
         val apdu = ByteArrayOutputStream()
         apdu.write(TAG_APDU)

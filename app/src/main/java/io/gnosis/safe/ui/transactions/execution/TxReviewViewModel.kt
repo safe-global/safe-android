@@ -8,15 +8,17 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TxData
 import io.gnosis.data.repositories.CredentialsRepository
-import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.data.utils.toSignature
+import io.gnosis.safe.HeimdallApplication.Companion.LEDGER_EXECUTION
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.TxExecField
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.utils.BalanceFormatter
@@ -115,7 +117,12 @@ class TxReviewViewModel
             activeSafe.signingOwners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     activeSafe.signingOwners.any {
-                        localOwner.address == it
+                        //TODO: [Ledger execution] remove after successfully tested
+                        if (LEDGER_EXECUTION) {
+                            localOwner.address == it
+                        } else {
+                            localOwner.address == it && localOwner.type != Owner.Type.LEDGER_NANO_X
+                        }
                     }
                 }
                 // select owner with highest balance
@@ -123,10 +130,6 @@ class TxReviewViewModel
                     rpcClient.getBalances(acceptedOwners.map { it.address })
                 }.onSuccess {
                     executionKey = acceptedOwners
-                        // TODO: Remove this filter when Ledger tx execution is implemented
-                        .filter {
-                            it.type != Owner.Type.LEDGER_NANO_X
-                        }
                         .mapIndexed { index, owner ->
                             owner to it[index]
                         }
@@ -363,7 +366,7 @@ class TxReviewViewModel
         return when (ethTx) {
             is Transaction.Eip1559 -> {
                 val ethTxEip1559 = ethTx as Transaction.Eip1559
-                if (ownerType == Owner.Type.KEYSTONE) {
+                if (ownerType == Owner.Type.KEYSTONE || ownerType == Owner.Type.LEDGER_NANO_X) {
                     byteArrayOf(ethTxEip1559.type, *ethTxEip1559.rlp())
                 } else {
                     ethTxEip1559.hash()
@@ -410,7 +413,22 @@ class TxReviewViewModel
                     }
 
                     Owner.Type.LEDGER_NANO_X -> {
-
+                        updateState {
+                            TxReviewState(
+                                viewAction = ViewAction.NavigateTo(
+                                    TxReviewFragmentDirections.actionTxReviewFragmentToLedgerDeviceListFragment(
+                                        mode = LedgerDeviceListFragment.Mode.EXECUTION.name,
+                                        owner = it.address.asEthereumAddressString(),
+                                        txHash = ethTxHash.toHexString()
+                                    )
+                                )
+                            )
+                        }
+                        updateState {
+                            TxReviewState(
+                                viewAction = ViewAction.None
+                            )
+                        }
                     }
 
                     Owner.Type.KEYSTONE -> {
@@ -442,7 +460,6 @@ class TxReviewViewModel
         ethTxSignature = signatueString.toSignature()
         if (ethTxSignature!!.v <= 1) {
             ethTxSignature!!.v = (ethTxSignature!!.v + 27).toByte()
-
         }
     }
 

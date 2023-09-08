@@ -1,7 +1,13 @@
 package io.gnosis.safe.ui.settings.owner.ledger.ble
 
-import android.bluetooth.*
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.TRANSPORT_LE
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothGattService
+import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -14,7 +20,7 @@ import pm.gnosis.utils.toHex
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -422,25 +428,17 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_WRITE_NOT_PERMITTED -> {
                         Timber.e("Write not permitted for $uuid!")
-
-                        //FIXME: define custom operation for GetAddress command
-                        if (pendingOperation is CharacteristicWrite) {
-                            signalEndOfOperation()
-                        }
-
                         throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write not permitted for $uuid!")
-
                     }
                     else -> {
                         Timber.e("Characteristic write failed for $uuid, error: $status")
                         val error =  LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Characteristic write failed for $uuid, error: $status")
                         listeners.forEach { it.get()?.onCharacteristicWriteError?.invoke(gatt.device, this, error) }
-
-                        //FIXME: define custom operation for GetAddress command
-                        if (pendingOperation is CharacteristicWrite) {
-                            signalEndOfOperation()
-                        }
                     }
+                }
+                //FIXME: define custom operation for GetAddress command
+                if (pendingOperation is CharacteristicWrite) {
+                    signalEndOfOperation()
                 }
             }
         }
