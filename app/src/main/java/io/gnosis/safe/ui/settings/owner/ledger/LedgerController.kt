@@ -17,6 +17,7 @@ import android.os.Build
 import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.chunkDataAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseSignMessage
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
@@ -39,7 +40,9 @@ import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
+import java.util.UUID
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -59,11 +62,13 @@ class LedgerController(val context: Context) {
         private set
 
     private var deviceConnectedCallback: DeviceConnectedCallback? = null
-    private var addressContinuations: Queue<Continuation<Solidity.Address>> = LinkedList<Continuation<Solidity.Address>>()
-    private var signContinuations: Queue<Continuation<String>> = LinkedList<Continuation<String>>()
+    private var addressContinuations: Queue<Continuation<Solidity.Address>> = LinkedList()
+    private var signContinuations: Queue<Continuation<String>> = LinkedList()
 
     var writeCharacteristic: BluetoothGattCharacteristic? = null
     var notifyCharacteristic: BluetoothGattCharacteristic? = null
+
+    private var mtu: Int = 517
 
     private fun loadDeviceCharacteristics() {
         val characteristic = connectedDevice?.let {
@@ -88,11 +93,16 @@ class LedgerController(val context: Context) {
             }
 
             onDisconnect = {
+                Timber.d("onDisconnect()")
             }
 
-            onCharacteristicRead = { _, characteristic -> }
+            onCharacteristicRead = { _, characteristic ->
+                Timber.d("onCharacteristicRead()")
+            }
 
-            onCharacteristicWrite = { _, characteristic -> }
+            onCharacteristicWrite = { _, characteristic ->
+                Timber.d("onCharacteristicWrite()")
+            }
 
             onCharacteristicWriteError = { _, _, error ->
                 val addressContinuation = nullOnThrow {
@@ -103,7 +113,9 @@ class LedgerController(val context: Context) {
                 }
             }
 
-            onMtuChanged = { _, mtu -> }
+            onMtuChanged = { _, mtu ->
+                this@LedgerController.mtu = mtu
+            }
 
             onCharacteristicChanged = { _, characteristic ->
 
@@ -190,8 +202,8 @@ class LedgerController(val context: Context) {
     }
 
     private fun locationPermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION))
+            && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+            && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION))
 
     private fun blePermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN) || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))
@@ -221,15 +233,46 @@ class LedgerController(val context: Context) {
         ConnectionManager.unregisterListener(connectionEventListener)
     }
 
+    fun getSignTxCommand(path: String, encodedTx: String): ByteArray {
+
+        val pathsData = splitPath(path)
+        val txBytes = encodedTx.hexToByteArray()
+
+        val commandData = mutableListOf<Byte>()
+        commandData.add(0xe0.toByte())
+        commandData.add(0x04.toByte())
+        commandData.add(0x00.toByte())
+        commandData.add(0x00.toByte())
+
+        val txData = ByteArrayOutputStream()
+        SerializeHelper.writeUint32BE(txData, txBytes.size.toLong())
+        txBytes.forEachIndexed { index, element ->
+            txData.write(element.toInt())
+        }
+
+        commandData.add((pathsData.size + txBytes.size + 4).toByte())
+        commandData.addAll(pathsData.toList())
+        commandData.addAll(txData.toByteArray().toList())
+
+        val command = commandData.toByteArray()
+        Timber.d("Sign tx command: ${command.toHexString()}")
+
+        return command
+    }
+
+    suspend fun getTxSignature(path: String, encodedTx: String): String = suspendCoroutine { continuation ->
+        val payload = getSignTxCommand(path, encodedTx)
+        val chunks = chunkDataAPDU(payload, 150)
+        chunks.forEach {
+            ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, it)
+        }
+        signContinuations.add(continuation)
+    }
+
     fun getSignCommand(path: String, message: String): ByteArray {
 
-        val paths = splitPath(path)
+        val pathsData = splitPath(path)
         val messageBytes = message.hexToByteArray()
-
-        val pathsData = ByteArray(paths.size)
-        paths.forEachIndexed { index, element ->
-            pathsData[index] = element
-        }
 
         val commandData = mutableListOf<Byte>()
         commandData.add(0xe0.toByte())
@@ -243,7 +286,7 @@ class LedgerController(val context: Context) {
             messageData.write(element.toInt())
         }
 
-        commandData.add((paths.size + messageBytes.size + 4).toByte())
+        commandData.add((pathsData.size + messageBytes.size + 4).toByte())
         commandData.addAll(pathsData.toList())
         commandData.addAll(messageData.toByteArray().toList())
 
@@ -328,7 +371,6 @@ class LedgerController(val context: Context) {
             fragment.requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_BLE_PERMISSION)
         } else {
             fragment.requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), REQUEST_CODE_BLE_PERMISSION)
-
         }
     }
 
