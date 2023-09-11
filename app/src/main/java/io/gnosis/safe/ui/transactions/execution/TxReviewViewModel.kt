@@ -117,11 +117,11 @@ class TxReviewViewModel
             activeSafe.signingOwners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     activeSafe.signingOwners.any {
-                        //TODO: [Ledger execution] remove after successfully tested
+                        //TODO: [Ledger execution] remove filter after successfully tested
                         if (LEDGER_EXECUTION) {
-                            localOwner.address == it
+                            true
                         } else {
-                            localOwner.address == it && localOwner.type != Owner.Type.LEDGER_NANO_X
+                            localOwner.type != Owner.Type.LEDGER_NANO_X
                         }
                     }
                 }

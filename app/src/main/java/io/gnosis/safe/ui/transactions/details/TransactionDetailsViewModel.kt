@@ -15,7 +15,6 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.data.utils.toSignatureString
-import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.HeimdallApplication.Companion.LEDGER_EXECUTION
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -139,11 +138,11 @@ class TransactionDetailsViewModel
         localOwners: List<Owner>
     ): Boolean {
         val ownersThatCanExecute = localOwners.filter {
-            //TODO: [Ledger execution] remove after successfully tested
+            //TODO: [Ledger execution] remove filter after successfully tested
             if (LEDGER_EXECUTION) {
-                executionInfo.signers.contains(AddressInfo(it.address))
+                true
             } else {
-                executionInfo.signers.contains(AddressInfo(it.address)) && it.type != Owner.Type.LEDGER_NANO_X
+                it.type != Owner.Type.LEDGER_NANO_X
             }
         }
         return ownersThatCanExecute.isNotEmpty() && executionInfo.confirmations.size >= executionInfo.confirmationsRequired
