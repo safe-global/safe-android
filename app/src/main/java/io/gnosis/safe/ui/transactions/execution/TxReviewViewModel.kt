@@ -116,13 +116,11 @@ class TxReviewViewModel
             val owners = credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }
             activeSafe.signingOwners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
-                    activeSafe.signingOwners.any {
-                        //TODO: [Ledger execution] remove filter after successfully tested
-                        if (LEDGER_EXECUTION) {
-                            true
-                        } else {
-                            localOwner.type != Owner.Type.LEDGER_NANO_X
-                        }
+                    //TODO: [Ledger execution] remove filter after successfully tested
+                    if (LEDGER_EXECUTION) {
+                        true
+                    } else {
+                        localOwner.type != Owner.Type.LEDGER_NANO_X
                     }
                 }
                 // select owner with highest balance
