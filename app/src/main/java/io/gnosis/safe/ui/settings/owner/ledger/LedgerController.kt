@@ -18,15 +18,15 @@ import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.chunkDataAPDU
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.commandGetAddress
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.commandSignMessage
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.commandSignTx
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseSignMessage
-import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionEventListener
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionManager
-import io.gnosis.safe.ui.settings.owner.ledger.transport.LedgerException
-import io.gnosis.safe.ui.settings.owner.ledger.transport.SerializeHelper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
@@ -35,11 +35,8 @@ import kotlinx.coroutines.withTimeout
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.nullOnThrow
-import pm.gnosis.utils.toHexString
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
 import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
@@ -68,7 +65,7 @@ class LedgerController(val context: Context) {
     var writeCharacteristic: BluetoothGattCharacteristic? = null
     var notifyCharacteristic: BluetoothGattCharacteristic? = null
 
-    private var mtu: Int = 517
+    private var mtu: Int = 20
 
     private fun loadDeviceCharacteristics() {
         val characteristic = connectedDevice?.let {
@@ -233,35 +230,8 @@ class LedgerController(val context: Context) {
         ConnectionManager.unregisterListener(connectionEventListener)
     }
 
-    fun getSignTxCommand(path: String, encodedTx: String): ByteArray {
-
-        val pathsData = splitPath(path)
-        val txBytes = encodedTx.hexToByteArray()
-
-        val commandData = mutableListOf<Byte>()
-        commandData.add(0xe0.toByte())
-        commandData.add(0x04.toByte())
-        commandData.add(0x00.toByte())
-        commandData.add(0x00.toByte())
-
-        val txData = ByteArrayOutputStream()
-        SerializeHelper.writeUint32BE(txData, txBytes.size.toLong())
-        txBytes.forEachIndexed { index, element ->
-            txData.write(element.toInt())
-        }
-
-        commandData.add((pathsData.size + txBytes.size + 4).toByte())
-        commandData.addAll(pathsData.toList())
-        commandData.addAll(txData.toByteArray().toList())
-
-        val command = commandData.toByteArray()
-        Timber.d("Sign tx command: ${command.toHexString()}")
-
-        return command
-    }
-
     suspend fun getTxSignature(path: String, encodedTx: String): String = suspendCoroutine { continuation ->
-        val payload = getSignTxCommand(path, encodedTx)
+        val payload = commandSignTx(path, encodedTx)
         val chunks = chunkDataAPDU(payload, 150)
         chunks.forEach {
             ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, it)
@@ -269,69 +239,13 @@ class LedgerController(val context: Context) {
         signContinuations.add(continuation)
     }
 
-    fun getSignCommand(path: String, message: String): ByteArray {
-
-        val pathsData = splitPath(path)
-        val messageBytes = message.hexToByteArray()
-
-        val commandData = mutableListOf<Byte>()
-        commandData.add(0xe0.toByte())
-        commandData.add(0x08.toByte())
-        commandData.add(0x00.toByte())
-        commandData.add(0x00.toByte())
-
-        val messageData = ByteArrayOutputStream()
-        SerializeHelper.writeUint32BE(messageData, messageBytes.size.toLong())
-        messageBytes.forEachIndexed { index, element ->
-            messageData.write(element.toInt())
-        }
-
-        commandData.add((pathsData.size + messageBytes.size + 4).toByte())
-        commandData.addAll(pathsData.toList())
-        commandData.addAll(messageData.toByteArray().toList())
-
-        // Command length should be 150 bytes length otherwise we should split
-        // it into chuncks. As we sign hashes we should be fine for now.
-        val command = commandData.toByteArray()
-        Timber.d("Sign command: ${command.toHexString()}")
-
-        if (command.size > 150) throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "invalid data format")
-
-        return command
-    }
-
     suspend fun getSignature(path: String, message: String): String = suspendCoroutine { continuation ->
-        ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, wrapAPDU(getSignCommand(path, message)))
+        ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, wrapAPDU(commandSignMessage(path, message)))
         signContinuations.add(continuation)
     }
 
-    fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
-
-        val paths = splitPath(path)
-
-        val commandData = mutableListOf<Byte>()
-
-        val pathsData = ByteArray(1 + paths.size)
-        pathsData[0] = paths.size.toByte()
-
-        paths.forEachIndexed { index, element ->
-            pathsData[1 + index] = element
-        }
-
-        commandData.add(0xe0.toByte())
-        commandData.add(0x02.toByte())
-        commandData.add((if (displayVerificationDialog) 0x01.toByte() else 0x00.toByte()))
-        commandData.add((if (chainCode) 0x01.toByte() else 0x00.toByte()))
-        commandData.addAll(pathsData.toList())
-
-        val command = commandData.toByteArray()
-        Timber.d("Get address command: ${command.toHexString()}")
-
-        return command
-    }
-
     private suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCancellableCoroutine { continuation ->
-        ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
+        ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(commandGetAddress(path)))
         addressContinuations.add(continuation)
     }
 

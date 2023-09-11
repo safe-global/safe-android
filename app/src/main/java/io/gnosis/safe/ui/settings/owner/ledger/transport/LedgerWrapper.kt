@@ -3,12 +3,15 @@ package io.gnosis.safe.ui.settings.owner.ledger
 import io.gnosis.safe.ui.settings.owner.ledger.transport.LedgerException
 import io.gnosis.safe.ui.settings.owner.ledger.transport.SerializeHelper
 import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.toHexString
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 
 
 object LedgerWrapper {
 
-    private const val TAG_APDU = 0x05
+    const val TAG_APDU = 0x05
 
     fun chunkDataAPDU(data: ByteArray, chunkSize: Int): List<ByteArray> {
         var chunkPayloadStartIndex = 0
@@ -101,5 +104,88 @@ object LedgerWrapper {
         return r.toString(16).padStart(64, '0').substring(0, 64) +
                 s.toString(16).padStart(64, '0').substring(0, 64) +
                 v.toString(16).padStart(2, '0')
+    }
+
+    fun commandSignTx(path: String, encodedTx: String): ByteArray {
+
+        val pathsData = splitPath(path)
+        val txBytes = encodedTx.hexToByteArray()
+
+        val commandData = mutableListOf<Byte>()
+        commandData.add(0xe0.toByte())
+        commandData.add(0x04.toByte())
+        commandData.add(0x00.toByte())
+        commandData.add(0x00.toByte())
+
+        val txData = ByteArrayOutputStream()
+        SerializeHelper.writeUint32BE(txData, txBytes.size.toLong())
+        txBytes.forEachIndexed { index, element ->
+            txData.write(element.toInt())
+        }
+
+        commandData.add((pathsData.size + txBytes.size + 4).toByte())
+        commandData.addAll(pathsData.toList())
+        commandData.addAll(txData.toByteArray().toList())
+
+        val command = commandData.toByteArray()
+        Timber.d("Sign tx command: ${command.toHexString()}")
+
+        return command
+    }
+
+    fun commandSignMessage(path: String, message: String): ByteArray {
+
+        val pathsData = splitPath(path)
+        val messageBytes = message.hexToByteArray()
+
+        val commandData = mutableListOf<Byte>()
+        commandData.add(0xe0.toByte())
+        commandData.add(0x08.toByte())
+        commandData.add(0x00.toByte())
+        commandData.add(0x00.toByte())
+
+        val messageData = ByteArrayOutputStream()
+        SerializeHelper.writeUint32BE(messageData, messageBytes.size.toLong())
+        messageBytes.forEachIndexed { index, element ->
+            messageData.write(element.toInt())
+        }
+
+        commandData.add((pathsData.size + messageBytes.size + 4).toByte())
+        commandData.addAll(pathsData.toList())
+        commandData.addAll(messageData.toByteArray().toList())
+
+        // Command length should be 150 bytes length otherwise we should split
+        // it into chuncks. As we sign hashes we should be fine for now.
+        val command = commandData.toByteArray()
+        Timber.d("Sign command: ${command.toHexString()}")
+
+        if (command.size > 150) throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "invalid data format")
+
+        return command
+    }
+
+    fun commandGetAddress(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
+
+        val paths = splitPath(path)
+
+        val commandData = mutableListOf<Byte>()
+
+        val pathsData = ByteArray(1 + paths.size)
+        pathsData[0] = paths.size.toByte()
+
+        paths.forEachIndexed { index, element ->
+            pathsData[1 + index] = element
+        }
+
+        commandData.add(0xe0.toByte())
+        commandData.add(0x02.toByte())
+        commandData.add((if (displayVerificationDialog) 0x01.toByte() else 0x00.toByte()))
+        commandData.add((if (chainCode) 0x01.toByte() else 0x00.toByte()))
+        commandData.addAll(pathsData.toList())
+
+        val command = commandData.toByteArray()
+        Timber.d("Get address command: ${command.toHexString()}")
+
+        return command
     }
 }
