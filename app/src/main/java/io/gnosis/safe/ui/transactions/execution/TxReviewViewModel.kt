@@ -141,7 +141,7 @@ class TxReviewViewModel
                         }
 
                     // get safe owner key with highest balance or non-owner with highest balance if not available
-                    val executionKey = executionKeys.firstOrNull { localOwner ->
+                    executionKey = executionKeys.firstOrNull { localOwner ->
                         activeSafe.signingOwners.any {
                             localOwner.address == it
                         }
