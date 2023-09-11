@@ -123,11 +123,11 @@ class TxReviewViewModel
                         localOwner.type != Owner.Type.LEDGER_NANO_X
                     }
                 }
-                // select owner with highest balance
+                // get default execution key
                 kotlin.runCatching {
                     rpcClient.getBalances(acceptedOwners.map { it.address })
                 }.onSuccess {
-                    executionKey = acceptedOwners
+                    val executionKeys = acceptedOwners
                         .mapIndexed { index, owner ->
                             owner to it[index]
                         }
@@ -139,7 +139,13 @@ class TxReviewViewModel
                                 zeroBalance = it.second?.value == BigInteger.ZERO
                             )
                         }
-                        .first()
+
+                    // get safe owner key with highest balance or non-owner with highest balance if not available
+                    val executionKey = executionKeys.firstOrNull { localOwner ->
+                        activeSafe.signingOwners.any {
+                            localOwner.address == it
+                        }
+                    } ?: executionKeys.first()
 
                     updateState {
                         TxReviewState(viewAction = DefaultKey(key = executionKey))
