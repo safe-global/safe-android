@@ -89,7 +89,7 @@ class TxReviewViewModelTest {
     }
 
     @Test
-    fun `loadDefaultKey(success, several owner keys) should emit executionKey with highest balance`() {
+    fun `loadDefaultKey(success, several safe owner keys) should emit owner executionKey with highest balance`() {
         coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
             signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
         }
@@ -97,6 +97,47 @@ class TxReviewViewModelTest {
         coEvery { rpcClient.getBalances(listOf(TEST_SAFE_OWNER1.address, TEST_SAFE_OWNER2.address)) } returns listOf(
             Wei(BigInteger.ONE),
             Wei(BigInteger.TEN.pow(Chain.DEFAULT_CHAIN.currency.decimals))
+        )
+
+        viewModel = TxReviewViewModel(
+            safeRepository,
+            credentialsRepository,
+            localTxRepository,
+            settingsHandler,
+            rpcClient,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
+
+        viewModel.loadDefaultKey()
+
+        with(viewModel.state.test().values()) {
+            Assert.assertEquals(
+                DefaultKey(
+                    OwnerViewData(
+                        TEST_SAFE_OWNER2.address,
+                        TEST_SAFE_OWNER2.name,
+                        Owner.Type.IMPORTED,
+                        "1 ${Chain.DEFAULT_CHAIN.currency.symbol}",
+                        false
+                    )
+                ), this[0].viewAction
+            )
+        }
+    }
+
+
+    @Test
+    fun `loadDefaultKey(success, several safe owner & non-owner keys) should emit owner executionKey with highest balance`() {
+        coEvery { safeRepository.getActiveSafe() } returns TEST_SAFE.apply {
+            signingOwners = listOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN))
+        }
+        coEvery { credentialsRepository.owners() } returns listOf(TEST_SAFE_OWNER1, TEST_SAFE_OWNER2, TEST_OWNER)
+        coEvery { rpcClient.getBalances(listOf(TEST_SAFE_OWNER1.address, TEST_SAFE_OWNER2.address, TEST_OWNER.address)) } returns listOf(
+            Wei(BigInteger.ONE),
+            Wei(BigInteger.TEN.pow(Chain.DEFAULT_CHAIN.currency.decimals)),
+            Wei(BigInteger.valueOf(100L).pow(Chain.DEFAULT_CHAIN.currency.decimals))
         )
 
         viewModel = TxReviewViewModel(
@@ -409,6 +450,12 @@ class TxReviewViewModelTest {
         val TEST_SAFE_OWNER2 = Owner(
             Solidity.Address(BigInteger.TEN),
             "owner2",
+            Owner.Type.IMPORTED
+        )
+
+        val TEST_OWNER = Owner(
+            Solidity.Address(BigInteger.valueOf(100L)),
+            "owner3",
             Owner.Type.IMPORTED
         )
     }
