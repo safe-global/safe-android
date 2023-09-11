@@ -31,13 +31,14 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     enum class Mode {
         ADDRESS_SELECTION,
         CONFIRMATION,
-        REJECTION
+        REJECTION,
+        EXECUTION
     }
 
     private val navArgs by navArgs<LedgerDeviceListFragmentArgs>()
     private val mode by lazy { Mode.valueOf(navArgs.mode) }
     private val owner by lazy { navArgs.owner }
-    private val safeTxHash by lazy { navArgs.safeTxHash }
+    private val txHash by lazy { navArgs.txHash }
 
     override fun screenId() = ScreenId.LEDGER_DEVICE_LIST
 
@@ -109,15 +110,24 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                                 findNavController().navigate(
                                     LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerSignDialog(
                                         owner!!,
-                                        safeTxHash!!
+                                        txHash!!,
+                                        Mode.CONFIRMATION.name
                                     )
                                 )
                             Mode.REJECTION ->
                                 findNavController().navigate(
                                     LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerSignDialog(
                                         owner!!,
-                                        safeTxHash!!,
-                                        false
+                                        txHash!!,
+                                        Mode.REJECTION.name
+                                    )
+                                )
+                            Mode.EXECUTION ->
+                                findNavController().navigate(
+                                    LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerSignDialog(
+                                        owner!!,
+                                        txHash!!,
+                                        Mode.EXECUTION.name
                                     )
                                 )
                         }

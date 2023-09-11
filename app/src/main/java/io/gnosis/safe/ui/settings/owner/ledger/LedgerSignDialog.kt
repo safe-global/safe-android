@@ -20,8 +20,14 @@ import javax.inject.Inject
 
 class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>() {
 
+    enum class Mode {
+        CONFIRMATION,
+        REJECTION,
+        EXECUTION
+    }
+
     private val navArgs by navArgs<LedgerSignDialogArgs>()
-    private val confirmation by lazy { navArgs.confirmation }
+    private val mode by lazy { Mode.valueOf(navArgs.mode) }
     private val owner by lazy { navArgs.owner.asEthereumAddress()!! }
     private val safeTxHash by lazy { navArgs.safeTxHash }
 
@@ -43,7 +49,11 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            actionLabel.text = getString(if (confirmation) R.string.ledger_sign_confirm else R.string.ledger_sign_reject)
+            actionLabel.text = getString(when(mode) {
+                Mode.CONFIRMATION -> R.string.ledger_sign_confirm
+                Mode.REJECTION -> R.string.ledger_sign_reject
+                Mode.EXECUTION -> R.string.ledger_sign_execute
+            })
             hash.text = viewModel.getPreviewHash(safeTxHash)
             cancel.setOnClickListener {
                 navigateBack()
@@ -65,7 +75,7 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
             }
         })
 
-        viewModel.getSignature(owner, safeTxHash)
+        viewModel.getSignature(mode, owner, safeTxHash)
     }
 
     override fun onStop() {
@@ -74,29 +84,45 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
     }
 
     private fun navigateBack(signedSafeTxHash: String? = null) {
-        if (confirmation) {
-            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-            signedSafeTxHash?.let {
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                    owner.asEthereumAddressString()
-                )
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                    SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
-                    it
-                )
+        when(mode) {
+            Mode.CONFIRMATION -> {
+                findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                signedSafeTxHash?.let {
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                        owner.asEthereumAddressString()
+                    )
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+                        it
+                    )
+                }
             }
-        } else {
-            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-            signedSafeTxHash?.let {
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                    owner.asEthereumAddressString()
-                )
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                    SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
-                    it
-                )
+            Mode.REJECTION -> {
+                findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                signedSafeTxHash?.let {
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                        owner.asEthereumAddressString()
+                    )
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+                        it
+                    )
+                }
+            }
+            Mode.EXECUTION -> {
+                findNavController().popBackStack(R.id.ledgerDeviceListFragment, true)
+                signedSafeTxHash?.let {
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                        owner.asEthereumAddressString()
+                    )
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+                        it
+                    )
+                }
             }
         }
     }

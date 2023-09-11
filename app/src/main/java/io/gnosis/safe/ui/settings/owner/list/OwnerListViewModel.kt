@@ -5,6 +5,7 @@ import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.HeimdallApplication.Companion.LEDGER_EXECUTION
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -69,9 +70,11 @@ class OwnerListViewModel
                         .map { OwnerViewData(it.address, it.name, it.type) }
                         .sortedBy { it.name }
                 val acceptedOwners = owners.filter { localOwner ->
-                    safe.signingOwners.any {
-                        //TODO: Modify this check when we have tx execution on Ledger Nano X
-                        localOwner.address == it && localOwner.type != Owner.Type.LEDGER_NANO_X
+                    //TODO: [Ledger execution] remove filter after successfully tested
+                    if (LEDGER_EXECUTION) {
+                        true
+                    } else {
+                        localOwner.type != Owner.Type.LEDGER_NANO_X
                     }
                 }
                 val balances = rpcClient.getBalances(acceptedOwners.map { it.address })
@@ -113,7 +116,7 @@ class OwnerListViewModel
                     updateState {
                         OwnerListState(
                             ViewAction.NavigateTo(
-                                SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToLedgerDeviceListFragmet(
+                                SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToLedgerDeviceListFragment(
                                     if (isConfirmation) LedgerDeviceListFragment.Mode.CONFIRMATION.name else LedgerDeviceListFragment.Mode.REJECTION.name,
                                     owner.asEthereumAddressString(),
                                     safeTxHash
