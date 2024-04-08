@@ -3,8 +3,8 @@ package io.gnosis.safe.ui.settings.owner.keystone
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.keystone.module.HDKey
-import com.keystone.module.MultiHDKeys
+import com.keystone.module.Account
+import com.keystone.module.MultiAccounts
 import com.keystone.module.Note
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -31,18 +31,18 @@ class KeystoneOwnerSelectionViewModel
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
 
     private var ownerIndex: Long = 0
-    private var multiHDKeys: MultiHDKeys? = null
-    private var hdKey: HDKey? = null
+    private var multiHDKeys: MultiAccounts? = null
+    private var hdKey: Account? = null
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
-    fun loadFirstDerivedOwner(hdKey: HDKey) {
+    fun loadFirstDerivedOwner(hdKey: Account) {
         this.hdKey = hdKey
         derivator.initialize(hdKey)
         loadMoreOwners()
     }
 
-    fun loadFirstDerivedOwner(multiHDKeys: MultiHDKeys) {
+    fun loadFirstDerivedOwner(multiHDKeys: MultiAccounts) {
         this.multiHDKeys = multiHDKeys
         loadAllOwners(multiHDKeys)
     }
@@ -63,7 +63,7 @@ class KeystoneOwnerSelectionViewModel
         }
     }
 
-    private fun loadAllOwners(multiHDKeys: MultiHDKeys) {
+    private fun loadAllOwners(multiHDKeys: MultiAccounts) {
         safeLaunch {
             KeystoneOwnerPagingProvider(multiHDKeys).getOwnersStream()
                 .cachedIn(viewModelScope)
@@ -85,11 +85,13 @@ class KeystoneOwnerSelectionViewModel
 
     fun getOwnerData(): Triple<String, String, String> {
         multiHDKeys?.let {
-            val hdKey = it.hdKeys[ownerIndex.toInt()]
-            return Triple(hdKey.toAddress().asEthereumAddressString(), derivationPath(ownerIndex), hdKey.sourceFingerprint)
+            val hdKey = it.keys[ownerIndex.toInt()]
+            // TODO KST: hdKey.sourceFingerprint -> hdKey.xfp
+            return Triple(hdKey.toAddress().asEthereumAddressString(), derivationPath(ownerIndex), hdKey.xfp)
         } ?: run {
             val address = derivator.addressesForPage(ownerIndex, 1)[0]
-            return Triple(address.asEthereumAddressString(), derivationPath(ownerIndex), hdKey!!.sourceFingerprint)
+            // TODO KST: hdKey.sourceFingerprint -> hdKey.xfp
+            return Triple(address.asEthereumAddressString(), derivationPath(ownerIndex), hdKey!!.xfp)
         }
     }
 
@@ -103,7 +105,7 @@ class KeystoneOwnerSelectionViewModel
     }
 }
 
-fun HDKey.toAddress(): Solidity.Address {
-    val keyPair = KeyPair.fromPublicOnly(this.key.hexStringToByteArray())
+fun Account.toAddress(): Solidity.Address {
+    val keyPair = KeyPair.fromPublicOnly(this.publicKey.hexStringToByteArray())
     return Solidity.Address(keyPair.address.asBigInteger())
 }

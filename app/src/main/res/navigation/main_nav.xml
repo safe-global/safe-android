@@ -332,12 +332,12 @@
 
         <argument
             android:name="hdKey"
-            app:argType="com.keystone.module.HDKey"
+            app:argType="io.gnosis.safe.ui.settings.owner.keystone.KeystoneAccount"
             app:nullable="true" />
 
         <argument
             android:name="multiHDKeys"
-            app:argType="com.keystone.module.MultiHDKeys"
+            app:argType="io.gnosis.safe.ui.settings.owner.keystone.KeystoneMultiAccount"
             app:nullable="true" />
 
         <action

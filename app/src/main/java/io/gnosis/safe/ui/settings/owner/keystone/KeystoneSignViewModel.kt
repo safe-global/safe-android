@@ -109,7 +109,7 @@ class KeystoneSignViewModel
     fun validator(scannedValue: String): Pair<IsValid, HasFinished> {
         return if (scannedValue.startsWith(UR_PREFIX_OF_SIGNATURE)) {
             sdk.decodeQR(scannedValue)?.let {
-                this.ur = it
+                this.ur = it.ur
                 sdk.resetQRDecoder()
                 Pair(true, true)
             } ?: Pair(true, false)

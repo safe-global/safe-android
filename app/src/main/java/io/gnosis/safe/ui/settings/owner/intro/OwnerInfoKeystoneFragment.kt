@@ -16,6 +16,8 @@ import io.gnosis.safe.qrscanner.HasFinished
 import io.gnosis.safe.qrscanner.IsValid
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneAccount
+import io.gnosis.safe.ui.settings.owner.keystone.KeystoneMultiAccount
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 
 class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeystoneBinding>() {
@@ -63,23 +65,25 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
 
             if (it.startsWith(UR_PREFIX_OF_HDKEY)) {
                 this.ur?.let { ur ->
-                    val hdKey = keystoneSDK.parseExtendedPublicKey(ur)
+                    // TODO KST: parseExtendedPublicKey(ur) -> parseAccount(ur)
+                    val hdKey = keystoneSDK.parseAccount(ur)
 
                     findNavController().navigate(
                         OwnerInfoKeystoneFragmentDirections.actionOwnerInfoKeystoneFragmentToKeystoneOwnerSelectionFragment(
-                            hdKey,
+                            KeystoneAccount(hdKey),
                             null
                         )
                     )
                 }
             } else if (it.startsWith(UR_PREFIX_OF_ACCOUNT)) {
                 this.ur?.let { ur ->
-                    val multiHDKeys = keystoneSDK.parseMultiPublicKeys(ur)
+                    // TODO KST: parseMultiPublicKeys -> parseCryptoAccount (or parseMultiAccounts?)
+                    val multiHDKeys = keystoneSDK.parseCryptoAccount(ur)
 
                     findNavController().navigate(
                         OwnerInfoKeystoneFragmentDirections.actionOwnerInfoKeystoneFragmentToKeystoneOwnerSelectionFragment(
                             null,
-                            multiHDKeys
+                            KeystoneMultiAccount(multiHDKeys)
                         )
                     )
                 }
@@ -93,7 +97,7 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
             )
         ) {
             keystoneSDK.decodeQR(scannedValue)?.let {
-                this.ur = it
+                this.ur = it.ur
                 keystoneSDK.resetQRDecoder()
                 Pair(true, true)
             } ?: Pair(true, false)
