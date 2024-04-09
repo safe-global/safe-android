@@ -86,11 +86,9 @@ class KeystoneOwnerSelectionViewModel
     fun getOwnerData(): Triple<String, String, String> {
         multiHDKeys?.let {
             val hdKey = it.keys[ownerIndex.toInt()]
-            // TODO KST: hdKey.sourceFingerprint -> hdKey.xfp
             return Triple(hdKey.toAddress().asEthereumAddressString(), derivationPath(ownerIndex), hdKey.xfp)
         } ?: run {
             val address = derivator.addressesForPage(ownerIndex, 1)[0]
-            // TODO KST: hdKey.sourceFingerprint -> hdKey.xfp
             return Triple(address.asEthereumAddressString(), derivationPath(ownerIndex), hdKey!!.xfp)
         }
     }

@@ -48,7 +48,6 @@ class PublicKeyAndAddressDerivator: PublicKeyDerivator, PublicAddressDerivator {
 
     private fun derivedKeyForIndex(index: Long): ByteArray {
         val path = if (hdKey.note == Note.LEDGER_LEGACY.value) "m/$index" else "m/0/$index"
-        // TODO KST: hdKey.xpub? what should be parameter here? xfp? publicKey? must be a root hd node
         return sdk.derivePublicKey(hdKey.getExtendedPublicKey(), path).hexStringToByteArray()
     }
 }

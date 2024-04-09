@@ -65,7 +65,6 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
 
             if (it.startsWith(UR_PREFIX_OF_HDKEY)) {
                 this.ur?.let { ur ->
-                    // TODO KST: parseExtendedPublicKey(ur) -> parseAccount(ur)
                     val hdKey = keystoneSDK.parseAccount(ur)
 
                     findNavController().navigate(
@@ -77,7 +76,6 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
                 }
             } else if (it.startsWith(UR_PREFIX_OF_ACCOUNT)) {
                 this.ur?.let { ur ->
-                    // TODO KST: parseMultiPublicKeys -> parseCryptoAccount (or parseMultiAccounts?)
                     val multiHDKeys = keystoneSDK.parseCryptoAccount(ur)
 
                     findNavController().navigate(
