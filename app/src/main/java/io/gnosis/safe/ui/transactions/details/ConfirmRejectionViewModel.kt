@@ -92,7 +92,7 @@ class ConfirmRejectionViewModel
                     safeAddress = safe.address,
                     transaction = rejectionTxDetails,
                     executionInfo = rejectionExecutionInfo
-                ).toHexString()
+                ).toHexString().addHexPrefix()
 
             val selectedOwner = credentialsRepository.owner(owner) ?: throw MissingOwnerCredential
             kotlin.runCatching {
@@ -125,7 +125,7 @@ class ConfirmRejectionViewModel
         }
     }
 
-    private suspend fun validateSafeTxHash(
+    private fun validateSafeTxHash(
         safe: Safe,
         transaction: TransactionDetails,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails

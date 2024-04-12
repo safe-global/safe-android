@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.MissingOwnerCredential
 import io.gnosis.safe.ui.transactions.details.SigningMode
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
@@ -82,22 +83,31 @@ class SendAssetReviewViewModel
                     SendAssetReviewState(EstimationDataLoaded)
                 }
             }
-            val txEstimation = transactionRepository.estimateTransaction(
-                chainId,
-                from,
-                to,
-                transferAmount
-            )
-            minSafeNonce = txEstimation.currentNonce
-            if (safeNonce == null) {
-                safeNonce = txEstimation.recommendedNonce
-            }
             if (SemVer.parse(activeSafe.version!!, ignoreExtensions = true) < SemVer(1, 3, 0)) {
+                val txEstimation = transactionRepository.estimateTransaction(
+                    chainId,
+                    from,
+                    to,
+                    transferAmount
+                )
+                minSafeNonce = txEstimation.currentNonce
+                if (safeNonce == null) {
+                    safeNonce = txEstimation.recommendedNonce
+                }
                 proposedSafeTxGas = txEstimation.safeTxGas
                 if (safeTxGas == null) {
                     safeTxGas = proposedSafeTxGas
                 }
+            } else {
+                val nonces = safeRepository.getSafeNonces(activeSafe)
+                minSafeNonce = nonces.currentNonce
+                if (safeNonce == null) {
+                    safeNonce = nonces.recommendedNonce
+                }
+                proposedSafeTxGas = null
+                safeTxGas = null
             }
+
             updateState {
                 SendAssetReviewState(EstimationDataLoaded)
             }
@@ -207,7 +217,7 @@ class SendAssetReviewViewModel
                     safeAddress = activeSafe.address,
                     transaction = txDetails,
                     executionInfo = txExecutionInfo
-                ).toHexString()
+                ).toHexString().addHexPrefix()
 
             updateState {
                 SendAssetReviewState(

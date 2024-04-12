@@ -37,7 +37,7 @@ class TransactionRepository(
         safeAddress: Solidity.Address,
         to: Solidity.Address,
         value: BigInteger = BigInteger.ZERO,
-        data: String = "",
+        data: String? = null,
         operation: Operation = Operation.DELEGATE,
     ): TransactionEstimation {
         return gatewayApi.estimateTransaction(

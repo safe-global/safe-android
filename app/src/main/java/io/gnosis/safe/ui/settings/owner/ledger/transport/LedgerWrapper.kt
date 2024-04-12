@@ -71,7 +71,7 @@ object LedgerWrapper {
         val r = data.slice(1..32).toByteArray().asBigInteger()
         val s = data.slice(33..64).toByteArray().asBigInteger()
 
-        return r.toString(16).padStart(64, '0').substring(0, 64) +
+        return "0x" + r.toString(16).padStart(64, '0').substring(0, 64) +
                 s.toString(16).padStart(64, '0').substring(0, 64) +
                 v.toString(16).padStart(2, '0')
     }

@@ -112,7 +112,7 @@ class TxReviewViewModel
                 TxReviewState(viewAction = Loading(true))
             }
             val owners = credentialsRepository.owners().map { OwnerViewData(it.address, it.name, it.type) }
-            activeSafe.signingOwners?.let {
+            activeSafe.signingOwners.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     activeSafe.signingOwners.any {
                         localOwner.address == it
@@ -154,7 +154,7 @@ class TxReviewViewModel
 
     fun updateDefaultKey(address: Solidity.Address) {
         safeLaunch {
-            address?.let {
+            address.let {
                 val owner = credentialsRepository.owner(it)!!
                 if (executionKey?.address != address) {
                     tracker.logTxExecKeyChanged()
