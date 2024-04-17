@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.owner.keystone
 
 import android.animation.Animator
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.keystone.module.HDKey
-import com.keystone.module.MultiHDKeys
+import com.keystone.module.Account
+import com.keystone.module.MultiAccounts
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.safe.R
@@ -28,9 +29,22 @@ import io.gnosis.safe.ui.settings.owner.selection.DerivedOwnerListAdapter
 import io.gnosis.safe.ui.settings.owner.selection.DerivedOwnerPagingProvider
 import io.gnosis.safe.ui.settings.owner.selection.DerivedOwners
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import javax.inject.Inject
+
+// Value wrappers to pass data between fragments
+@Parcelize
+data class KeystoneAccount (
+    val account: @RawValue Account
+) : Parcelable
+
+@Parcelize
+data class KeystoneMultiAccount (
+    val account: @RawValue MultiAccounts
+) : Parcelable
 
 class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneOwnerSelectionBinding>(),
     DerivedOwnerListAdapter.OnOwnerItemClickedListener {
@@ -40,8 +54,8 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
     override suspend fun chainId(): BigInteger? = null
 
     private val navArgs by navArgs<KeystoneOwnerSelectionFragmentArgs>()
-    private val hdKey: HDKey? by lazy { navArgs.hdKey }
-    private val multiHDKeys: MultiHDKeys? by lazy { navArgs.multiHDKeys }
+    private val hdKey: Account? by lazy { navArgs.hdKey?.account }
+    private val multiHDKeys: MultiAccounts? by lazy { navArgs.multiHDKeys?.account }
     private val maxPages: Int
         get() = if (multiHDKeys != null) 1 else DerivedOwnerPagingProvider.MAX_PAGES
 

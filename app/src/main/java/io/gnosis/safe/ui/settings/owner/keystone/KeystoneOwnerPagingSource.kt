@@ -1,18 +1,18 @@
 package io.gnosis.safe.ui.settings.owner.keystone
 
 import androidx.paging.PagingSource
-import com.keystone.module.MultiHDKeys
+import com.keystone.module.MultiAccounts
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
 class KeystoneOwnerPagingSource(
-    private val multiHDKeys: MultiHDKeys
+    private val multiHDKeys: MultiAccounts
 ) : PagingSource<Long, Solidity.Address>() {
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Solidity.Address> {
 
         kotlin.runCatching {
-            multiHDKeys.hdKeys.map {
+            multiHDKeys.keys.map {
                 it.toAddress()
             }
         }.onSuccess {

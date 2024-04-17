@@ -1,6 +1,6 @@
 package io.gnosis.safe.utils
 
-import com.keystone.module.HDKey
+import com.keystone.module.Account
 import com.keystone.module.Note
 import com.keystone.sdk.KeystoneSDK
 import pm.gnosis.crypto.KeyPair
@@ -10,21 +10,21 @@ import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 
 interface PublicAddressDerivator: AddressPagingSource {
-    fun initialize(hdKey: HDKey)
+    fun initialize(hdKey: Account)
     fun addressesForRange(range: LongRange): List<Solidity.Address>
 }
 
 interface PublicKeyDerivator {
-    fun initialize(hdKey: HDKey)
+    fun initialize(hdKey: Account)
     fun keyForIndex(index: Long): BigInteger
 }
 
 class PublicKeyAndAddressDerivator: PublicKeyDerivator, PublicAddressDerivator {
 
-    private lateinit var hdKey: HDKey
+    private lateinit var hdKey: Account
     private val sdk = KeystoneSDK()
 
-    override fun initialize(hdKey: HDKey) {
+    override fun initialize(hdKey: Account) {
         this.hdKey = hdKey
     }
 
@@ -48,6 +48,6 @@ class PublicKeyAndAddressDerivator: PublicKeyDerivator, PublicAddressDerivator {
 
     private fun derivedKeyForIndex(index: Long): ByteArray {
         val path = if (hdKey.note == Note.LEDGER_LEGACY.value) "m/$index" else "m/0/$index"
-        return sdk.derivePublicKey(hdKey.xpub, path).hexStringToByteArray()
+        return sdk.derivePublicKey(hdKey.getExtendedPublicKey(), path).hexStringToByteArray()
     }
 }
