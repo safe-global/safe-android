@@ -7,6 +7,7 @@ import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.SafeNonces
 import io.gnosis.data.utils.SemVer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -61,14 +62,14 @@ class SafeRepository(
 
     suspend fun removeSafe(safe: Safe) = safeDao.delete(safe)
 
-    suspend fun clearActiveSafe() {
+    fun clearActiveSafe() {
         preferencesManager.prefs.edit {
             remove(ACTIVE_SAFE)
             remove(ACTIVE_SAFE_SIGNING_OWNERS)
         }
     }
 
-    suspend fun setActiveSafe(safe: Safe) {
+    fun setActiveSafe(safe: Safe) {
         preferencesManager.prefs.edit {
             putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
             putString(
@@ -94,7 +95,7 @@ class SafeRepository(
         return safe
     }
 
-    suspend fun setActiveSafeSigningOwners(owners: List<Solidity.Address>) {
+    fun setActiveSafeSigningOwners(owners: List<Solidity.Address>) {
         preferencesManager.prefs.edit {
             putString(
                 ACTIVE_SAFE_SIGNING_OWNERS,
@@ -109,7 +110,7 @@ class SafeRepository(
         }
     }
 
-    suspend fun getActiveSafeSigningOwners(): List<Solidity.Address> {
+    fun getActiveSafeSigningOwners(): List<Solidity.Address> {
         return preferencesManager.prefs
                 .getString(ACTIVE_SAFE_SIGNING_OWNERS, null)
                 ?.split(SEPARATOR)
@@ -156,6 +157,9 @@ class SafeRepository(
 
     suspend fun getSafeInfo(safe: Safe): SafeInfo =
         gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
+
+    suspend fun getSafeNonces(safe: Safe): SafeNonces =
+        gatewayApi.loadSafeNonces(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
 
     suspend fun clearUserData() {
         getSafes().forEach {

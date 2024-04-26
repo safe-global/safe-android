@@ -23,6 +23,8 @@ Replace `<YOUR_PROJECT_ID>` with the `project id` that you got from Infura.
 
 `./gradlew assembleInternal`
 
+Configure the gradle's JVM version according to the target SDK version, as provided in the [reference](https://developer.android.com/build/jdks#compileSdk).
+
 ## Buildkite (Continuous Integration) Setup
 
 We use a self hosted Buildkite agent. Given that you have the appropriate credentials you can see the Android projects here: https://buildkite.com/gnosis

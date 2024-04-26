@@ -16,7 +16,7 @@ data class TransactionEstimationRequest(
     val value: BigInteger,
 
     @Json(name = "data")
-    val data: String = "",
+    val data: String?,
 
     @Json(name = "operation")
     val operation: Operation = Operation.CALL,

@@ -114,7 +114,7 @@ sealed class Error(
         override fun message(context: Context): String {
             return "${context.getString(reason)}. ${context.getString(howToFix)}"
         }
-    };
+    }
 
 
     open fun message(context: Context): String {
@@ -158,25 +158,7 @@ fun Throwable.toError(): Error =
                     this.code() == HttpCodes.FORBIDDEN -> Error.Error403
                     this.code() == HttpCodes.NOT_FOUND -> Error.Error404
                     this.code() == HttpCodes.SERVER_ERROR -> Error.Error500(500)
-                    this.code() == 422 -> {
-
-                        val serverError = errorBodyString?.let {
-                            if (errorBodyString.isNotEmpty()) {
-                                serverErrorAdapter.fromJson(errorBodyString)
-                            } else {
-                                null
-                            }
-                        }
-
-                        when {
-                            serverError?.code == 1 -> Error.Error42201
-                            serverError?.code == 50 -> Error.Error42250
-                            serverError?.code == null -> Error.Error42200
-                            serverError.code in 2..9 -> Error.Error422xx("4220${serverError.code}".toInt())
-                            serverError.code >= 10 -> Error.Error422xx("422${serverError.code}".toInt())
-                            else -> Error.Error42200
-                        }
-                    }
+                    this.code() == 422 -> Error.Error42200
                     this.code() in 300..599 -> Error.Error500(this.code())
                     else -> Error.ErrorUnknown
                 }
@@ -210,9 +192,8 @@ fun errorSnackbar(view: View, text: CharSequence, duration: Int = 6000, action: 
 
 @JsonClass(generateAdapter = true)
 data class ServerError(
-    @Json(name = "code") val code: Int,
-    @Json(name = "message") val message: String?,
-    @Json(name = "arguments") val arguments: List<String>?
+    @Json(name = "code") val code: String,
+    @Json(name = "message") val message: String?
 )
 
 private val serverErrorAdapter = dataMoshi.adapter(ServerError::class.java)

@@ -4,6 +4,7 @@ import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.ChainInfo
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.SafeNonces
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.transaction.*
@@ -90,6 +91,12 @@ interface GatewayApi {
         @Path("address") address: String,
         @Body transactionEstimationRequest: TransactionEstimationRequest
     ): TransactionEstimation
+
+    @GET("/v1/chains/{chainId}/safes/{address}/nonces")
+    suspend fun loadSafeNonces(
+        @Path("chainId") chainId: BigInteger,
+        @Path("address") address: String
+    ): SafeNonces
 
     companion object {
         const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL

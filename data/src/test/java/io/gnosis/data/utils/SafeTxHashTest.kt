@@ -16,6 +16,7 @@ import org.junit.Test
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
+import java.math.BigInteger
 
 class SafeTxHashTest {
 
@@ -87,15 +88,16 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (v1_3_0 safe, settingsChangeTx) should return same value as in settingsChangeTx`() = runBlocking {
         val safeAddress = "0x6cf158C37354d8da5396fb6d3e965318CCf119c1".asEthereumAddress()!!
+        val chainId = BigInteger("5")
         val txSettingsChangeDto = txDtoAdapter.readJsonFrom("tx_details_custom_set_guard.json")
         coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txSettingsChangeDto
-        val txSettingsChange = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
+        val txSettingsChange = transactionRepository.getTransactionDetails(chainId, "id")
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
             SemVer(1, 3, 0),
-            chain.chainId,
+            chainId,
             safeAddress,
             txSettingsChange,
             executionInfo
