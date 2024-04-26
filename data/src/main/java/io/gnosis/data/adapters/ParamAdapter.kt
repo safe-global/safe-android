@@ -68,11 +68,12 @@ class ParamAdapter {
     fun fromJson(reader: JsonReader, valueDecodedAdapter: JsonAdapter<List<ValueDecoded>>): Param {
         try {
             var name = ""
-            var type = getType(reader)
+            val type = getType(reader)
             reader.beginObject()
             while(reader.hasNext()) {
                 if (reader.peek() == JsonReader.Token.NAME) {
-                    when (reader.nextName()) {
+                    val nextName = reader.nextName()
+                    when (nextName) {
                         "name" -> {
                             name = reader.nextString()
                         }
@@ -80,7 +81,7 @@ class ParamAdapter {
                             when {
                                 type == "address" -> {
                                     val value = reader.nextString().asEthereumAddress()!!
-                                    reader.endObject()
+                                    skipRemainingValues(reader)
                                     return Param.Address(type, name, value)
                                 }
                                 type == "bytes" -> {
@@ -90,26 +91,26 @@ class ParamAdapter {
                                             kotlin.runCatching {
                                                 valueDecodedAdapter.fromJson(reader)
                                             }.onSuccess {
-                                                reader.endObject()
+                                                skipRemainingValues(reader)
                                                 return Param.Bytes(type, name, value, it)
                                             }.onFailure {
                                                 reader.endArray()
-                                                reader.endObject()
+                                                skipRemainingValues(reader)
                                                 return Param.Bytes(type, name, value, null)
                                             }
                                         } else {
                                             reader.skipValue()
-                                            reader.endObject()
+                                            skipRemainingValues(reader)
                                             return Param.Bytes(type, name, value, null)
                                         }
                                     } else {
-                                        reader.endObject()
+                                        skipRemainingValues(reader)
                                         return Param.Bytes(type, name, value, null)
                                     }
                                 }
                                 !type.contains("[") && !type.contains("(") -> {
                                     val value = reader.nextString()
-                                    reader.endObject()
+                                    skipRemainingValues(reader)
                                     return Param.Value(type, name, value)
                                 }
                                 else -> {
@@ -122,7 +123,7 @@ class ParamAdapter {
                                             }
                                         }
                                         reader.endArray()
-                                        reader.endObject()
+                                        skipRemainingValues(reader)
                                         return Param.Array(type, name, value)
                                     } else {
                                         reader.skipValue()
@@ -141,6 +142,14 @@ class ParamAdapter {
             return Param.Unknown
         }
         return Param.Unknown
+    }
+
+    private fun skipRemainingValues(reader: JsonReader) {
+        while (reader.hasNext()) {
+            reader.skipName()
+            reader.skipValue()
+        }
+        reader.endObject()
     }
 
     private fun getType(reader: JsonReader): String {
