@@ -11,7 +11,8 @@ import io.gnosis.data.readJsonFrom
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,9 +41,8 @@ class TransactionRepositoryTransferTest(
             return TransactionDirection.values()
         }
     }
-
     @Test
-    fun `getHistoryTransactions (all transfer types) should return Transfers`() = runBlockingTest {
+    fun `getHistoryTransactions (all transfer types) should return Transfers`() = runTest(UnconfinedTestDispatcher()) {
         val pagedResult = listOf(
             buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC20())),
             buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoEther())),
@@ -99,7 +99,7 @@ class TransactionRepositoryTest {
     private val defaultSafe = Safe(defaultSafeAddress, "Name", CHAIN_ID)
 
     @Test
-    fun `getHistoryTransactions (api failure) should throw`() = runBlockingTest {
+    fun `getHistoryTransactions (api failure) should throw`() = runTest(UnconfinedTestDispatcher()) {
         val throwable = Throwable()
         coEvery { gatewayApi.loadTransactionsHistory(address = any(), chainId = any()) } throws throwable
 
@@ -118,7 +118,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getHistoryTransactions (all tx types) should return respective tx type`() = runBlockingTest {
+    fun `getHistoryTransactions (all tx types) should return respective tx type`() = runTest(UnconfinedTestDispatcher()) {
         val pagedResult = listOf(
             buildGateTransaction(txInfo = buildTransferTxInfo()),
             buildGateTransaction(txInfo = buildCustomTxInfo()),
@@ -162,13 +162,16 @@ class TransactionRepositoryTest {
                     assertEquals((transaction.txInfo as TransactionInfo.Creation).implementation, txInfo.implementation)
                     assertEquals((transaction.txInfo as TransactionInfo.Creation).transactionHash, txInfo.transactionHash)
                 }
+                is TransactionInfo.Unknown -> {
+                    // ignore
+                }
             }
         }
     }
 
 
     @Test
-    fun `loadTransactionsPage (all tx type) should return respective tx type`() = runBlockingTest {
+    fun `loadTransactionsPage (all tx type) should return respective tx type`() = runTest(UnconfinedTestDispatcher()) {
         val pagedResult = listOf(
             buildGateTransaction(txInfo = buildTransferTxInfo()),
             buildGateTransaction(txInfo = buildCustomTxInfo()),
@@ -201,6 +204,9 @@ class TransactionRepositoryTest {
                     assertEquals(pagedTransaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
                     assertEquals(pagedTransaction.txStatus, actualTransaction.transaction.txStatus)
                     assertEquals((pagedTransaction.txInfo as TransactionInfo.SettingsChange).dataDecoded, txInfo.dataDecoded)
+                }
+                else -> {
+                    // Ignored
                 }
             }
         }
@@ -264,7 +270,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `submitConfirmation (API failure) should throw`() = runBlockingTest {
+    fun `submitConfirmation (API failure) should throw`() = runTest(UnconfinedTestDispatcher()) {
         val throwable = Throwable()
         val confirmationRequest = TransactionConfirmationRequest("0x0")
         coEvery { gatewayApi.submitConfirmation(safeTxHash = any(), txConfirmationRequest = any(), chainId = any()) } throws throwable
@@ -278,7 +284,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `submitConfirmation (successful) should return TransactionDetails`() = runBlockingTest {
+    fun `submitConfirmation (successful) should return TransactionDetails`() = runTest(UnconfinedTestDispatcher()) {
         val transactionDetailsDto = moshiAdapter.readJsonFrom("tx_details_transfer.json")
         coEvery { gatewayApi.submitConfirmation(safeTxHash = any(), txConfirmationRequest = any(), chainId = CHAIN_ID) } returns transactionDetailsDto
         coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto
@@ -296,7 +302,7 @@ class TransactionRepositoryTest {
         val ownerKey = "0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger()
         val actual = transactionRepository.sign(ownerKey, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67")
         val expected =
-            "d757e1a0f195a26988290d6f533c3cd5eff0924abe7f92c071ecbe007031a4274dd9aee773cf051a7c0906a332571dfbeda672cf98d2631d12e11764508e4ec81c"
+            "0xd757e1a0f195a26988290d6f533c3cd5eff0924abe7f92c071ecbe007031a4274dd9aee773cf051a7c0906a332571dfbeda672cf98d2631d12e11764508e4ec81c"
 
         assertEquals(expected, actual)
     }

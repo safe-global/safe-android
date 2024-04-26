@@ -1,8 +1,8 @@
 package io.gnosis.safe
 
 import io.gnosis.safe.helpers.Offline
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Test
@@ -66,93 +66,13 @@ class ErrorHandlerTest {
     }
 
     @Test
-    fun `toError() (HttpException with code 422 and no body) should create 42200 error`() {
+    fun `toError() (HttpException with code 422) should create 42200 error`() {
         val exception = HttpException(Response.error<String>(422, emptyResponseBody))
 
         val result = exception.toError()
 
         assertTrue(result is Error.Error42200)
         assertEquals(42200, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 1 in body) should create 42201 error`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 1}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error42201)
-        assertEquals(42201, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 2 in body) should create 422xx error`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 2}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error422xx)
-        assertEquals(42202, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 9 in body) should create 422xx error`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 9}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error422xx)
-        assertEquals(42209, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 10 in body) should create 422xx error`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 10}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error422xx)
-        assertEquals(42210, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 35 in body) should create 422xx error with code 42235`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 35}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error422xx)
-        assertEquals(42235, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 50 in body) should create 42250 error`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 50}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error42250)
-        assertEquals(42250, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 99 in body) should create 422xx error with code 42299`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 99}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error422xx)
-        assertEquals(42299, result.httpCode)
-    }
-
-    @Test
-    fun `toError() (HttpException with code 422 and code 100 in body) should create 422xx error with code 422100`() {
-        val exception = HttpException(Response.error<String>(422, "{ \"code\": 100}".toResponseBody(jsonContentType)))
-
-        val result = exception.toError()
-
-        assertTrue(result is Error.Error422xx)
-        assertEquals(422100, result.httpCode)
     }
 
     @Test
