@@ -186,6 +186,7 @@ class TransactionListViewModel
                     val owner = localOwners.find { it.address == txInfo.creator.value }
                     toHistoryCreation(chain, txInfo, owner)
                 }
+                is TransactionInfo.SwapOrder -> toSwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
@@ -363,6 +364,60 @@ class TransactionListViewModel
             methodName = txInfo.methodName,
             actionCount = txInfo.actionCount,
             addressInfo = addressInfo
+        )
+    }
+
+    private fun Transaction.toSwapOrderTransactionView(
+        chain: Chain,
+        txInfo: TransactionInfo.SwapOrder,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
+        if (!isCompleted(txStatus)) queuedSwapOrderTransaction(chain, txInfo, needsYourConfirmation, isConflict)
+        else historicSwapOrderTransaction(chain, txInfo)
+
+    private fun Transaction.historicSwapOrderTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.SwapOrder
+    ): TransactionView.SwapOrderTransaction {
+
+        return TransactionView.SwapOrderTransaction(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            alpha = alpha(txStatus),
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            explorerUrl = txInfo.explorerUrl
+        )
+    }
+
+    private fun Transaction.queuedSwapOrderTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.SwapOrder,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView.SwapOrderTransactionQueued {
+
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        return TransactionView.SwapOrderTransactionQueued(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, needsYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            dateTime = timestamp,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
+            explorerUrl = txInfo.explorerUrl
         )
     }
 

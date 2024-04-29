@@ -57,6 +57,9 @@ enum class TransactionType {
     @Json(name = "Creation")
     Creation,
 
+    @Json(name = "SwapOrder")
+    SwapOrder,
+
     @Json(name = "Unknown")
     Unknown
 }

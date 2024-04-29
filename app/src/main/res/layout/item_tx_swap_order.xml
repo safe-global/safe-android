@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_secondary"
+    android:minHeight="@dimen/item_tx_s_height">
+
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chevron_right" />
+
+    <TextView
+        android:id="@+id/nonce"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_small_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_logo"
+        tools:text="10" />
+
+    <TextView
+        android:id="@+id/date_time"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/nonce"
+        app:layout_constraintStart_toEndOf="@+id/nonce"
+        app:layout_constraintTop_toTopOf="@+id/nonce"
+        tools:text="Apr 27, 2020 — 1:01:42PM" />
+
+<!--Revise TableLayout solution when
+        app:layout_constraintWidth_percent=""
+        app:layout_constraintWidth_max="wrap"
+    works as expected
+-->
+    <TableLayout
+        android:id="@id/address_name_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:shrinkColumns="0"
+        android:stretchColumns="1"
+        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
+        app:layout_constraintStart_toEndOf="@+id/address_logo"
+        app:layout_constraintTop_toTopOf="@+id/address_logo">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/address_name"
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="true"
+                tools:text="@string/tx_list_swap_order" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/final_status"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:textColor="@color/primary"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Success" />
+
+    <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
+        android:id="@+id/address_logo"
+        android:layout_width="@dimen/default_margin"
+        android:layout_height="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:src="@drawable/ic_code_16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        app:strokeColor="@color/background_tertiary"
+        app:strokeWidth="0.01dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

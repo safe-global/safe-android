@@ -40,6 +40,14 @@ sealed class TransactionInfo(
         @Json(name = "factory") val factory: AddressInfo?
     ) : TransactionInfo(TransactionType.Creation)
 
+    @JsonClass(generateAdapter = true)
+    data class SwapOrder(
+        @Json(name = "uid") val uid: String,
+        @Json(name = "status") val status: String,
+        @Json(name = "kind") val kind: String,
+        @Json(name = "explorerUrl") val explorerUrl: String
+    ) : TransactionInfo(TransactionType.SwapOrder)
+
     object Unknown : TransactionInfo(TransactionType.Unknown)
 }
 

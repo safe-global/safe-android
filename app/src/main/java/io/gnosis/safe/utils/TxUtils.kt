@@ -70,6 +70,7 @@ fun TransactionInfoViewData.formattedAmount(chain: Chain, balanceFormatter: Bala
         is TransactionInfoViewData.SettingsChange -> "0 ${chain.currency.symbol}"
         is TransactionInfoViewData.Creation -> "0 ${chain.currency.symbol}"
         is TransactionInfoViewData.Rejection -> "0 ${chain.currency.symbol}"
+        is TransactionInfoViewData.SwapOrder -> "0 ${chain.currency.symbol}"
         TransactionInfoViewData.Unknown -> "0 ${chain.currency.symbol}"
     }
 
@@ -87,6 +88,7 @@ fun TransactionInfoViewData.logoUri(chain: Chain): String? =
             }
         }
         is TransactionInfoViewData.Custom,
+        is TransactionInfoViewData.SwapOrder,
         is TransactionInfoViewData.SettingsChange,
         is TransactionInfoViewData.Creation,
         is TransactionInfoViewData.Rejection,

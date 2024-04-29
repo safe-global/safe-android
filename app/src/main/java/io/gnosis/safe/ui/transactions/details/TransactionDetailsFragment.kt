@@ -26,6 +26,7 @@ import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewDat
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.*
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -256,6 +257,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.advancedDivider.visible(false)
         }
 
+        if (txDetails.txInfo !is TransactionInfoViewData.SwapOrder) {
+            binding.etherscanDivider.visible(false)
+            binding.orderLink.visible(false)
+        }
+
         when (val txInfo = txDetails.txInfo) {
             is TransactionInfoViewData.Transfer -> {
                 val viewStub = binding.stubTransfer
@@ -441,6 +447,30 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                             getColorForStatus(txDetails.txStatus)
                     )
+                }
+            }
+            is TransactionInfoViewData.SwapOrder -> {
+                val viewStub = binding.stubCustom
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                }
+                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
+                with(txDetailsCustomBinding) {
+                    txAction.visible(false)
+                    txDataDecoded.visible(false)
+                    txDataDecodedSeparator.visible(false)
+
+                    txStatus.setStatus(
+                        title = resources.getString(TxType.SWAP_ORDER.titleRes),
+                        defaultIconRes = TxType.SWAP_ORDER.iconRes,
+                        statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
+                        statusColorRes = getColorForStatus(txDetails.txStatus)
+                    )
+                    binding.etherscanDivider.visible(true)
+                    binding.orderLink.visible(true)
+                    binding.orderLink.setOnClickListener {
+                        requireContext().openUrl(txInfo.explorerUrl)
+                    }
                 }
             }
         }
