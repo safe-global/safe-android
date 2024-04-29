@@ -164,10 +164,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/item_setting_openable_height"
                     android:layout_marginStart="16dp"
+                    android:drawablePadding="6dp"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/tx_details_view_on_block_explorer"
+                    app:drawableEndCompat="@drawable/ic_link_green_24dp" />
+
+                <View
+                    android:id="@+id/etherscan_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_separator_height"
+                    android:background="@color/separator" />
+
+                <TextView
+                    android:id="@+id/order_link"
+                    style="@style/TextLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/item_setting_openable_height"
+                    android:layout_marginStart="16dp"
                     app:drawableEndCompat="@drawable/ic_link_green_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/tx_details_view_on_block_explorer" />
+                    android:text="@string/tx_details_view_swap_order" />
+
 
             </LinearLayout>
 

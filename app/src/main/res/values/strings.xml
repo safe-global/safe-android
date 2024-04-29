@@ -342,6 +342,7 @@
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_block_explorer">View transaction on block explorer</string>
+    <string name="tx_details_view_swap_order">View swap order details</string>
     <string name="tx_details_token_name_unknown">Unknown</string>
     <string name="tx_details_creation_creator_address">Creator address</string>
     <string name="tx_details_creation_implementation_used">Base contract used</string>
@@ -375,6 +376,7 @@
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
     <string name="tx_status_type_modify_settings">Modify settings</string>
     <string name="tx_status_type_custom">Contract interaction</string>
+    <string name="tx_status_type_swap_order">Swap order</string>
     <string name="tx_status_type_creation">Safe Account created</string>
     <string name="tx_status_type_rejection">On-chain rejection</string>
 
@@ -634,6 +636,7 @@
     <string name="unknown_creator">Unknown</string>
     <string name="unknown_module">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
+    <string name="tx_list_swap_order">Swap order</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
     <string name="tx_list_rejection">On-chain rejection</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>

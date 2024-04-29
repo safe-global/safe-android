@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_secondary"
+    android:minHeight="@dimen/item_tx_m_height">
+
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chevron_right" />
+
+    <ImageView
+        android:id="@+id/confirmations_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/status"
+        app:layout_constraintEnd_toStartOf="@+id/confirmations"
+        app:layout_constraintTop_toTopOf="@+id/status"
+        app:srcCompat="@drawable/ic_confirmations_grey_16dp" />
+
+
+    <!--Revise TableLayout solution when
+            app:layout_constraintWidth_percent=""
+            app:layout_constraintWidth_max="wrap"
+        works as expected
+    -->
+    <TableLayout
+        android:id="@id/address_name_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:shrinkColumns="0"
+        android:stretchColumns="1"
+        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
+        app:layout_constraintStart_toEndOf="@+id/address_logo"
+        app:layout_constraintTop_toTopOf="@+id/address_logo">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/address_name"
+                style="@style/Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="true"
+                tools:text="@string/tx_list_swap_order" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/nonce"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_small_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_logo"
+        tools:text="10" />
+
+    <TextView
+        android:id="@+id/date_time"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/nonce"
+        app:layout_constraintStart_toEndOf="@+id/nonce"
+        app:layout_constraintTop_toTopOf="@+id/nonce"
+        tools:text="Apr 27, 2020 — 1:01:42PM" />
+
+    <TextView
+        android:id="@+id/status_pending"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:textColor="@color/warning"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="\u2022 Pending" />
+
+    <TextView
+        android:id="@+id/status"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:textColor="@color/warning"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_time"
+        tools:text="\u2022 Needs execution" />
+
+    <TextView
+        android:id="@+id/confirmations"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_small_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
+        app:layout_constraintEnd_toStartOf="@+id/chevron"
+        app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
+        tools:text="2 out of 2" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/not_pending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="confirmations_icon,status,confirmations" />
+
+    <!-- When making status_pending visible, make group "not_pending" "gone" -->
+    <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
+        android:id="@+id/address_logo"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:src="@drawable/ic_code_16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        app:strokeColor="@color/background_tertiary"
+        app:strokeWidth="0.01dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
