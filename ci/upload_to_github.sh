@@ -15,22 +15,24 @@ echo "INTERCOM_APP_ID=$INTERCOM_APP_ID" > project_keys
 REPO="https://api.github.com/repos/safe-global/safe-android"
 TAGS="$REPO/releases/tags/$BUILDKITE_BRANCH"
 AUTH="Authorization: token $GITHUB_API_KEY"
-WGET_ARGS="--content-disposition --auth-no-challenge --no-cookie"
-CURL_ARGS="-LJO#"
 
 # Read asset tags.
 response=$(curl -sH "$AUTH" $TAGS)
 
 # Get ID of the asset based on given filename.
-eval $(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')
+eval "$(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')"
 [ "$id" ] || { echo "Error: Failed to get release id for tag: $BUILDKITE_BRANCH"; echo "$response" | awk 'length($0)<100' >&2; exit 1; }
 
 # Upload asset
 echo "Uploading assets..." >&2
 
-# Construct url
-ASSET="https://uploads.github.com/repos/safe-global/safe-android/releases/$id/assets"
-
-curl --data-binary @"app/build/outputs/apk/release/safe-${APP_VERSION_CODE}-release.apk" -H "$AUTH" -H "Content-Type: application/octet-stream" $ASSET?name=safe-${APP_VERSION_CODE}-release.apk
+curl -L \
+  -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer $GITHUB_API_KEY" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  -H "Content-Type: application/octet-stream" \
+  "https://uploads.github.com/repos/safe-global/safe-android/releases/$id/assets?name=safe-${APP_VERSION_CODE}-release.apk" \
+  --data-binary "@app/build/outputs/apk/release/safe-${APP_VERSION_CODE}-release.apk"
 
 ci/notify_slack.sh
