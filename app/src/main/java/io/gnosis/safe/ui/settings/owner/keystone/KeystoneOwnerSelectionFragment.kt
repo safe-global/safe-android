@@ -17,7 +17,9 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.keystone.module.Account
+import com.keystone.module.Extra
 import com.keystone.module.MultiAccounts
+import com.keystone.module.OkxExtra
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.safe.R
@@ -38,13 +40,62 @@ import javax.inject.Inject
 // Value wrappers to pass data between fragments
 @Parcelize
 data class KeystoneAccount (
-    val account: @RawValue Account
-) : Parcelable
+    var chain: String,
+    var path: String,
+    var publicKey: String,
+    var name: String,
+    var xfp: String,
+    val note: String?,
+    var extraChainId: Int,
+    var chainCode: String,
+    var extendedPublicKey: String
+) : Parcelable {
+    fun account(): Account {
+      return Account(
+          chain, path, publicKey, name, xfp, note,
+          Extra(OkxExtra(extraChainId)), chainCode, extendedPublicKey
+      )
+    }
+
+    constructor(account: Account) : this(
+        account.chain,
+        account.path,
+        account.publicKey,
+        account.name,
+        account.xfp,
+        account.note,
+        account.extra.okx.chainId,
+        account.getChainCode(),
+        account.getExtendedPublicKey()
+    )
+}
 
 @Parcelize
 data class KeystoneMultiAccount (
-    val account: @RawValue MultiAccounts
-) : Parcelable
+    val masterFingerprint: String,
+    val keys: List<KeystoneAccount>,
+    val device: String?,
+    val deviceId: String?,
+    val deviceVersion: String?,
+) : Parcelable {
+    fun multiAccounts(): MultiAccounts {
+        return MultiAccounts(
+            masterFingerprint,
+            keys.map { it.account() },
+            device,
+            deviceId,
+            deviceVersion
+        )
+    }
+
+    constructor(account: MultiAccounts) : this(
+        account.masterFingerprint,
+        account.keys.map { KeystoneAccount(it) },
+        account.device,
+        account.deviceId,
+        account.deviceVersion
+    )
+}
 
 class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneOwnerSelectionBinding>(),
     DerivedOwnerListAdapter.OnOwnerItemClickedListener {
@@ -54,8 +105,8 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
     override suspend fun chainId(): BigInteger? = null
 
     private val navArgs by navArgs<KeystoneOwnerSelectionFragmentArgs>()
-    private val hdKey: Account? by lazy { navArgs.hdKey?.account }
-    private val multiHDKeys: MultiAccounts? by lazy { navArgs.multiHDKeys?.account }
+    private val hdKey: Account? by lazy { navArgs.hdKey?.account() }
+    private val multiHDKeys: MultiAccounts? by lazy { navArgs.multiHDKeys?.multiAccounts() }
     private val maxPages: Int
         get() = if (multiHDKeys != null) 1 else DerivedOwnerPagingProvider.MAX_PAGES
 
