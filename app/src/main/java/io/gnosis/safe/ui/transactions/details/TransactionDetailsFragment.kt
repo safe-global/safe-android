@@ -457,7 +457,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
                 with(txDetailsSettingsChangeBinding) {
-
                     txAction.visible(true)
                     txAction.setActionInfoItems(
                         chain = chain,
