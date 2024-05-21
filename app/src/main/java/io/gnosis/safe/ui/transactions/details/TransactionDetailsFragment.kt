@@ -21,6 +21,7 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
@@ -450,15 +451,22 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
             }
             is TransactionInfoViewData.SwapOrder -> {
-                val viewStub = binding.stubCustom
+                val viewStub = binding.stubSettingsChange
                 if (viewStub.parent != null) {
-                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
                 }
-                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
-                with(txDetailsCustomBinding) {
-                    txAction.visible(false)
-                    txDataDecoded.visible(false)
-                    txDataDecodedSeparator.visible(false)
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
+                with(txDetailsSettingsChangeBinding) {
+
+                    txAction.visible(true)
+                    txAction.setActionInfoItems(
+                        chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
+                            itemLabel = R.string.tx_status_type_custom ,
+                            value = "Swap order"))
+                        )
 
                     txStatus.setStatus(
                         title = resources.getString(TxType.SWAP_ORDER.titleRes),
