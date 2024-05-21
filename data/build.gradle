@@ -38,7 +38,7 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client.staging.5afe.dev/"')
+            buildConfigField ("String", "CLIENT_GATEWAY_URL", asString("https://safe-client.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "11155111")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#B8AAD5"))
