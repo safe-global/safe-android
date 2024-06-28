@@ -682,6 +682,7 @@
 
     <string name="ledger_sign_confirm">Confirm Transaction</string>
     <string name="ledger_sign_reject">Reject Transaction</string>
+    <string name="ledger_sign_execute">Execute Transaction</string>
     <string name="ledger_sign_verify">Verify the transaction hash below on your Ledger Nano X and confirm by pressing both buttons simultaneously.</string>
     <string name="ledger_sign_cancel">Cancel</string>
 
