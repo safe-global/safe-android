@@ -187,6 +187,8 @@ class TransactionListViewModel
                     toHistoryCreation(chain, txInfo, owner)
                 }
                 is TransactionInfo.SwapOrder -> toSwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.SwapTransfer -> toSwapTransferTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.TwapOrder -> toTwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
@@ -418,6 +420,112 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             explorerUrl = txInfo.explorerUrl
+        )
+    }
+
+    private fun Transaction.toSwapTransferTransactionView(
+        chain: Chain,
+        txInfo: TransactionInfo.SwapTransfer,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
+        if (!isCompleted(txStatus)) queuedSwapTransferTransaction(chain, txInfo, needsYourConfirmation, isConflict)
+        else historicSwapTransferTransaction(chain, txInfo)
+
+    private fun Transaction.historicSwapTransferTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.SwapTransfer
+    ): TransactionView.SwapTransferTransaction {
+
+        return TransactionView.SwapTransferTransaction(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            alpha = alpha(txStatus),
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            explorerUrl = txInfo.explorerUrl
+        )
+    }
+
+    private fun Transaction.queuedSwapTransferTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.SwapTransfer,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView.SwapTransferTransactionQueued {
+
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        return TransactionView.SwapTransferTransactionQueued(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, needsYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            dateTime = timestamp,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
+            explorerUrl = txInfo.explorerUrl
+        )
+    }
+
+    private fun Transaction.toTwapOrderTransactionView(
+        chain: Chain,
+        txInfo: TransactionInfo.TwapOrder,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
+        if (!isCompleted(txStatus)) queuedTwapOrderTransaction(chain, txInfo, needsYourConfirmation, isConflict)
+        else historicTwapOrderTransaction(chain, txInfo)
+
+    private fun Transaction.historicTwapOrderTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.TwapOrder
+    ): TransactionView.TwapOrderTransaction {
+
+        return TransactionView.TwapOrderTransaction(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            alpha = alpha(txStatus),
+            nonce = executionInfo?.nonce?.toString() ?: ""
+        )
+    }
+
+    private fun Transaction.queuedTwapOrderTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.TwapOrder,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView.TwapOrderTransactionQueued {
+
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        return TransactionView.TwapOrderTransactionQueued(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, needsYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            dateTime = timestamp,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
     }
 

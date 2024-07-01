@@ -258,7 +258,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.advancedDivider.visible(false)
         }
 
-        if (txDetails.txInfo !is TransactionInfoViewData.SwapOrder) {
+        if (txDetails.txInfo !is TransactionInfoViewData.SwapOrder && txDetails.txInfo !is TransactionInfoViewData.SwapTransfer) {
             binding.etherscanDivider.visible(false)
             binding.orderLink.visible(false)
         }
@@ -478,6 +478,61 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     binding.orderLink.setOnClickListener {
                         requireContext().openUrl(txInfo.explorerUrl)
                     }
+                }
+            }
+            is TransactionInfoViewData.SwapTransfer -> {
+                val viewStub = binding.stubSettingsChange
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
+                }
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
+                with(txDetailsSettingsChangeBinding) {
+                    txAction.visible(true)
+                    txAction.setActionInfoItems(
+                        chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
+                            itemLabel = R.string.tx_status_type_custom ,
+                            value = "Swap transfer"))
+                    )
+
+                    txStatus.setStatus(
+                        title = resources.getString(TxType.SWAP_TRANSFER.titleRes),
+                        defaultIconRes = TxType.SWAP_TRANSFER.iconRes,
+                        statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
+                        statusColorRes = getColorForStatus(txDetails.txStatus)
+                    )
+                    binding.etherscanDivider.visible(true)
+                    binding.orderLink.visible(true)
+                    binding.orderLink.setOnClickListener {
+                        requireContext().openUrl(txInfo.explorerUrl)
+                    }
+                }
+            }
+            is TransactionInfoViewData.TwapOrder -> {
+                val viewStub = binding.stubSettingsChange
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
+                }
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
+                with(txDetailsSettingsChangeBinding) {
+                    txAction.visible(true)
+                    txAction.setActionInfoItems(
+                        chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
+                            itemLabel = R.string.tx_status_type_custom ,
+                            value = "Twap order"))
+                    )
+
+                    txStatus.setStatus(
+                        title = resources.getString(TxType.TWAP_ORDER.titleRes),
+                        defaultIconRes = TxType.TWAP_ORDER.iconRes,
+                        statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
+                        statusColorRes = getColorForStatus(txDetails.txStatus)
+                    )
                 }
             }
         }

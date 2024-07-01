@@ -43,6 +43,10 @@ enum class TransactionViewType {
     REJECTION_QUEUED,
     SWAP_ORDER,
     SWAP_ORDER_QUEUED,
+    SWAP_TRANSFER,
+    SWAP_TRANSFER_QUEUED,
+    TWAP_ORDER,
+    TWAP_ORDER_QUEUED,
     CONFLICT
 }
 
@@ -66,6 +70,10 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.REJECTION_QUEUED.ordinal -> RejectionQueuedViewHolder(viewBinding as ItemTxQueuedRejectionBinding)
             TransactionViewType.SWAP_ORDER.ordinal -> SwapOrderViewHolder(viewBinding as ItemTxSwapOrderBinding)
             TransactionViewType.SWAP_ORDER_QUEUED.ordinal -> SwapOrderQueuedViewHolder(viewBinding as ItemTxQueuedSwapOrderBinding)
+            TransactionViewType.SWAP_TRANSFER.ordinal -> SwapTransferViewHolder(viewBinding as ItemTxSwapOrderBinding)
+            TransactionViewType.SWAP_TRANSFER_QUEUED.ordinal -> SwapTransferQueuedViewHolder(viewBinding as ItemTxQueuedSwapOrderBinding)
+            TransactionViewType.TWAP_ORDER.ordinal -> TwapOrderViewHolder(viewBinding as ItemTxSwapOrderBinding)
+            TransactionViewType.TWAP_ORDER_QUEUED.ordinal -> TwapOrderQueuedViewHolder(viewBinding as ItemTxQueuedSwapOrderBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -86,6 +94,11 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.REJECTION_QUEUED.ordinal -> ItemTxQueuedRejectionBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SWAP_ORDER.ordinal -> ItemTxSwapOrderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SWAP_ORDER_QUEUED.ordinal -> ItemTxQueuedSwapOrderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SWAP_TRANSFER.ordinal -> ItemTxSwapOrderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SWAP_TRANSFER_QUEUED.ordinal -> ItemTxQueuedSwapOrderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.TWAP_ORDER.ordinal -> ItemTxSwapOrderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.TWAP_ORDER_QUEUED.ordinal -> ItemTxQueuedSwapOrderBinding.inflate(layoutInflater, parent, false)
+
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -107,6 +120,10 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.RejectionTransactionQueued -> TransactionViewType.REJECTION_QUEUED
             is TransactionView.SwapOrderTransaction -> TransactionViewType.SWAP_ORDER
             is TransactionView.SwapOrderTransactionQueued -> TransactionViewType.SWAP_ORDER_QUEUED
+            is TransactionView.SwapTransferTransaction -> TransactionViewType.SWAP_TRANSFER
+            is TransactionView.SwapTransferTransactionQueued -> TransactionViewType.SWAP_TRANSFER_QUEUED
+            is TransactionView.TwapOrderTransaction -> TransactionViewType.TWAP_ORDER
+            is TransactionView.TwapOrderTransactionQueued -> TransactionViewType.TWAP_ORDER_QUEUED
         }.ordinal
 }
 
@@ -381,6 +398,119 @@ class SwapOrderViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
         }
     }
 }
+
+class SwapTransferQueuedViewHolder(private val viewBinding: ItemTxQueuedSwapOrderBinding) :
+    BaseTransactionViewHolder<TransactionView.SwapTransferTransactionQueued>(viewBinding) {
+
+    @OptIn(ExperimentalTime::class)
+    override fun bind(viewTransfer: TransactionView.SwapTransferTransactionQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            status.setText(viewTransfer.statusText)
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
+            addressName.text = resources.getString(R.string.tx_list_swap_transfer)
+
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
+
+            nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class SwapTransferViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
+    BaseTransactionViewHolder<TransactionView.SwapTransferTransaction>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.SwapTransferTransaction, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+            dateTime.text = viewTransfer.dateTimeText
+
+            nonce.text = viewTransfer.nonce
+            addressName.text = resources.getString(R.string.tx_list_swap_transfer)
+
+            addressLogo.alpha = viewTransfer.alpha
+            addressName.alpha = viewTransfer.alpha
+            finalStatus.alpha = OPACITY_FULL
+            dateTime.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class TwapOrderQueuedViewHolder(private val viewBinding: ItemTxQueuedSwapOrderBinding) :
+    BaseTransactionViewHolder<TransactionView.TwapOrderTransactionQueued>(viewBinding) {
+
+    @OptIn(ExperimentalTime::class)
+    override fun bind(viewTransfer: TransactionView.TwapOrderTransactionQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            status.setText(viewTransfer.statusText)
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
+            addressName.text = resources.getString(R.string.tx_list_twap_order)
+
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
+
+            nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class TwapOrderViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
+    BaseTransactionViewHolder<TransactionView.TwapOrderTransaction>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.TwapOrderTransaction, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+            dateTime.text = viewTransfer.dateTimeText
+
+            nonce.text = viewTransfer.nonce
+            addressName.text = resources.getString(R.string.tx_list_twap_order)
+
+            addressLogo.alpha = viewTransfer.alpha
+            addressName.alpha = viewTransfer.alpha
+            finalStatus.alpha = OPACITY_FULL
+            dateTime.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
 
 private fun Resources.getAction(methodName: String?, actionCount: Int?): String? =
     if (actionCount != null) {

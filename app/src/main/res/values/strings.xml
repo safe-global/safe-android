@@ -377,6 +377,8 @@
     <string name="tx_status_type_modify_settings">Modify settings</string>
     <string name="tx_status_type_custom">Contract interaction</string>
     <string name="tx_status_type_swap_order">Swap order</string>
+    <string name="tx_status_type_swap_transfer">Swap transfer</string>
+    <string name="tx_status_type_twap_order">Twap order</string>
     <string name="tx_status_type_creation">Safe Account created</string>
     <string name="tx_status_type_rejection">On-chain rejection</string>
 
@@ -637,6 +639,8 @@
     <string name="unknown_module">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_swap_order">Swap order</string>
+    <string name="tx_list_swap_transfer">Swap transfer</string>
+    <string name="tx_list_twap_order">Twap order</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
     <string name="tx_list_rejection">On-chain rejection</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>

@@ -108,6 +108,17 @@ sealed class TransactionInfoViewData(
     ) : TransactionInfoViewData(TransactionType.SwapOrder)
 
     @Parcelize
+    data class SwapTransfer(
+        val uid: String,
+        val explorerUrl: String
+    ) : TransactionInfoViewData(TransactionType.SwapTransfer)
+
+    @Parcelize
+    data class TwapOrder(
+        val status: String
+    ) : TransactionInfoViewData(TransactionType.TwapOrder)
+
+    @Parcelize
     object Unknown : TransactionInfoViewData(TransactionType.Unknown)
 }
 
@@ -251,6 +262,8 @@ internal fun TransactionInfo.toTransactionInfoViewData(
             settingsInfo.toSettingsInfoViewData(safes, owners = owners)
         )
         is TransactionInfo.SwapOrder -> TransactionInfoViewData.SwapOrder(uid, explorerUrl)
+        is TransactionInfo.SwapTransfer -> TransactionInfoViewData.SwapTransfer(uid, explorerUrl)
+        is TransactionInfo.TwapOrder -> TransactionInfoViewData.TwapOrder(status)
         is TransactionInfo.Transfer -> {
             val addressInfoData =
                 if (direction == TransactionDirection.OUTGOING) {

@@ -60,6 +60,12 @@ enum class TransactionType {
     @Json(name = "SwapOrder")
     SwapOrder,
 
+    @Json(name = "SwapTransfer")
+    SwapTransfer,
+
+    @Json(name = "TwapOrder")
+    TwapOrder,
+
     @Json(name = "Unknown")
     Unknown
 }
