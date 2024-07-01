@@ -17,6 +17,8 @@ internal val transactionInfoAdapter =
         .withSubtype(TransactionInfo.SettingsChange::class.java, "SettingsChange")
         .withSubtype(TransactionInfo.Custom::class.java, "Custom")
         .withSubtype(TransactionInfo.SwapOrder::class.java, "SwapOrder")
+        .withSubtype(TransactionInfo.SwapTransfer::class.java, "SwapTransfer")
+        .withSubtype(TransactionInfo.TwapOrder::class.java, "TwapOrder")
         .withSubtype(TransactionInfo.Creation::class.java, "Creation")
         .withDefaultValue(TransactionInfo.Unknown)
 

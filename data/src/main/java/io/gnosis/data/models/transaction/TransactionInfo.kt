@@ -43,10 +43,20 @@ sealed class TransactionInfo(
     @JsonClass(generateAdapter = true)
     data class SwapOrder(
         @Json(name = "uid") val uid: String,
-        @Json(name = "status") val status: String,
-        @Json(name = "kind") val kind: String,
         @Json(name = "explorerUrl") val explorerUrl: String
     ) : TransactionInfo(TransactionType.SwapOrder)
+
+    @JsonClass(generateAdapter = true)
+    data class SwapTransfer(
+        @Json(name = "uid") val uid: String,
+        @Json(name = "explorerUrl") val explorerUrl: String
+    ) : TransactionInfo(TransactionType.SwapTransfer)
+
+    @JsonClass(generateAdapter = true)
+    data class TwapOrder(
+        @Json(name = "status") val status: String,
+        @Json(name = "kind") val kind: String,
+    ) : TransactionInfo(TransactionType.TwapOrder)
 
     object Unknown : TransactionInfo(TransactionType.Unknown)
 }
