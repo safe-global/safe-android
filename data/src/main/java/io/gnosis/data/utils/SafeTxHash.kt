@@ -56,7 +56,7 @@ fun calculateSafeTxHash(
     val txGasString = executionInfo.safeTxGas.paddedHexString()
     val dataGasString = executionInfo.baseGas.paddedHexString()
     val gasTokenString = executionInfo.gasToken.value.paddedHexString()
-    val refundReceiverString = BigInteger.ZERO.paddedHexString()
+    val refundReceiverString = (executionInfo.refundReceiver?.value?.value ?: BigInteger.ZERO).paddedHexString()
     val nonce = executionInfo.nonce.paddedHexString()
 
     return hash(
