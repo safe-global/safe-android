@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/background_secondary">
 
@@ -11,5 +12,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginBottom="-16dp"/>
+
+    <View
+        android:id="@+id/action_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_separator_height"
+        android:visibility="invisible"
+        android:background="@color/separator" />
+
+    <TextView
+        android:id="@+id/order_link"
+        style="@style/TextLink"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/item_setting_openable_height"
+        android:layout_marginStart="16dp"
+        app:drawableEndCompat="@drawable/ic_link_green_24dp"
+        android:drawablePadding="6dp"
+        android:visibility="invisible"
+        android:gravity="start|center_vertical"
+        android:text="@string/tx_details_view_swap_order" />
 
 </LinearLayout>

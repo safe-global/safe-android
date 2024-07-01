@@ -29,6 +29,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
+import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
@@ -40,6 +41,7 @@ import io.gnosis.safe.utils.setToCurrent
 import io.gnosis.safe.utils.toColor
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigDecimal
@@ -102,6 +104,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 is TransactionInfoViewData.SettingsChange -> setupSettingsChangeUI(txInfo)
                 is TransactionInfoViewData.Custom -> setupCustomUI(txInfo)
                 is TransactionInfoViewData.Rejection -> setupRejectionUI(txInfo)
+                is TransactionInfoViewData.SwapOrder -> setupSwapOrderUI(txInfo)
+                is TransactionInfoViewData.SwapTransfer -> setupSwapTransferUI(txInfo)
+                is TransactionInfoViewData.TwapOrder -> setupTwapOrderUI(txInfo)
             }
 
             estimatedFee.setOnClickListener {
@@ -362,6 +367,83 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                 actionInfoItems = txInfo.txActionInfoItems(requireContext().resources)
             )
+
+            actionDivider.visible(false)
+            orderLink.visible(false)
+        }
+    }
+
+    private fun setupSwapOrderUI(txInfo: TransactionInfoViewData.SwapOrder) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = listOf<ActionInfoItem>(
+                    ActionInfoItem.Value(
+                    itemLabel = R.string.tx_status_type_custom,
+                    value = "Swap order"))
+            )
+            orderLink.visible(true)
+            actionDivider.visible(true)
+
+            orderLink.setOnClickListener {
+                requireContext().openUrl(txInfo.explorerUrl)
+            }
+        }
+    }
+
+    private fun setupSwapTransferUI(txInfo: TransactionInfoViewData.SwapTransfer) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = listOf<ActionInfoItem>(
+                    ActionInfoItem.Value(
+                        itemLabel = R.string.tx_status_type_custom,
+                        value = "Swap transfer"))
+            )
+            orderLink.visible(true)
+            actionDivider.visible(true)
+
+            orderLink.setOnClickListener {
+                requireContext().openUrl(txInfo.explorerUrl)
+            }
+        }
+    }
+
+    private fun setupTwapOrderUI(txInfo: TransactionInfoViewData.TwapOrder) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = listOf<ActionInfoItem>(
+                    ActionInfoItem.Value(
+                        itemLabel = R.string.tx_status_type_custom,
+                        value = "Twap order"))
+            )
+            orderLink.visible(false)
+            actionDivider.visible(false)
         }
     }
 
