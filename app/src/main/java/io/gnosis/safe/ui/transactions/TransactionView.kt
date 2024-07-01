@@ -142,6 +142,58 @@ sealed class TransactionView(
         val explorerUrl: String
     ) : TransactionView(status, id, chain)
 
+    data class SwapTransferTransaction(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val chain: Chain,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val alpha: Float,
+        val nonce: String,
+        val explorerUrl: String
+    ) : TransactionView(status, id, chain)
+
+    data class SwapTransferTransactionQueued(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val chain: Chain,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTime: Date,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String,
+        val explorerUrl: String
+    ) : TransactionView(status, id, chain)
+
+    data class TwapOrderTransaction(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val chain: Chain,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val alpha: Float,
+        val nonce: String,
+    ) : TransactionView(status, id, chain)
+
+    data class TwapOrderTransactionQueued(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val chain: Chain,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTime: Date,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String,
+    ) : TransactionView(status, id, chain)
+
     data class Creation(
         override val id: String,
         override val status: TransactionStatus,

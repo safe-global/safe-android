@@ -44,6 +44,12 @@ fun calculateSafeTxHash(
         is TransactionInfo.SwapOrder -> {
             transaction.txData?.to?.value ?: safeAddress
         }
+        is TransactionInfo.SwapTransfer -> {
+            transaction.txData?.to?.value ?: safeAddress
+        }
+        is TransactionInfo.TwapOrder -> {
+            transaction.txData?.to?.value ?: safeAddress
+        }
         else -> {
             throw UnsupportedTransactionType(transaction::javaClass.name)
         }
