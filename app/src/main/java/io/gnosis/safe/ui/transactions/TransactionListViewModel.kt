@@ -30,6 +30,9 @@ import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.transactions.details.viewdata.swapOrderDisplayname
+import io.gnosis.safe.ui.transactions.details.viewdata.swapTransferDisplayName
+import io.gnosis.safe.ui.transactions.details.viewdata.twapOrderDisplayName
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
 import io.gnosis.safe.utils.BalanceFormatter
@@ -392,7 +395,8 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
-            explorerUrl = txInfo.explorerUrl
+            explorerUrl = txInfo.explorerUrl,
+            displayName = swapOrderDisplayname(txInfo)
         )
     }
 
@@ -419,7 +423,8 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
-            explorerUrl = txInfo.explorerUrl
+            explorerUrl = txInfo.explorerUrl,
+            displayName = swapOrderDisplayname(txInfo)
         )
     }
 
@@ -446,7 +451,8 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
-            explorerUrl = txInfo.explorerUrl
+            explorerUrl = txInfo.explorerUrl,
+            displayName = swapTransferDisplayName(txInfo)
         )
     }
 
@@ -473,7 +479,8 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
-            explorerUrl = txInfo.explorerUrl
+            explorerUrl = txInfo.explorerUrl,
+            displayName = swapTransferDisplayName(txInfo)
         )
     }
 
@@ -499,7 +506,8 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
-            nonce = executionInfo?.nonce?.toString() ?: ""
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            displayName = twapOrderDisplayName()
         )
     }
 
@@ -525,7 +533,8 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
+            displayName = twapOrderDisplayName()
         )
     }
 

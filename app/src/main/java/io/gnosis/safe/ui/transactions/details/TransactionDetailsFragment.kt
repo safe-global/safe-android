@@ -464,11 +464,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                         actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
                             itemLabel = R.string.tx_status_type_custom ,
-                            value = "Swap order"))
+                            value = txInfo.displayDescription))
                         )
 
                     txStatus.setStatus(
-                        title = resources.getString(TxType.SWAP_ORDER.titleRes),
+                        title = txInfo.displayDescription,
                         defaultIconRes = TxType.SWAP_ORDER.iconRes,
                         statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         statusColorRes = getColorForStatus(txDetails.txStatus)
@@ -494,11 +494,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                         actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
                             itemLabel = R.string.tx_status_type_custom ,
-                            value = "Swap transfer"))
+                            value = txInfo.displayDescription))
                     )
 
                     txStatus.setStatus(
-                        title = resources.getString(TxType.SWAP_TRANSFER.titleRes),
+                        title = txInfo.displayDescription,
                         defaultIconRes = TxType.SWAP_TRANSFER.iconRes,
                         statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         statusColorRes = getColorForStatus(txDetails.txStatus)
@@ -524,11 +524,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
                         actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
                             itemLabel = R.string.tx_status_type_custom ,
-                            value = "Twap order"))
+                            value = txInfo.displayDescription))
                     )
 
                     txStatus.setStatus(
-                        title = resources.getString(TxType.TWAP_ORDER.titleRes),
+                        title = txInfo.displayDescription,
                         defaultIconRes = TxType.TWAP_ORDER.iconRes,
                         statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         statusColorRes = getColorForStatus(txDetails.txStatus)

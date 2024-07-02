@@ -43,13 +43,15 @@ sealed class TransactionInfo(
     @JsonClass(generateAdapter = true)
     data class SwapOrder(
         @Json(name = "uid") val uid: String,
-        @Json(name = "explorerUrl") val explorerUrl: String
+        @Json(name = "explorerUrl") val explorerUrl: String,
+        @Json(name = "fullAppData") val fullAppData: AppData? = null
     ) : TransactionInfo(TransactionType.SwapOrder)
 
     @JsonClass(generateAdapter = true)
     data class SwapTransfer(
         @Json(name = "uid") val uid: String,
-        @Json(name = "explorerUrl") val explorerUrl: String
+        @Json(name = "explorerUrl") val explorerUrl: String,
+        @Json(name = "fullAppData") val fullAppData: AppData? = null
     ) : TransactionInfo(TransactionType.SwapTransfer)
 
     @JsonClass(generateAdapter = true)
@@ -71,3 +73,21 @@ enum class TransactionDirection {
     @Json(name = "UNKNOWN")
     UNKNOWN
 }
+
+@JsonClass(generateAdapter = true)
+data class AppData (
+    @Json(name = "metadata")
+    val metadata: Metadata? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class Metadata (
+    @Json(name = "orderClass")
+    val orderClass: OrderClass? = null
+)
+
+@JsonClass(generateAdapter = true)
+data class OrderClass (
+    @Json(name = "orderClass")
+    val orderClass: String? = "market"
+)

@@ -104,18 +104,21 @@ sealed class TransactionInfoViewData(
     @Parcelize
     data class SwapOrder(
         val uid: String,
-        val explorerUrl: String
+        val explorerUrl: String,
+        val displayDescription: String
     ) : TransactionInfoViewData(TransactionType.SwapOrder)
 
     @Parcelize
     data class SwapTransfer(
         val uid: String,
-        val explorerUrl: String
+        val explorerUrl: String,
+        val displayDescription: String
     ) : TransactionInfoViewData(TransactionType.SwapTransfer)
 
     @Parcelize
     data class TwapOrder(
-        val status: String
+        val status: String,
+        val displayDescription: String
     ) : TransactionInfoViewData(TransactionType.TwapOrder)
 
     @Parcelize
@@ -248,22 +251,49 @@ internal fun TransactionInfo.toTransactionInfoViewData(
                 )
             }
         }
+
         is TransactionInfo.Creation -> TransactionInfoViewData.Creation(
             creator.value,
-            AddressInfoData.Remote(creator.name, creator.logoUri, creator.value.asEthereumAddressString()),
+            AddressInfoData.Remote(
+                creator.name,
+                creator.logoUri,
+                creator.value.asEthereumAddressString()
+            ),
             transactionHash,
             implementation?.value,
-            AddressInfoData.Remote(implementation?.name, implementation?.logoUri, implementation?.value?.asEthereumAddressString()),
+            AddressInfoData.Remote(
+                implementation?.name,
+                implementation?.logoUri,
+                implementation?.value?.asEthereumAddressString()
+            ),
             factory?.value,
-            AddressInfoData.Remote(factory?.name, factory?.logoUri, factory?.value?.asEthereumAddressString())
+            AddressInfoData.Remote(
+                factory?.name,
+                factory?.logoUri,
+                factory?.value?.asEthereumAddressString()
+            )
         )
+
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(
             dataDecoded,
             settingsInfo.toSettingsInfoViewData(safes, owners = owners)
         )
-        is TransactionInfo.SwapOrder -> TransactionInfoViewData.SwapOrder(uid, explorerUrl)
-        is TransactionInfo.SwapTransfer -> TransactionInfoViewData.SwapTransfer(uid, explorerUrl)
-        is TransactionInfo.TwapOrder -> TransactionInfoViewData.TwapOrder(status)
+
+        is TransactionInfo.SwapOrder -> {
+            val name = swapOrderDisplayname(this)
+            TransactionInfoViewData.SwapOrder(uid, explorerUrl, name)
+        }
+
+        is TransactionInfo.SwapTransfer -> {
+            val name = swapTransferDisplayName(this)
+            TransactionInfoViewData.SwapTransfer(uid, explorerUrl, name)
+        }
+
+        is TransactionInfo.TwapOrder -> {
+            val name = twapOrderDisplayName()
+            TransactionInfoViewData.TwapOrder(status, name)
+        }
+
         is TransactionInfo.Transfer -> {
             val addressInfoData =
                 if (direction == TransactionDirection.OUTGOING) {
@@ -289,8 +319,31 @@ internal fun TransactionInfo.toTransactionInfoViewData(
                 direction = direction
             )
         }
+
         is TransactionInfo.Unknown -> TransactionInfoViewData.Unknown
     }
+
+internal fun twapOrderDisplayName(): String {
+    return "Twap order"
+}
+
+internal fun swapOrderDisplayname(info: TransactionInfo.SwapOrder): String {
+    val orderClass = info.fullAppData?.metadata?.orderClass?.orderClass ?: "market"
+    val name = if (orderClass == "limit") "Limit order" else "Swap order"
+    return name
+}
+
+internal fun swapTransferDisplayName(info: TransactionInfo.SwapTransfer): String {
+    val orderClass = info.fullAppData?.metadata?.orderClass?.orderClass ?: "market"
+    val name = when (orderClass) {
+        "limit" -> "Limit order settlement"
+        "twap" -> "TWAP order settlement"
+        "liquidity" -> "Liquidity order settlement"
+        "market" -> "Swap order settlement"
+        else -> "Swap order settlement"
+    }
+    return name
+}
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal fun SettingsInfo?.toSettingsInfoViewData(

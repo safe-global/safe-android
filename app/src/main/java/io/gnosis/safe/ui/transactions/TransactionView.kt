@@ -124,7 +124,8 @@ sealed class TransactionView(
         val dateTimeText: String,
         val alpha: Float,
         val nonce: String,
-        val explorerUrl: String
+        val explorerUrl: String,
+        val displayName: String
     ) : TransactionView(status, id, chain)
 
     data class SwapOrderTransactionQueued(
@@ -139,7 +140,8 @@ sealed class TransactionView(
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
-        val explorerUrl: String
+        val explorerUrl: String,
+        val displayName: String
     ) : TransactionView(status, id, chain)
 
     data class SwapTransferTransaction(
@@ -151,7 +153,8 @@ sealed class TransactionView(
         val dateTimeText: String,
         val alpha: Float,
         val nonce: String,
-        val explorerUrl: String
+        val explorerUrl: String,
+        val displayName: String
     ) : TransactionView(status, id, chain)
 
     data class SwapTransferTransactionQueued(
@@ -166,7 +169,8 @@ sealed class TransactionView(
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
-        val explorerUrl: String
+        val explorerUrl: String,
+        val displayName: String
     ) : TransactionView(status, id, chain)
 
     data class TwapOrderTransaction(
@@ -178,6 +182,7 @@ sealed class TransactionView(
         val dateTimeText: String,
         val alpha: Float,
         val nonce: String,
+        val displayName: String
     ) : TransactionView(status, id, chain)
 
     data class TwapOrderTransactionQueued(
@@ -192,6 +197,7 @@ sealed class TransactionView(
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
+        val displayName: String
     ) : TransactionView(status, id, chain)
 
     data class Creation(
