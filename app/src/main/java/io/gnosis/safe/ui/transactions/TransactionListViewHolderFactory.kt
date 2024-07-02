@@ -384,7 +384,7 @@ class SwapOrderViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
             dateTime.text = viewTransfer.dateTimeText
 
             nonce.text = viewTransfer.nonce
-            addressName.text = resources.getString(R.string.tx_list_swap_order)
+            addressName.text = viewTransfer.displayName
 
             addressLogo.alpha = viewTransfer.alpha
             addressName.alpha = viewTransfer.alpha
@@ -412,7 +412,7 @@ class SwapTransferQueuedViewHolder(private val viewBinding: ItemTxQueuedSwapOrde
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
-            addressName.text = resources.getString(R.string.tx_list_swap_transfer)
+            addressName.text = viewTransfer.displayName
 
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
@@ -440,7 +440,7 @@ class SwapTransferViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
             dateTime.text = viewTransfer.dateTimeText
 
             nonce.text = viewTransfer.nonce
-            addressName.text = resources.getString(R.string.tx_list_swap_transfer)
+            addressName.text = viewTransfer.displayName
 
             addressLogo.alpha = viewTransfer.alpha
             addressName.alpha = viewTransfer.alpha
@@ -468,7 +468,7 @@ class TwapOrderQueuedViewHolder(private val viewBinding: ItemTxQueuedSwapOrderBi
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
-            addressName.text = resources.getString(R.string.tx_list_twap_order)
+            addressName.text = viewTransfer.displayName
 
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
@@ -496,7 +496,7 @@ class TwapOrderViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
             dateTime.text = viewTransfer.dateTimeText
 
             nonce.text = viewTransfer.nonce
-            addressName.text = resources.getString(R.string.tx_list_twap_order)
+            addressName.text = viewTransfer.displayName
 
             addressLogo.alpha = viewTransfer.alpha
             addressName.alpha = viewTransfer.alpha

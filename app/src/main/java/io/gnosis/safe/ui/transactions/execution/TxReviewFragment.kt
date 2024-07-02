@@ -388,7 +388,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 actionInfoItems = listOf<ActionInfoItem>(
                     ActionInfoItem.Value(
                     itemLabel = R.string.tx_status_type_custom,
-                    value = "Swap order"))
+                    value = txInfo.displayDescription))
             )
             orderLink.visible(true)
             actionDivider.visible(true)
@@ -414,7 +414,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 actionInfoItems = listOf<ActionInfoItem>(
                     ActionInfoItem.Value(
                         itemLabel = R.string.tx_status_type_custom,
-                        value = "Swap transfer"))
+                        value = txInfo.displayDescription))
             )
             orderLink.visible(true)
             actionDivider.visible(true)
@@ -440,7 +440,7 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 actionInfoItems = listOf<ActionInfoItem>(
                     ActionInfoItem.Value(
                         itemLabel = R.string.tx_status_type_custom,
-                        value = "Twap order"))
+                        value = txInfo.displayDescription))
             )
             orderLink.visible(false)
             actionDivider.visible(false)
