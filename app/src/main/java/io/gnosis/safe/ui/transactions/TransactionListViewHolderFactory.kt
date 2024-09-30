@@ -47,6 +47,8 @@ enum class TransactionViewType {
     SWAP_TRANSFER_QUEUED,
     TWAP_ORDER,
     TWAP_ORDER_QUEUED,
+    STAKE_VALIDATOR_EXIT,
+    STAKE_VALIDATOR_EXIT_QUEUED,
     CONFLICT
 }
 
@@ -74,6 +76,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.SWAP_TRANSFER_QUEUED.ordinal -> SwapTransferQueuedViewHolder(viewBinding as ItemTxQueuedSwapOrderBinding)
             TransactionViewType.TWAP_ORDER.ordinal -> TwapOrderViewHolder(viewBinding as ItemTxSwapOrderBinding)
             TransactionViewType.TWAP_ORDER_QUEUED.ordinal -> TwapOrderQueuedViewHolder(viewBinding as ItemTxQueuedSwapOrderBinding)
+            TransactionViewType.STAKE_VALIDATOR_EXIT.ordinal -> StakeValidatorExitViewHolder(viewBinding as ItemTxStakeValidatorExitBinding)
+            TransactionViewType.STAKE_VALIDATOR_EXIT_QUEUED.ordinal -> StakeValidatorExitQueuedViewHolder(viewBinding as ItemTxQueuedStakeValidatorExitBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -98,7 +102,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.SWAP_TRANSFER_QUEUED.ordinal -> ItemTxQueuedSwapOrderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TWAP_ORDER.ordinal -> ItemTxSwapOrderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TWAP_ORDER_QUEUED.ordinal -> ItemTxQueuedSwapOrderBinding.inflate(layoutInflater, parent, false)
-
+            TransactionViewType.STAKE_VALIDATOR_EXIT.ordinal -> ItemTxStakeValidatorExitBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.STAKE_VALIDATOR_EXIT_QUEUED.ordinal -> ItemTxQueuedStakeValidatorExitBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -124,6 +129,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.SwapTransferTransactionQueued -> TransactionViewType.SWAP_TRANSFER_QUEUED
             is TransactionView.TwapOrderTransaction -> TransactionViewType.TWAP_ORDER
             is TransactionView.TwapOrderTransactionQueued -> TransactionViewType.TWAP_ORDER_QUEUED
+            is TransactionView.StakeValidatorExitTransaction -> TransactionViewType.STAKE_VALIDATOR_EXIT
+            is TransactionView.StakeValidatorExitTransactionQueued -> TransactionViewType.STAKE_VALIDATOR_EXIT_QUEUED
         }.ordinal
 }
 
@@ -511,6 +518,62 @@ class TwapOrderViewHolder(private val viewBinding: ItemTxSwapOrderBinding) :
     }
 }
 
+class StakeValidatorExitViewHolder(private val viewBinding: ItemTxStakeValidatorExitBinding) :
+    BaseTransactionViewHolder<TransactionView.StakeValidatorExitTransaction>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.StakeValidatorExitTransaction, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+            dateTime.text = viewTransfer.dateTimeText
+
+            stakeValidatorExitLabel.text = viewTransfer.displayName
+            nonce.text = viewTransfer.nonce
+//            amount.text = viewTransfer.value
+
+            finalStatus.alpha = OPACITY_FULL
+            dateTime.alpha = viewTransfer.alpha
+//            amount.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class StakeValidatorExitQueuedViewHolder(private val viewBinding: ItemTxQueuedStakeValidatorExitBinding) :
+    BaseTransactionViewHolder<TransactionView.StakeValidatorExitTransactionQueued>(viewBinding) {
+
+    @OptIn(ExperimentalTime::class)
+    override fun bind(viewTransfer: TransactionView.StakeValidatorExitTransactionQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            status.setText(viewTransfer.statusText)
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
+//            amount.text = viewTransfer.value
+
+            stakeValidatorExitLabel.text = viewTransfer.displayName
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
+
+            nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
 
 private fun Resources.getAction(methodName: String?, actionCount: Int?): String? =
     if (actionCount != null) {

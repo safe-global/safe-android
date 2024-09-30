@@ -535,6 +535,32 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     )
                 }
             }
+
+            is TransactionInfoViewData.StakeValidatorExit -> {
+                val viewStub = binding.stubSettingsChange
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
+                }
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
+                with(txDetailsSettingsChangeBinding) {
+                    txAction.visible(true)
+                    txAction.setActionInfoItems(
+                        chain = chain,
+                        showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                        copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                        actionInfoItems = listOf<ActionInfoItem>(ActionInfoItem.Value(
+                            itemLabel = R.string.tx_status_type_custom ,
+                            value = txInfo.displayDescription))
+                    )
+
+                    txStatus.setStatus(
+                        title = txInfo.displayDescription,
+                        defaultIconRes = TxType.STAKE_VALIDATOR_EXIT.iconRes,
+                        statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
+                        statusColorRes = getColorForStatus(txDetails.txStatus)
+                    )
+                }
+            }
         }
 
         binding.content.visible(true)

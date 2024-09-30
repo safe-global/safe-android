@@ -200,6 +200,36 @@ sealed class TransactionView(
         val displayName: String
     ) : TransactionView(status, id, chain)
 
+    data class StakeValidatorExitTransaction(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val chain: Chain,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val alpha: Float,
+        val nonce: String,
+        val value: String,
+        val displayName: String
+    ) : TransactionView(status, id, chain)
+
+    data class StakeValidatorExitTransactionQueued(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val chain: Chain,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTime: Date,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String,
+        val value: String,
+        val displayName: String
+    ) : TransactionView(status, id, chain)
+
+
     data class Creation(
         override val id: String,
         override val status: TransactionStatus,

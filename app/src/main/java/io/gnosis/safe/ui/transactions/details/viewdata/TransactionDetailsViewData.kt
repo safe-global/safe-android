@@ -48,7 +48,7 @@ data class TransactionDetailsViewData(
 
 sealed class TransactionInfoViewData(
     val type: TransactionType
-): Parcelable {
+) : Parcelable {
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Custom(
@@ -122,12 +122,20 @@ sealed class TransactionInfoViewData(
     ) : TransactionInfoViewData(TransactionType.TwapOrder)
 
     @Parcelize
+    data class StakeValidatorExit(
+        val value: String,
+        val displayDescription: String
+    ) : TransactionInfoViewData(
+        TransactionType.StakeValidatorExit
+    )
+
+    @Parcelize
     object Unknown : TransactionInfoViewData(TransactionType.Unknown)
 }
 
 sealed class SettingsInfoViewData(
     val type: SettingsInfoType
-): Parcelable {
+) : Parcelable {
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
@@ -294,6 +302,11 @@ internal fun TransactionInfo.toTransactionInfoViewData(
             TransactionInfoViewData.TwapOrder(status, name)
         }
 
+        is TransactionInfo.StakeValidatorExit -> {
+            val name = stakeValidatorExitDisplayName()
+            TransactionInfoViewData.StakeValidatorExit(value, name)
+        }
+
         is TransactionInfo.Transfer -> {
             val addressInfoData =
                 if (direction == TransactionDirection.OUTGOING) {
@@ -343,6 +356,10 @@ internal fun swapTransferDisplayName(info: TransactionInfo.SwapTransfer): String
         else -> "Swap order settlement"
     }
     return name
+}
+
+internal fun stakeValidatorExitDisplayName(): String {
+    return "Request withdrawal"
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

@@ -30,6 +30,7 @@ import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.transactions.details.viewdata.stakeValidatorExitDisplayName
 import io.gnosis.safe.ui.transactions.details.viewdata.swapOrderDisplayname
 import io.gnosis.safe.ui.transactions.details.viewdata.swapTransferDisplayName
 import io.gnosis.safe.ui.transactions.details.viewdata.twapOrderDisplayName
@@ -192,6 +193,7 @@ class TransactionListViewModel
                 is TransactionInfo.SwapOrder -> toSwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.SwapTransfer -> toSwapTransferTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.TwapOrder -> toTwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.StakeValidatorExit -> toStakeValidatorExitView(chain, txInfo, needsYourConfirmation, isConflict)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
@@ -537,6 +539,64 @@ class TransactionListViewModel
             displayName = twapOrderDisplayName()
         )
     }
+
+    private fun Transaction.toStakeValidatorExitView(
+        chain: Chain,
+        txInfo: TransactionInfo.StakeValidatorExit,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
+        if (!isCompleted(txStatus)) queuedStakeValidatorExit(chain, txInfo, needsYourConfirmation, isConflict)
+        else historicStakeValidatorExit(chain, txInfo)
+
+    private fun Transaction.queuedStakeValidatorExit(
+        chain: Chain,
+        txInfo: TransactionInfo.StakeValidatorExit,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView.StakeValidatorExitTransactionQueued {
+
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        return TransactionView.StakeValidatorExitTransactionQueued(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, needsYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            dateTime = timestamp,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
+            value = txInfo.value,
+            displayName = stakeValidatorExitDisplayName()
+        )
+    }
+
+    private fun Transaction.historicStakeValidatorExit(
+        chain: Chain,
+        txInfo: TransactionInfo.StakeValidatorExit
+    ): TransactionView.StakeValidatorExitTransaction {
+
+        return TransactionView.StakeValidatorExitTransaction(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            alpha = alpha(txStatus),
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            value = txInfo.value,
+            displayName = stakeValidatorExitDisplayName()
+        )
+    }
+
+
 
     private fun Transaction.toRejectionTransactionView(
         chain: Chain,
