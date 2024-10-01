@@ -50,6 +50,15 @@ fun calculateSafeTxHash(
         is TransactionInfo.TwapOrder -> {
             transaction.txData?.to?.value ?: safeAddress
         }
+        is TransactionInfo.StakeDeposit -> {
+            transaction.txData?.to?.value ?: safeAddress
+        }
+        is TransactionInfo.StakeValidatorExit -> {
+            transaction.txData?.to?.value ?: safeAddress
+        }
+        is TransactionInfo.StakeWithdraw -> {
+            transaction.txData?.to?.value ?: safeAddress
+        }
         else -> {
             throw UnsupportedTransactionType(transaction::javaClass.name)
         }

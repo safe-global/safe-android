@@ -137,6 +137,14 @@ sealed class TransactionInfoViewData(
         TransactionType.StakeValidatorExit
     )
 
+    @Parcelize
+    data class StakeWithdraw(
+        val value: String,
+        val displayDescription: String
+    ) : TransactionInfoViewData(
+        TransactionType.StakeWithdraw
+    )
+
 
 
     @Parcelize

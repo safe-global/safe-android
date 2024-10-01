@@ -75,6 +75,7 @@ fun TransactionInfoViewData.formattedAmount(chain: Chain, balanceFormatter: Bala
         is TransactionInfoViewData.TwapOrder -> "0 ${chain.currency.symbol}"
         is TransactionInfoViewData.StakeDeposit -> "0 ${chain.currency.symbol}"
         is TransactionInfoViewData.StakeValidatorExit -> "0 ${chain.currency.symbol}"
+        is TransactionInfoViewData.StakeWithdraw -> "0 ${chain.currency.symbol}"
         TransactionInfoViewData.Unknown -> "0 ${chain.currency.symbol}"
     }
 
@@ -97,6 +98,7 @@ fun TransactionInfoViewData.logoUri(chain: Chain): String? =
         is TransactionInfoViewData.TwapOrder,
         is TransactionInfoViewData.StakeDeposit,
         is TransactionInfoViewData.StakeValidatorExit,
+        is TransactionInfoViewData.StakeWithdraw,
         is TransactionInfoViewData.SettingsChange,
         is TransactionInfoViewData.Creation,
         is TransactionInfoViewData.Rejection,

@@ -107,6 +107,9 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
                 is TransactionInfoViewData.SwapOrder -> setupSwapOrderUI(txInfo)
                 is TransactionInfoViewData.SwapTransfer -> setupSwapTransferUI(txInfo)
                 is TransactionInfoViewData.TwapOrder -> setupTwapOrderUI(txInfo)
+                is TransactionInfoViewData.StakeDeposit -> setupStakeDepositUI(txInfo)
+                is TransactionInfoViewData.StakeValidatorExit -> setupStakeValidatorExitUI(txInfo)
+                is TransactionInfoViewData.StakeWithdraw -> setupStakeWithdrawUI(txInfo)
             }
 
             estimatedFee.setOnClickListener {
@@ -426,6 +429,72 @@ class TxReviewFragment : BaseViewBindingFragment<FragmentTxReviewBinding>() {
     }
 
     private fun setupTwapOrderUI(txInfo: TransactionInfoViewData.TwapOrder) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = listOf<ActionInfoItem>(
+                    ActionInfoItem.Value(
+                        itemLabel = R.string.tx_status_type_custom,
+                        value = txInfo.displayDescription))
+            )
+            orderLink.visible(false)
+            actionDivider.visible(false)
+        }
+    }
+
+    private fun setupStakeDepositUI(txInfo: TransactionInfoViewData.StakeDeposit) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = listOf<ActionInfoItem>(
+                    ActionInfoItem.Value(
+                        itemLabel = R.string.tx_status_type_custom,
+                        value = txInfo.displayDescription))
+            )
+            orderLink.visible(false)
+            actionDivider.visible(false)
+        }
+    }
+
+    private fun setupStakeValidatorExitUI(txInfo: TransactionInfoViewData.StakeValidatorExit) {
+        val viewStub = binding.stubSettingsChange
+        if (viewStub.parent != null) {
+            val inflate = viewStub.inflate()
+            contentBinding = TxReviewSettingsChangeBinding.bind(inflate)
+        }
+        val settingsChangeBinding = contentBinding as TxReviewSettingsChangeBinding
+        with(settingsChangeBinding) {
+            txAction.setActionInfoItems(
+                chain = chain,
+                showChainPrefix = viewModel.isChainPrefixPrependEnabled(),
+                copyChainPrefix = viewModel.isChainPrefixCopyEnabled(),
+                actionInfoItems = listOf<ActionInfoItem>(
+                    ActionInfoItem.Value(
+                        itemLabel = R.string.tx_status_type_custom,
+                        value = txInfo.displayDescription))
+            )
+            orderLink.visible(false)
+            actionDivider.visible(false)
+        }
+    }
+
+    private fun setupStakeWithdrawUI(txInfo: TransactionInfoViewData.StakeWithdraw) {
         val viewStub = binding.stubSettingsChange
         if (viewStub.parent != null) {
             val inflate = viewStub.inflate()
