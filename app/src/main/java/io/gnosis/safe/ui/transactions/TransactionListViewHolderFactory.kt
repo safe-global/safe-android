@@ -51,6 +51,8 @@ enum class TransactionViewType {
     STAKE_DEPOSIT_QUEUED,
     STAKE_VALIDATOR_EXIT,
     STAKE_VALIDATOR_EXIT_QUEUED,
+    STAKE_WITHDRAW,
+    STAKE_WITHDRAW_QUEUED,
     CONFLICT
 }
 
@@ -82,6 +84,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.STAKE_DEPOSIT_QUEUED.ordinal -> StakeDepositQueuedViewHolder(viewBinding as ItemTxQueuedStakeDepositBinding)
             TransactionViewType.STAKE_VALIDATOR_EXIT.ordinal -> StakeValidatorExitViewHolder(viewBinding as ItemTxStakeValidatorExitBinding)
             TransactionViewType.STAKE_VALIDATOR_EXIT_QUEUED.ordinal -> StakeValidatorExitQueuedViewHolder(viewBinding as ItemTxQueuedStakeValidatorExitBinding)
+            TransactionViewType.STAKE_WITHDRAW.ordinal -> StakeWithdrawViewHolder(viewBinding as ItemTxStakeWithdrawBinding)
+            TransactionViewType.STAKE_WITHDRAW_QUEUED.ordinal -> StakeWithdrawQueuedViewHolder(viewBinding as ItemTxQueuedStakeWithdrawBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -110,6 +114,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.STAKE_DEPOSIT_QUEUED.ordinal -> ItemTxQueuedStakeDepositBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.STAKE_VALIDATOR_EXIT.ordinal -> ItemTxStakeValidatorExitBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.STAKE_VALIDATOR_EXIT_QUEUED.ordinal -> ItemTxQueuedStakeValidatorExitBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.STAKE_WITHDRAW.ordinal -> ItemTxStakeWithdrawBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.STAKE_WITHDRAW_QUEUED.ordinal -> ItemTxQueuedStakeWithdrawBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -139,6 +145,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.StakeDepositTransactionQueued -> TransactionViewType.STAKE_DEPOSIT_QUEUED
             is TransactionView.StakeValidatorExitTransaction -> TransactionViewType.STAKE_VALIDATOR_EXIT
             is TransactionView.StakeValidatorExitTransactionQueued -> TransactionViewType.STAKE_VALIDATOR_EXIT_QUEUED
+            is TransactionView.StakeWithdrawTransaction -> TransactionViewType.STAKE_WITHDRAW
+            is TransactionView.StakeWithdrawTransactionQueued -> TransactionViewType.STAKE_WITHDRAW_QUEUED
         }.ordinal
 }
 
@@ -624,6 +632,57 @@ class StakeValidatorExitQueuedViewHolder(private val viewBinding: ItemTxQueuedSt
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
+            nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class StakeWithdrawViewHolder(private val viewBinding: ItemTxStakeWithdrawBinding) :
+    BaseTransactionViewHolder<TransactionView.StakeWithdrawTransaction>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.StakeWithdrawTransaction, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+            dateTime.text = viewTransfer.dateTimeText
+
+            txListLabel.text = viewTransfer.displayName
+            nonce.text = viewTransfer.nonce
+
+            finalStatus.alpha = OPACITY_FULL
+            dateTime.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class StakeWithdrawQueuedViewHolder(private val viewBinding: ItemTxQueuedStakeWithdrawBinding) :
+    BaseTransactionViewHolder<TransactionView.StakeWithdrawTransactionQueued>(viewBinding) {
+
+    @OptIn(ExperimentalTime::class)
+    override fun bind(viewTransfer: TransactionView.StakeWithdrawTransactionQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+        with(viewBinding) {
+            txListLabel.text = viewTransfer.displayName
+            status.setText(viewTransfer.statusText)
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
+
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
+            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {

@@ -14,6 +14,7 @@ enum class TxType(@DrawableRes val iconRes: Int, @StringRes val titleRes: Int) {
     TWAP_ORDER(R.drawable.ic_code_16dp, R.string.tx_status_type_twap_order),
     STAKE_DEPOSIT(R.drawable.ic_stake_16dp, R.string.tx_status_type_stake_deposit),
     STAKE_VALIDATOR_EXIT(R.drawable.ic_stake_16dp, R.string.tx_status_type_stake_validator_exit),
+    STAKE_WITHDRAW(R.drawable.ic_stake_16dp, R.string.tx_status_type_stake_withdraw),
     CREATION(R.drawable.ic_settings_change_14dp, R.string.tx_status_type_creation),
     REJECTION(R.drawable.ic_circle_cross_red_16dp, R.string.tx_status_type_rejection)
 }

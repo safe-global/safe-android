@@ -70,6 +70,11 @@ sealed class TransactionInfo(
         @Json(name = "value") val value: String
     ) : TransactionInfo(TransactionType.StakeValidatorExit)
 
+    @JsonClass(generateAdapter = true)
+    data class StakeWithdraw(
+        @Json(name = "value") val value: String
+    ) : TransactionInfo(TransactionType.StakeWithdraw)
+
 
     object Unknown : TransactionInfo(TransactionType.Unknown)
 }

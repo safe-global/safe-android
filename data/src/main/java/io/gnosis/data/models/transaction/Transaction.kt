@@ -72,6 +72,9 @@ enum class TransactionType {
     @Json(name = "NativeStakingValidatorsExit")
     StakeValidatorExit,
 
+    @Json(name = "NativeStakingWithdraw")
+    StakeWithdraw,
+
     @Json(name = "Unknown")
     Unknown
 }

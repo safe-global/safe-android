@@ -322,6 +322,11 @@ internal fun TransactionInfo.toTransactionInfoViewData(
             TransactionInfoViewData.StakeValidatorExit(value, name)
         }
 
+        is TransactionInfo.StakeWithdraw -> {
+            val name = stakeWithdrawDisplayName()
+            TransactionInfoViewData.StakeValidatorExit(value, name)
+        }
+
         is TransactionInfo.Transfer -> {
             val addressInfoData =
                 if (direction == TransactionDirection.OUTGOING) {
@@ -379,6 +384,10 @@ internal fun stakeValidatorExitDisplayName(): String {
 
 internal fun stakeDepositDisplayName(): String {
     return "Stake"
+}
+
+internal fun stakeWithdrawDisplayName(): String {
+    return "Claim"
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

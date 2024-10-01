@@ -21,6 +21,7 @@ internal val transactionInfoAdapter =
         .withSubtype(TransactionInfo.TwapOrder::class.java, "TwapOrder")
         .withSubtype(TransactionInfo.StakeDeposit::class.java, "NativeStakingDeposit")
         .withSubtype(TransactionInfo.StakeValidatorExit::class.java, "NativeStakingValidatorsExit")
+        .withSubtype(TransactionInfo.StakeWithdraw::class.java, "NativeStakingWithdraw")
         .withSubtype(TransactionInfo.Creation::class.java, "Creation")
         .withDefaultValue(TransactionInfo.Unknown)
 
