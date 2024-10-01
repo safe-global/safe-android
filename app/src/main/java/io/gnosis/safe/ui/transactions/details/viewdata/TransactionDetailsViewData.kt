@@ -332,7 +332,7 @@ internal fun TransactionInfo.toTransactionInfoViewData(
 
         is TransactionInfo.StakeWithdraw -> {
             val name = stakeWithdrawDisplayName()
-            TransactionInfoViewData.StakeValidatorExit(value, name)
+            TransactionInfoViewData.StakeWithdraw(value, name)
         }
 
         is TransactionInfo.Transfer -> {
