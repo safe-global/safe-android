@@ -66,6 +66,9 @@ enum class TransactionType {
     @Json(name = "TwapOrder")
     TwapOrder,
 
+    @Json(name = "NativeStakingDeposit")
+    StakeDeposit,
+
     @Json(name = "NativeStakingValidatorsExit")
     StakeValidatorExit,
 

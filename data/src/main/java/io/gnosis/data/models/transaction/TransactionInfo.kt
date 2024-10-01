@@ -61,9 +61,15 @@ sealed class TransactionInfo(
     ) : TransactionInfo(TransactionType.TwapOrder)
 
     @JsonClass(generateAdapter = true)
+    data class StakeDeposit(
+        @Json(name = "value") val value: String
+    ) : TransactionInfo(TransactionType.StakeDeposit)
+
+    @JsonClass(generateAdapter = true)
     data class StakeValidatorExit(
         @Json(name = "value") val value: String
     ) : TransactionInfo(TransactionType.StakeValidatorExit)
+
 
     object Unknown : TransactionInfo(TransactionType.Unknown)
 }

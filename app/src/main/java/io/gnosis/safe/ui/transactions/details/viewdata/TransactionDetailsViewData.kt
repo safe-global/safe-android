@@ -122,12 +122,22 @@ sealed class TransactionInfoViewData(
     ) : TransactionInfoViewData(TransactionType.TwapOrder)
 
     @Parcelize
+    data class StakeDeposit(
+        val value: String,
+        val displayDescription: String
+    ) : TransactionInfoViewData(
+        TransactionType.StakeDeposit
+    )
+
+    @Parcelize
     data class StakeValidatorExit(
         val value: String,
         val displayDescription: String
     ) : TransactionInfoViewData(
         TransactionType.StakeValidatorExit
     )
+
+
 
     @Parcelize
     object Unknown : TransactionInfoViewData(TransactionType.Unknown)
@@ -302,6 +312,11 @@ internal fun TransactionInfo.toTransactionInfoViewData(
             TransactionInfoViewData.TwapOrder(status, name)
         }
 
+        is TransactionInfo.StakeDeposit -> {
+            val name = stakeDepositDisplayName()
+            TransactionInfoViewData.StakeDeposit(value, name)
+        }
+
         is TransactionInfo.StakeValidatorExit -> {
             val name = stakeValidatorExitDisplayName()
             TransactionInfoViewData.StakeValidatorExit(value, name)
@@ -360,6 +375,10 @@ internal fun swapTransferDisplayName(info: TransactionInfo.SwapTransfer): String
 
 internal fun stakeValidatorExitDisplayName(): String {
     return "Request withdrawal"
+}
+
+internal fun stakeDepositDisplayName(): String {
+    return "Stake"
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

@@ -30,6 +30,7 @@ import io.gnosis.data.repositories.TransactionLocalRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.transactions.details.viewdata.stakeDepositDisplayName
 import io.gnosis.safe.ui.transactions.details.viewdata.stakeValidatorExitDisplayName
 import io.gnosis.safe.ui.transactions.details.viewdata.swapOrderDisplayname
 import io.gnosis.safe.ui.transactions.details.viewdata.swapTransferDisplayName
@@ -193,7 +194,9 @@ class TransactionListViewModel
                 is TransactionInfo.SwapOrder -> toSwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.SwapTransfer -> toSwapTransferTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.TwapOrder -> toTwapOrderTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.StakeDeposit -> toStakeDepositTransactionView(chain, txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.StakeValidatorExit -> toStakeValidatorExitView(chain, txInfo, needsYourConfirmation, isConflict)
+
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
@@ -537,6 +540,62 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             displayName = twapOrderDisplayName()
+        )
+    }
+
+    private fun Transaction.toStakeDepositTransactionView(
+        chain: Chain,
+        txInfo: TransactionInfo.StakeDeposit,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
+        if (!isCompleted(txStatus)) queuedStakeDepositTransaction(chain, txInfo, needsYourConfirmation, isConflict)
+        else historicStakeDepositTransaction(chain, txInfo)
+
+    private fun Transaction.historicStakeDepositTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.StakeDeposit
+    ): TransactionView.StakeDepositTransaction {
+
+        return TransactionView.StakeDepositTransaction(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            alpha = alpha(txStatus),
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            value = txInfo.value,
+            displayName = stakeDepositDisplayName()
+        )
+    }
+
+    private fun Transaction.queuedStakeDepositTransaction(
+        chain: Chain,
+        txInfo: TransactionInfo.StakeDeposit,
+        needsYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView.StakeDepositTransactionQueued {
+
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        return TransactionView.StakeDepositTransactionQueued(
+            chain = chain,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, needsYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            dateTime = timestamp,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
+            value = txInfo.value,
+            displayName = stakeDepositDisplayName()
         )
     }
 
