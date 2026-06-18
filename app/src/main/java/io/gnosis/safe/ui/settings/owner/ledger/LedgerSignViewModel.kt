@@ -17,13 +17,23 @@ class LedgerSignViewModel
 
     override fun initialState() = LedgerSignState(ViewAction.Loading(true))
 
-    fun getSignature(ownerAddress: Solidity.Address, safeTxHash: String) {
+    fun getSignature(mode: LedgerSignDialog.Mode, ownerAddress: Solidity.Address, txHash: String) {
         safeLaunch {
             val owner = credentialsRepository.owner(ownerAddress)!!
-            val signature = ledgerController.getSignature(
-                owner.keyDerivationPath!!,
-                safeTxHash
-            )
+            val signature = when (mode) {
+                LedgerSignDialog.Mode.EXECUTION -> {
+                    ledgerController.getTxSignature(
+                        owner.keyDerivationPath!!,
+                        txHash
+                    )
+                }
+                else -> {
+                    ledgerController.getSignature(
+                        owner.keyDerivationPath!!,
+                        txHash
+                    )
+                }
+            }
             updateState {
                 LedgerSignState(Signature(signature))
             }
@@ -37,7 +47,7 @@ class LedgerSignViewModel
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(safeTxHash.hexToByteArray())
         val sha256hash = digest.fold("", { str, it -> str + "%02x".format(it) })
-        return sha256hash.toUpperCase()
+        return sha256hash.uppercase()
     }
 
     fun disconnectFromDevice() {

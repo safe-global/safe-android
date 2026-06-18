@@ -15,6 +15,7 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.data.utils.toSignatureString
+import io.gnosis.safe.HeimdallApplication.Companion.LEDGER_EXECUTION
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -136,8 +137,14 @@ class TransactionDetailsViewModel
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         localOwners: List<Owner>
     ): Boolean {
-        //TODO: Modify this check when we have tx execution on Ledger Nano X
-        val ownersThatCanExecute = localOwners.filter { it.type != Owner.Type.LEDGER_NANO_X && executionInfo.signers.contains(AddressInfo(it.address))}
+        val ownersThatCanExecute = localOwners.filter {
+            //TODO: [Ledger execution] remove filter after successfully tested
+            if (LEDGER_EXECUTION) {
+                true
+            } else {
+                it.type != Owner.Type.LEDGER_NANO_X
+            }
+        }
         return ownersThatCanExecute.isNotEmpty() && executionInfo.confirmations.size >= executionInfo.confirmationsRequired
     }
 

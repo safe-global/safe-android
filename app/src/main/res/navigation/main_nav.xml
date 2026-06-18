@@ -862,7 +862,7 @@
             app:popUpTo="@id/signingOwnerSelectionFragment" />
 
         <action
-            android:id="@+id/action_signingOwnerSelectionFragment_to_ledgerDeviceListFragmet"
+            android:id="@+id/action_signingOwnerSelectionFragment_to_ledgerDeviceListFragment"
             app:destination="@id/ledgerDeviceListFragment"
             app:popUpTo="@id/signingOwnerSelectionFragment" />
 
@@ -1307,6 +1307,11 @@
             app:popUpTo="@id/txReviewFragment" />
 
         <action
+            android:id="@+id/action_txReviewFragment_to_ledgerDeviceListFragment"
+            app:destination="@id/ledgerDeviceListFragment"
+            app:popUpTo="@id/txReviewFragment" />
+
+        <action
             android:id="@+id/action_txReviewFragment_to_txSuccessFragment"
             app:destination="@id/txSuccessFragment" />
 
@@ -1428,7 +1433,7 @@
             app:nullable="true" />
 
         <argument
-            android:name="safeTxHash"
+            android:name="txHash"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
@@ -1450,9 +1455,8 @@
             app:argType="string" />
 
         <argument
-            android:name="confirmation"
-            android:defaultValue="true"
-            app:argType="boolean" />
+            android:name="mode"
+            app:argType="string" />
 
     </dialog>
 

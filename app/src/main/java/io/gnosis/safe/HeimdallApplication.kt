@@ -103,6 +103,9 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
     }
 
     companion object Companion {
+
+        const val LEDGER_EXECUTION = true
+
         operator fun get(context: Context): ApplicationComponent {
             return (context.applicationContext as ComponentProvider).get()
         }
